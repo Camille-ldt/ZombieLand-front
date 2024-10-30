@@ -1,6 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuItems } from '@headlessui/react';
 import { Bars3Icon,  XMarkIcon } from '@heroicons/react/24/outline';
-import Button from './Button';
+import { Button } from './Button';
 
 // Interface pour définir la structure d'un élément de navigation
 // Interface to define the structure pf a navigation item
