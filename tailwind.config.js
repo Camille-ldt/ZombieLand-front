@@ -5,6 +5,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+
   theme: {
     
     extend: {
@@ -24,6 +25,10 @@ export default {
         body: ["Gentium Book Basic, sans serif"],
       },
     },
+    
   },
-  plugins: [],
+  plugins: [
+    require('@headlessui/tailwindcss'),
+    require('@tailwindcss/forms'),
+  ],
 }
