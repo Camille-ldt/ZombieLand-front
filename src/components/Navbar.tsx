@@ -1,28 +1,30 @@
+
+import { NavLink } from 'react-router-dom';
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuItems } from '@headlessui/react';
 import { Bars3Icon,  XMarkIcon } from '@heroicons/react/24/outline';
-import { Button } from './Button';
+import { RedLink } from './RedLink';
 
 // Interface pour définir la structure d'un élément de navigation
 // Interface to define the structure pf a navigation item
 interface NavigationItem {
     name: string;
-    href: string;
+    to: string;
     current: boolean;
 };
 
 // Liste des éléments de navigation
 // List of navigation items
 const navigation: NavigationItem[] = [
-    { name: 'Accueil', href: '#', current: true },
-    { name: 'Nos activités', href: '#', current: false },
-    { name: 'Réservation', href: '#', current: false },
-    { name: 'À propos', href: '#', current: false },
+    { name: 'Accueil', to: '/', current: true },
+    { name: 'Nos activités', to: '/activities', current: false },
+    { name: 'Réservation', to: '/bookings', current: false },
+    { name: 'À propos', to: '/aboutus', current: false },
 ];
 
 // Fonction utilitaire pour concaténer les classes conditionnelles
 // Utility function to concatenate conditional classes
 function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ')
 }
 
 // Composant Navbar
@@ -70,9 +72,9 @@ const Navbar = () => {
               <div className="navigation hidden md:ml-6 md:flex md:items-center md:space-x-4">
                 
                 {navigation.map((item: NavigationItem) => (
-                  <a
+                  <NavLink
                     key={item.name}
-                    href={item.href}
+                    to={item.to}
                     aria-current={item.current ? 'page' : undefined}
                     className={classNames(
                       item.current ? 'text-white' : 'text-white',
@@ -80,7 +82,7 @@ const Navbar = () => {
                     )}
                   >
                     {item.name}
-                  </a>
+                  </NavLink>
                 ))}
               </div>
             </div>
@@ -92,11 +94,11 @@ const Navbar = () => {
 
               {/* Bouton Réservation */}
               {/* Reservation button */}
-                <Button>Réservation</Button>
+                <RedLink to='/' textSize='text-sm'>Réservation</RedLink>
 
                 {/* Bouton Connexion */}
                 {/* Login button */}
-                <Button>Connexion</Button>
+                <RedLink to='/login' textSize='text-sm'>Connexion</RedLink>
 
 
               {/* Menu utilisateur pour les actions de connexion, affiché uniquement sur les écrans moyens et grands */}
@@ -123,18 +125,18 @@ const Navbar = () => {
         <DisclosurePanel className="md:hidden">
           <div className="navigation-mobile space-y-1 px-2 pb-3 pt-2 sm:px-3">
             {navigation.map((item) => (
-              <DisclosureButton
-                key={item.name}
-                as="a"
-                href={item.href}
-                aria-current={item.current ? 'page' : undefined}
-                className={classNames(
+              <NavLink to={item.to} key={item.name}>
+                  <DisclosureButton
+                    as="div"
+                    aria-current={item.current ? 'page' : undefined}
+                    className={classNames(
                   item.current ? 'text-white' : 'text-white hover:text-white',
                   'block rounded-md px-3 py-2 text-base font-medium',
-                )}
-              >
-                {item.name}
-              </DisclosureButton>
+                    )}
+                  >
+                    {item.name}
+                  </DisclosureButton>
+              </NavLink>
             ))}
           </div>
 

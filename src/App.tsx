@@ -1,15 +1,10 @@
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import HomePage from "./Pages/HomePage";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/router";
 
 
 const App = () => {
   return (
-    <>
-      <Navbar />
-      <HomePage />
-      <Footer />
-    </>
+      <RouterProvider router={router} />
   )
 }
 export default App;
