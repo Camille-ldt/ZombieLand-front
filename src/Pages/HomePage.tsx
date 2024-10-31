@@ -6,7 +6,7 @@ import { ButtonContent, ButtonTitle } from '../components/Button';
 
 const HomePage = () => {
   return (
-    <div className='bg-black'>
+    <div className='bg-black min-h-screen'>
     <div className="relative">
     <img 
         src={MyImage}
@@ -22,7 +22,7 @@ const HomePage = () => {
 </div>
     <div className='text-center mt-7'>
       <ButtonTitle>Qui sommes-nous ?</ButtonTitle>
-      <p className='text-white'>
+      <p className='text-white pb-14'>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt corrupti aut illum architecto fugit eveniet, deserunt quos nisi sit voluptatum nemo veniam adipisci, delectus ullam, inventore tempore vero repudiandae iure!
       </p>
     </div>

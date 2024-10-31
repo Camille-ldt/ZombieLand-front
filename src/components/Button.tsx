@@ -2,6 +2,7 @@ interface ButtonProps {
     children: string
 }
 
+// Bouton barre de nav
 export const Button = ({children}: ButtonProps) => {
     return (
         <button
@@ -13,6 +14,7 @@ export const Button = ({children}: ButtonProps) => {
     )
 }
 
+// Bouton réservation sur l'image
 export const ButtonContent = ({children}: ButtonProps) => {
     return (
         <button
@@ -24,6 +26,7 @@ export const ButtonContent = ({children}: ButtonProps) => {
     )
 }
 
+// Encadré titre kaki 
 export const ButtonTitle = ({children}: ButtonProps) => {
     return (
         <button
