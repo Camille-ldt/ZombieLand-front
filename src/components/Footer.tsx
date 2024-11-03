@@ -103,7 +103,8 @@ const footer: Footer = {
               </a>
             ))}
           </nav>
-          <p className="mt-10 text-center text-sm/6 text-gray-300">Copyright &copy; 2024 ZombieLand - Tous droits réservés.</p>
+          <p className="mt-10 mb-2 text-center text-sm/6 text-gray-300">Parc ouvert du mercredi au dimanche, de 10h à 18h</p>
+          <p className="mb-5 text-center text-sm/6 text-gray-300">Copyright &copy; 2024 ZombieLand - Tous droits réservés.</p>
         </div>
       </footer>
     )
