@@ -26,18 +26,25 @@ const HomePage = () => {
         </div>
           <div className='text-center mt-7'>
               <Title>Qui sommes nous ?</Title>
-              <p className='text-white pb-14'>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt corrupti aut illum architecto fugit eveniet, deserunt quos nisi sit voluptatum nemo veniam adipisci, delectus ullam, inventore tempore vero repudiandae iure!
+              <p className='text-white pb-14 px-60'>
+                Willkommen in der postapokalyptischen Welt von ZombieLand, einem einzigartigen Freizeitpark! Unsere Mission ist es, Sie in eine Welt zu entführen, in der Adrenalin und Abenteuer auf immersive, von der Apokalypse inspirierte Kulissen treffen.
+                ZombieLand wurde für Liebhaber von Nervenkitzel und außergewöhnlichen Erlebnissen konzipiert und bietet eine Vielzahl von Aktivitäten, Attraktionen und Events, die speziell für die Mutigsten gedacht sind!
+                Machen Sie sich bereit, Herausforderungen anzunehmen, Ihre Ängste zu überwinden und unvergessliche Momente mit Familie oder Freunden zu erleben.
+                Auf eigene Gefahr!
+                {/* Bienvenue dans l'univers post-apocalyptique de ZombieLand, un parc d'attraction unique en son genre ! Notre mission est de vous plonger dans un monde où l'adrénaline et l'aventure se rencontrent dans des décors immersifs inspirés de l'apocalypse.
+                Conçu pour les amateurs de sensations fortes et d'expériences hors du commun, ZombieLand vous propose une multitude d'activités, d'attractions et d'événements spécialement pensés pour les plus courageux !
+                Préparez-vous à relever des défis, à affronter vos peur et à vivre des moments inoubliables en famille ou entre amis.
+                À vos risques et périls ! */}
               </p>
           </div>
-
-                {/* Intégration du Carousel */}
              
       {/* Intégration du Carousel */}
       <div className="">
         <Carousel items={activities} />
-      </div>    
-      
+      </div>
+      <div className='text-center mt-10 pb-10'>
+      <RedLink to='' textSize='text-xl'>Voir toutes nos activités</RedLink>
+      </div>
     </div>
     
    
