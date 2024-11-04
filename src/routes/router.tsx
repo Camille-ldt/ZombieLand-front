@@ -4,6 +4,7 @@ import HomePage from "../Pages/HomePage";
 import Login from "../Pages/Login";
 import Error404 from "../Pages/Error404";
 import Activity from "../Pages/Activity";
+import Activities from "../Pages/Activities";
 
 const router = createBrowserRouter([
 	{
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/activities",
-				element: <HomePage />,
+				element: <Activities />,
 			},
 			{
 				path: "/bookings",
