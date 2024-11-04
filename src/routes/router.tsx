@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import HomePage from "../Pages/HomePage";
 import Login from "../Pages/Login";
 import Error404 from "../Pages/Error404";
+import Activity from "../Pages/Activity";
 
 const router = createBrowserRouter([
 	{
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
 			{
 				path: "*",
 				element: <Error404 />,
+			},
+			{
+				path: "/activity",
+				element: <Activity />,
 			},
 		],
 	},

@@ -1,3 +1,4 @@
+// src/components/ActivityCard.tsx
 import { Link } from "react-router-dom";
 
 export interface CardProps {
@@ -6,14 +7,13 @@ export interface CardProps {
 	title: string;
 	description: string;
 	buttonText: string;
-	to: string;
 }
 
 export const Card = ({
+	id,
 	backgroundImage,
 	title,
 	description,
-	to,
 }: CardProps): JSX.Element => {
 	return (
 		<div
@@ -32,7 +32,8 @@ export const Card = ({
 			</div>
 			<div className="p-4 flex justify-end">
 				<Link
-					to={to}
+					to="/activity"
+					state={{ activity: { id, title, description, backgroundImage } }}
 					className="transform transition-transform duration-400 hover:scale-110 inline-flex items-center rounded-md bg-red-primary px-3 py-2 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
 				>
 					Découvrir
