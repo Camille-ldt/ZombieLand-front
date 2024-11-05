@@ -18,7 +18,7 @@ const navigation: NavigationItem[] = [
     { name: 'Accueil', to: '/', current: true },
     { name: 'Nos activités', to: '/activities', current: false },
     { name: 'Réservation', to: '/bookings', current: false },
-    { name: 'À propos', to: '/aboutus', current: false },
+    { name: 'À propos', to: '/informations/aboutus', current: false },
 ];
 
 // Fonction utilitaire pour concaténer les classes conditionnelles

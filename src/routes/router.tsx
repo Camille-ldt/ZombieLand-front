@@ -5,6 +5,9 @@ import Login from "../Pages/Login";
 import Error404 from "../Pages/Error404";
 import Activity from "../Pages/Activity";
 import Activities from "../Pages/Activities";
+import { UsefulInformation } from "../components/UsefulInformation";
+import SiteMap from "../Pages/SiteMap";
+import AboutUs from "../Pages/AboutUs";
 
 const router = createBrowserRouter([
 	{
@@ -25,8 +28,18 @@ const router = createBrowserRouter([
 				element: <HomePage />,
 			},
 			{
-				path: "/aboutus",
-				element: <HomePage />,
+				path: "/informations",
+				element: <UsefulInformation />,
+				children: [
+					{
+						path: "/informations/aboutus",
+						element: <AboutUs />,
+					}, 
+					{
+						path: "/informations/sitemap",
+						element: <SiteMap />
+					}
+				]
 			},
 			{
 				path: "/login",
