@@ -59,7 +59,7 @@ const HomePage = () => {
 				</p>
 			</div>
 
-			{/* Intégration du Carousel */}
+			{/* Intégration du Carousel */} 
 			<div className="">
 				<Carousel items={activities} />
 			</div>
