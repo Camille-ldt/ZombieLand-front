@@ -1,7 +1,34 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {authService} from '../Auth/Services/authService';
 import MyImage from '../assets/img/zombie-accueil.webp';
+import { useAuth } from '../Auth/authContext';
 
-const Login = () => {
-    return (
+
+const Login = () => { // Etat pour stocker les éléments email, password avec une fonction pour le màj
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState ('');
+  const navigate = useNavigate();
+  const [error, setError] = useState ('');
+  const {login} = useAuth();
+  const [isLoading, setIsLoading]= useState(false);
+  
+  const handleSubmitLogin = async (e: React.FormEvent) => { // Gérer la soumission du formulaire
+    e.preventDefault(); // Empêche le comportement par défaut du formulaire
+    setError('');
+    setIsLoading(true);
+    try { 
+      await authService.login({ email, password }); // Appel à la fonction d'authentification en passant par email et password
+      navigate('/'); // Note à nous-même : en attente de la création de la page -- Si la connexion est ok alors redirection vers la page d'accueil
+    } catch (error){
+      setError("Échec de la connexion. Veuillez vérifier vos identifiants."); // Met à jour l'état 'error' avec un message d'erreur pour l'utilisateur
+      console.error('Erreur de connexion:', error); // L'erreur iriginal est passée en second argument pour plus de détails
+    }finally {
+      setIsLoading(false);
+    }
+  };
+  
+  return (
       <>
         {/*
           This example requires updating your template:
@@ -26,7 +53,7 @@ const Login = () => {
   
               <div className="mt-10">
                 <div>
-                  <form action="#" method="POST" className="space-y-6">
+                  <form onSubmit={handleSubmitLogin} action="#" method="POST" className="space-y-6">
                     <div>
                       <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                         Email
@@ -38,6 +65,8 @@ const Login = () => {
                           type="email"
                           required
                           autoComplete="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
@@ -54,6 +83,8 @@ const Login = () => {
                           type="password"
                           required
                           autoComplete="current-password"
+                          value={password}
+                          onChange={(e)=> setPassword(e.target.value)}
                           className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
@@ -78,13 +109,15 @@ const Login = () => {
                         </a>
                       </div>
                     </div>
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
   
                     <div>
                       <button
                         type="submit"
+                        disabled={isLoading}
                         className="flex w-full justify-center rounded-md bg-red-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
                       >
-                        Se connecter
+                       {isLoading ? 'Connexion...' : 'Se connecter'}
                       </button>
                     </div>
                   </form>

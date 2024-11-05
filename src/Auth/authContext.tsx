@@ -1,0 +1,71 @@
+// Importation des hooks et types
+import { useContext, useState, useEffect, createContext, ReactNode } from "react";
+import {User, Login} from './types';
+import {authService} from './Services/authService';
+
+// Interface pour le contexte d'authentification
+interface AuthContextType {
+    user: User | null, // Utilisateur ou null
+    login: (data :Login) => Promise<void>, // Se connecter
+    logout: ()=>void, // Se déconnecter
+    isLoading: boolean // Etat de chargement
+}
+
+// Création du contexte d'authentification 
+const AuthContext = createContext<AuthContextType | undefined>(undefined); // Avec le type défini précédemment il est initialisé à undefined
+
+// Définition des props
+interface AuthProviderProps {
+    children: ReactNode; // Les composants enfants qui seront de type ReactNode
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => { // Déclare l'AuthProvider pour donner le contexte d'authentification
+const [user, setUser] = useState<User | null>(null); // Définition de l'état user pour stocker les informations de l'utilisateur
+  const [isLoading, setIsLoading] = useState(true); // Définition de l'état de chargement
+
+// Exécute une fois au montage du composant. Vérifie l'état de l'utilisateur actuel et màj en conséquence.
+  useEffect(()=>{
+    const initAuth = async() =>{ 
+        const currentUser = authService.getCurrentUser();
+        setUser(currentUser);
+        setIsLoading(false);
+    };
+    initAuth();
+  },[]);
+
+  // Appel le servie d'authentification et màj l'état utilisateur
+  const login = async(data: Login)=>{
+    const loggedInUser = await authService.login(data);
+    setUser(loggedInUser);
+  };
+
+  // Appel le service de déconnexion qui réinitialise les tables de l'utilisateur, remet à null
+  const logout = () => {
+    authService.logout();
+    setUser(null);
+  };
+
+  // Contient toute les valeurs et fonctions fournies par le contexte
+  const value ={
+    user,
+    login,
+    logout,
+    isLoading
+  };
+
+  // Retourne les enfants et les valeurs en fonction du contexte
+  return (
+    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+        {children}
+        </AuthContext.Provider>
+  );
+};
+
+// Hook personnalisé pour accéder facilement au contexte d'authentification. Elle vérifie si le contexte est ok ou lance une erreur.
+export const useAuth = ()=>{
+    const context = useContext(AuthContext);
+    if(context === undefined){
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context
+};
