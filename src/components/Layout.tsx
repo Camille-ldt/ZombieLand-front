@@ -3,14 +3,19 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const Layout = () => {
-    return (
-        <div>
-            <Navbar />
-            <Outlet />
-            <Footer />
-        </div>
-    );
+	return (
+		<>
+			<nav>
+				<Navbar />
+			</nav>
+			<main>
+				<Outlet />
+			</main>
+			<footer>
+				<Footer />
+			</footer>
+		</>
+	);
 };
 
 export default Layout;
-
