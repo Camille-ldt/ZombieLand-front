@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {authService} from '../Auth/Services/authService';
+import { authService } from '../Auth/Services/authService';
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
 

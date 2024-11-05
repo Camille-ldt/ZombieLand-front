@@ -1,13 +1,15 @@
 // Importation des hooks et types
 import { useContext, useState, useEffect, createContext, ReactNode } from "react";
-import {User, Login} from './types';
+import {User, Login, Register} from './types';
 import {authService} from './Services/authService';
 
 // Interface pour le contexte d'authentification
 interface AuthContextType {
     user: User | null, // Utilisateur ou null
     login: (data :Login) => Promise<void>, // Se connecter
+    register: (data: Register) => Promise<void>;
     logout: ()=>void, // Se déconnecter
+
     isLoading: boolean // Etat de chargement
 }
 
@@ -45,17 +47,25 @@ const [user, setUser] = useState<User | null>(null); // Définition de l'état u
     setUser(null);
   };
 
+  //Appel le service d'auth pour l'inscription
+  const register = async (data: Register) => {
+    const registeredUser = await authService.register(data);
+    setUser(registeredUser);
+  };
+
+
   // Contient toute les valeurs et fonctions fournies par le contexte
   const value ={
     user,
     login,
     logout,
+    register,
     isLoading
   };
 
   // Retourne les enfants et les valeurs en fonction du contexte
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>
         {children}
         </AuthContext.Provider>
   );

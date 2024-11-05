@@ -14,7 +14,7 @@ export interface Login {
 };
 
 export interface Register {
-    id: number,
+    
     firstname: string,
     lastname: string,
     email: string,
