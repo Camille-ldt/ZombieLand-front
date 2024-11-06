@@ -1,10 +1,9 @@
-import { TitleGrey } from "../components/TitleGrey";
-
 const SiteMap = () => {
-   return (
-<TitleGrey>Plan du site</TitleGrey>
-   )
-}
-
+  return (
+    <div>
+      <p className="text-white">Plan du site</p>
+    </div>
+  );
+};
 
 export default SiteMap;
