@@ -5,6 +5,7 @@ import Login from "../Pages/Login";
 import Error404 from "../Pages/Error404";
 import Activity from "../Pages/Activity";
 import Activities from "../Pages/Activities";
+import Profil from "../Pages/Profil";
 
 const router = createBrowserRouter([
 	{
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
 			{
 				path: "/activity",
 				element: <Activity />,
+			},
+			{
+				path: "/user/:id",
+				element: <Profil />
 			},
 		],
 	},

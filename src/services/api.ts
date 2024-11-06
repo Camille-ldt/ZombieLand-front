@@ -31,7 +31,7 @@ export const getDataById = async (endpoint: string, id: number | string) => {
 };
 
 // Fonction POST : Créer une nouvelle ressource
-export const createData = async (endpoint: string, data) => {
+export const createData = async (endpoint: string, data: string) => {
   try {
     const response = await api.post(endpoint, data);
     return response.data;
@@ -42,7 +42,7 @@ export const createData = async (endpoint: string, data) => {
 };
 
 // Fonction PUT : Mettre à jour une ressource
-export const updateData = async (endpoint: string, id: number | string, data) => {
+export const updateData = async (endpoint: string, id: number | string, data: string) => {
   try {
     const response = await api.put(`${endpoint}/${id}/modify`, data);
     return response.data;

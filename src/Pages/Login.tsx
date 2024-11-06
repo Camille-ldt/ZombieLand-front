@@ -73,7 +73,7 @@ const Login = () => {
                       </div>
   
                       <div className="text-sm/6">
-                        <a href="#" className="font-semibold text-red-primary hover:text-red-secondary">
+                        <a href="/" className="font-semibold text-red-primary hover:text-red-secondary">
                           Mot de passe oublié ?
                         </a>
                       </div>
@@ -102,7 +102,7 @@ const Login = () => {
   
                   <div className="mt-6 grid grid-cols-2 gap-4">
                     <a
-                      href="#"
+                      href="/"
                       className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent"
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
@@ -127,7 +127,7 @@ const Login = () => {
                     </a>
   
                     <a
-                      href="#"
+                      href="/"
                       className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:ring-transparent"
                     >
                       <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" className="h-5 w-5 fill-[#24292F]">
