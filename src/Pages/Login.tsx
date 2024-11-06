@@ -42,10 +42,10 @@ const Login = () => { // Etat pour stocker les éléments email, password avec u
           <div className="flex flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
             <div className="mx-auto w-full max-w-sm lg:w-96">
               <div>
-                <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+                <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">Connectez-vous</h2>
                 <p className="mt-2 text-sm/6 text-gray-500">
-                  Not a member?{' '}
-                  <a href="/bookings" className="font-semibold text-red-primary hover:text-red-secondary">
+                  Pas encore inscrit ?{' '}
+                  <a href="/register" className="font-semibold text-red-primary hover:text-red-secondary">
                     Inscrivez-vous
                   </a>
                 </p>
@@ -99,7 +99,7 @@ const Login = () => { // Etat pour stocker les éléments email, password avec u
                           className="h-4 w-4 rounded border-gray-300 text-red-primary focus:ring-red-primary"
                         />
                         <label htmlFor="remember-me" className="ml-3 block text-sm/6 text-gray-700">
-                          Remember me
+                          Se souvenir de moi
                         </label>
                       </div>
   

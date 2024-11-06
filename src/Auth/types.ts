@@ -21,3 +21,4 @@ export interface Register {
     password: string,
     confirmPassword: string,
 };
+

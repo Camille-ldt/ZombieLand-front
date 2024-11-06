@@ -6,6 +6,8 @@ import Error404 from "../Pages/Error404";
 import Activity from "../Pages/Activity";
 import Activities from "../Pages/Activities";
 import Register from "../Pages/Register";
+import BackOfficeActivities from "../Pages/BackOfficeActivities";
+import BackOfficeDashboard from "../Pages/BackOfficeDashboard";
 
 const router = createBrowserRouter([
 	{
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
 			{
 				path: "/activity",
 				element: <Activity />,
+			},
+			{
+				path: "/adminactivities",
+				element: <BackOfficeActivities/>,
+			},
+			{
+				path: "/admindashboard",
+				element: <BackOfficeDashboard />,
 			},
 		],
 	},
