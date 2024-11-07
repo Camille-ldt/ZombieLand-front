@@ -22,7 +22,7 @@ const footer: Footer = {
       { name: 'Accueil', href: '#' },
       { name: 'Nos actvités', href: '#' },
       { name: 'Réservations', href: '#' },
-      { name: 'À propos', href: '#' },
+      { name: 'À propos', href: '/informations/aboutus' },
       { name: 'Contact', href: '#' },
       { name: 'Mentions légales', href: '#' },
       { name: 'CGV', href: '#' },

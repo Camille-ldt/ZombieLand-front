@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../components/Layout";
+import { UsefulInformation } from "../components/UsefulInformation/UsefulInformation";
 import HomePage from "../Pages/HomePage";
 import Login from "../Pages/Login";
 import Error404 from "../Pages/Error404";
@@ -44,8 +45,12 @@ const router = createBrowserRouter([
 				element: <Activity />,
 			},
 			{
+				path: "/informations-utiles",
+				element: <UsefulInformation />,
+			},
+			{
 				path: "/adminactivities",
-				element: <BackOfficeActivities/>,
+				element: <BackOfficeActivities />,
 			},
 			{
 				path: "/admindashboard",
