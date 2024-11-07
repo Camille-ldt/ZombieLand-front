@@ -21,22 +21,20 @@ interface AuthProviderProps {
     children: ReactNode; // Les composants enfants qui seront de type ReactNode
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => { // Déclare l'AuthProvider pour donner le contexte d'authentification
-const [user, setUser] = useState<User | null>(null); // Définition de l'état user pour stocker les informations de l'utilisateur
-  const [isLoading, setIsLoading] = useState(true); // Définition de l'état de chargement
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-// Exécute une fois au montage du composant. Vérifie l'état de l'utilisateur actuel et màj en conséquence.
-  useEffect(()=>{
-    const initAuth = async() =>{ 
-        const currentUser = authService.getCurrentUser();
-        setUser(currentUser);
-        setIsLoading(false);
+  useEffect(() => {
+    const initAuth = async () => {
+      const currentUser = authService.getCurrentUser();
+      setUser(currentUser);
+      setIsLoading(false);
     };
     initAuth();
-  },[]);
+  }, []);
 
-  // Appel le servie d'authentification et màj l'état utilisateur
-  const login = async(data: Login)=>{
+  const login = async (data: Login) => {
     const loggedInUser = await authService.login(data);
     setUser(loggedInUser);
   };
@@ -65,17 +63,17 @@ const [user, setUser] = useState<User | null>(null); // Définition de l'état u
 
   // Retourne les enfants et les valeurs en fonction du contexte
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, isLoading }}>
-        {children}
-        </AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
 // Hook personnalisé pour accéder facilement au contexte d'authentification. Elle vérifie si le contexte est ok ou lance une erreur.
-export const useAuth = ()=>{
-    const context = useContext(AuthContext);
-    if(context === undefined){
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
