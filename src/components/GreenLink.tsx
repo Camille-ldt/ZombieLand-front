@@ -1,45 +1,23 @@
-import { ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export const cn = (...inputs: ClassValue[]) => {
-  return twMerge(clsx(inputs))
-}
-
 interface LinkProps {
-  textSize: string;
-  position: string;
-  children: string;
-  onClick: () => void;
+	textSize: string;
+	position: string;
+	children: string;
+	onClick: () => void;
 }
 
 export const GreenLink = ({
-  onClick,
-  position,
-  textSize,
-  children,
+	onClick,
+	position,
+	textSize,
+	children,
 }: LinkProps) => {
-
-  return (
-    <div
-          onClick={onClick}
-          className={`transform transition-transform duration-400 hover:scale-110 ${position} inline-flex items-center rounded-md bg-green-low px-3 py-2 ${textSize} font-semibold text-white shadow-sm hover:bg-red-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary mx-3 active:bg-red-primary focus:bg-red-primary`} to={""}    >
-          {children}
-    </div>
-    );
-  
+	return (
+		<div
+			onClick={onClick}
+			className={`transform transition-transform duration-400 hover:scale-110 ${position} inline-flex items-center rounded-md bg-green-low px-3 py-2 ${textSize} font-semibold text-white shadow-sm hover:bg-red-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary mx-3 active:bg-red-primary focus:bg-red-primary`}
+			to={""}
+		>
+			{children}
+		</div>
+	);
 };
-
-
-
-
-
-
-
-
-// return (
-//   <div onClick={OnClick} className={cn ...inputs: `transform transition-transform duration-400 hover:scale-110 ${position} inline-flex items-center rounded-md bg-green-low px-3 py-2 ${textSize} font-semibold text-white shadow-sm hover:bg-red-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary mx-3 active:bg-red-primary focus:bg-red-primary`}>
-
-//     {children}
-
-//   </div>
-// )
