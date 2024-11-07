@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, CardProps } from "../components/ActivityCard";
 import { getDatas } from "../services/api";
 
+
+export interface ActivitiesProps {
+	items: CardProps[];
+	activitiesButtonText: string;
+}
+
 const Activities = () => {
 	const [activities, setActivities] = useState<CardProps[]>([]);
 
@@ -26,12 +32,14 @@ const Activities = () => {
 	}
 
 	return (
-		<div className="container mx-auto p-4">
+		<body className="bg-black min-h-screen min-w-screen">
+			<div className="container mx-auto p-4">
 			<h1 className="text-3xl font-bold text-center text-white mb-8">
 				Toutes les activités
 			</h1>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 				{activities.map((activity) => (
+					
 					<Card
 						key={activity.id}
 						id={activity.id}
@@ -39,10 +47,14 @@ const Activities = () => {
 						title={activity.title}
 						description={activity.description}
 						buttonText="Découvrir"
+						to= "/activity"
 					/>
 				))}
 			</div>
 		</div>
+			
+		</body>
+		
 	);
 };
 

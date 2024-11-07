@@ -18,6 +18,7 @@ const Activity = () => {
 					title={activity.title}
 					description={activity.description}
 					buttonText="Retour"
+					to="/"
 				/>
 			</div>
 		</div>

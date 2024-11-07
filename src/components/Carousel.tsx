@@ -6,10 +6,11 @@ import { Card } from "./ActivityCard";
 // Props type for Carousel (Type des props pour Carousel)
 export interface CarouselProps {
 	items: CardProps[];
+	carouselButtonText: string;
 }
 
 // Carousel component (Composant Carousel)
-export const Carousel: React.FC<CarouselProps> = ({ items }) => {
+export const Carousel: React.FC<CarouselProps> = ({ items, carouselButtonText }) => {
 	const [displayItems, setDisplayItems] = useState([
 		...items,
 		...items,
@@ -104,7 +105,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
 								style={{ width: `${100 / cardsToShow}%` }} // Set card width (Définir la largeur)
 							>
 								<div className="h-full flex justify-center items-center overflow-hidden">
-									<Card {...item} /> {/* Render card (Rendu de la carte) */}
+									<Card {...item} buttonText={carouselButtonText} to="/activity"  /> {/* Render card (Rendu de la carte) */}
 								</div>
 							</div>
 						);
