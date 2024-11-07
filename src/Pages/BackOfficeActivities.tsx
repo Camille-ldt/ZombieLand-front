@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getDatas, createData } from "../services/api";
+import { getDatas, createData, deleteData, updateData } from "../services/api";
 import Aside from "../components/Aside";
-import Modal from '../components/Modal';
+import ActivitiesModal from "../components/ActivitiesModal";
 
 interface Activity {
     id: number;
@@ -16,6 +16,7 @@ interface Category {
 }
 
 interface ActivityFormData {
+    id?: number;
     title: string;
     description: string;
     category_id: number;
@@ -28,6 +29,9 @@ const BackOfficeActivities: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [isModalOpen, setIsModalOpen]= useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [activityToEdit, setActivityToEdit] = useState<Activity | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen]= useState(false);
 
     
 
@@ -68,6 +72,7 @@ const BackOfficeActivities: React.FC = () => {
 
     const handleCreateActivity = async (newActivity: ActivityFormData) => {
         try {
+            console.log("handleCreateActivity déclenché");
           console.log('Données envoyées au serveur:', newActivity); // Pour le débogage
           const createdActivity = await createData('/activities', newActivity);
           console.log('Activité créée:', createdActivity); // Pour le débogage
@@ -77,7 +82,62 @@ const BackOfficeActivities: React.FC = () => {
           console.error("Erreur lors de la création de l'activité:", error);
          
         }
+      
+    };
+
+    const handleEditClick = () => {
+        if (selectedActivities.length === 1) {
+          const activityToEdit = activities.find(activity => activity.id === selectedActivities[0]);
+          if (activityToEdit) {
+            setActivityToEdit(activityToEdit);
+            setIsEditModalOpen(true);
+          }
+        }
       };
+
+      const handleUpdateActivity = async (updatedActivity: ActivityFormData) => {
+        try {
+          if ('id' in updatedActivity && typeof updatedActivity.id === 'number') {
+            const updatedActivityFromServer = await updateData('/activities', updatedActivity.id, updatedActivity);
+            console.log("Activité mise à jour reçue du serveur:", updatedActivityFromServer);
+            
+            setActivities(prevActivities => prevActivities.map(activity => 
+              activity.id === updatedActivityFromServer.id ? updatedActivityFromServer : activity
+            ));
+            const refreshedActivities = await getDatas("/activities");
+            setActivities(refreshedActivities);
+            setIsEditModalOpen(false);
+            setActivityToEdit(null);
+            setSelectedActivities([]);
+          } else {
+            console.error("L'activité à mettre à jour n'a pas d'ID valide");
+          }
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour de l'activité:", error);
+        }
+      };
+
+    const handleDeleteSelectedActivities = async ()=> {
+        if (selectedActivities.length === 0){
+            alert("Veuillez sélectionner au moins une activité à supprimer")
+            return;
+        }
+        const confirmDelete = window.confirm(`Êtes-vous sur de vouloir supprimer ${selectedActivities.length} activité(s) ?`)
+        if(!confirmDelete) return;
+
+        try{
+            for(const activityId of selectedActivities) {
+                await deleteData('/activities', activityId)
+            }
+            setActivities(prevActivities=> prevActivities.filter(activity => !selectedActivities.includes(activity.id)));
+            setSelectedActivities([]);
+            console.log('Activités supprimées avec succès');
+        }catch(error){
+            console.error("Erreur lors de la suppression des activités:", error);
+        }
+    };
+
+    
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -109,14 +169,31 @@ const BackOfficeActivities: React.FC = () => {
                     </div>
                     <div className="mb-4 flex space-x-4 justify-end ">
                         <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700" onClick={() => setIsModalOpen(true)}>Créer</button>
-                        <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700">Modifier</button>
-                        <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700">Supprimer</button>
+                        <button 
+                        type="button"
+                        className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+                        onClick={handleEditClick}
+                        disabled={selectedActivities.length !== 1}
+                        >Modifier
+                        </button>
+                        <button 
+                        type="button"
+                        className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+                        onClick={handleDeleteSelectedActivities}
+                        disabled={selectedActivities.length === 0 || isLoading}
+                        >{isLoading ? 'Suppression...' : 'Supprimer'}
+                        </button>
                     </div>
-                    <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleCreateActivity}
-                    categories={categories}
+                    <ActivitiesModal
+                        isOpen={isModalOpen || isEditModalOpen}
+                        onClose={() => {
+                            setIsModalOpen(false);
+                            setIsEditModalOpen(false);
+                            setActivityToEdit(null);
+                        }}
+                        onSubmit={isEditModalOpen ? handleUpdateActivity : handleCreateActivity}
+                        categories={categories}
+                        activity={activityToEdit}
                     />
 
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">

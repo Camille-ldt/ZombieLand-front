@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
@@ -8,19 +8,45 @@ interface ActivityFormData {
   category_id: number;
 }
 
+interface Activity extends ActivityFormData {
+  id: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (activity: ActivityFormData) => void;
-  categories: { id: number; name: string }[];
+  onSubmit: (activity: ActivityFormData | Activity) => void | Promise<void>;
+  categories: Category[];
+  activity?: Activity | null;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) => {
+const ActivitiesModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories, activity }) => {
   const [formData, setFormData] = useState<ActivityFormData>({
     title: '',
     description: '',
     category_id: 0
   });
+
+  useEffect(() => {
+    if (activity) {
+      setFormData({
+        title: activity.title,
+        description: activity.description,
+        category_id: activity.category_id
+      });
+    } else {
+      setFormData({
+        title: '',
+        description: '',
+        category_id: 0
+      });
+    }
+  }, [activity]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -32,7 +58,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    console.log("Soumission du formulaire dans Modal", formData);
+    if (activity) {
+      onSubmit({ ...formData, id: activity.id });
+    } else {
+      onSubmit(formData);
+    }
     onClose();
   };
 
@@ -63,7 +94,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
     >
       <div className="bg-white rounded-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Créer une nouvelle activité</h2>
+          <h2 className="text-xl font-bold">
+            {activity ? 'Modifier une activité' : 'Créer une nouvelle activité'}
+          </h2>
           <button 
             type="button" 
             onClick={onClose} 
@@ -100,11 +133,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
           <div>
             <label htmlFor="category_id" className="block text-sm font-medium text-gray-700">Catégorie</label>
             <select
-            id="category_id"
-            name="category_id"
-            value={formData.category_id}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              id="category_id"
+              name="category_id"
+              value={formData.category_id}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               required
             >
               <option value="">Sélectionnez une catégorie</option>
@@ -118,7 +151,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
               Annuler
             </button>
             <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Créer
+              {activity ? 'Modifier' : 'Créer'}
             </button>
           </div>
         </form>
@@ -127,4 +160,4 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
   );
 };
 
-export default Modal;
+export default ActivitiesModal;

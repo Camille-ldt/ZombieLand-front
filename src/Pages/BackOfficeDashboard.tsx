@@ -42,28 +42,35 @@ const BackOfficeDashboard: React.FC = () => {
 	// !! Ne surtout pas effacer ce code, c'est le code qui demande à un administrateur de se connecter avant de se rendre sur la page !!
 	// if (!user) return <p className="text-center text-red-500">Veuillez vous connecter pour accéder au tableau de bord.</p>;
 	// !! Don't touch my tralalala code !
-     // Fonction pour gérer le changement dans le champ de recherche
+     
+    // Fonction pour gérer le changement dans le champ de recherche
      const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+        console.log("Valeur de recherche:", e.target.value);
     };
 
     // Fonction pour gérer le changement dans le filtre de catégorie
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedCategory(e.target.value);
+        console.log("Catégorie sélectionnée:", e.target.value);
     };
 
     // Filtrage des données basées sur la recherche et la catégorie
     const filteredData = () => {
         if (!dashboardData) return null;
 
-        // Appliquer le filtre de recherche et de catégorie
+        // Filtrer les données en fonction de `selectedCategory`et `searchTerm`
+        let data = { ...dashboardData };
+
+        // Exemple de filtrage
         if (selectedCategory !== "all") {
-            return {
-                ...dashboardData,
-                // Appliquer d'autres conditions de filtrage si nécessaire
-            };
+            // Filtrage par catégorie
+            data = {
+                ...data,
+                // Ajoute
+            }
         }
-        return dashboardData;
+        return data;
     };
 
     const displayedData = filteredData();
@@ -96,10 +103,10 @@ const BackOfficeDashboard: React.FC = () => {
                     >
                         <option value="all">Toutes les années</option>
                         {/* Ajoute ici des catégories spécifiques si tu en as */}
-                        <option value="reservations">Nombre de réservations</option>
-                        <option value="users">Nombre d'utilisateurs inscrits</option>
-                        <option value="revenue">Chiffre d'affaires</option>
-                        <option value="partnerReservations">Réservations partenaires</option>
+                        <option value="reservations">2024</option>
+                        <option value="users">2023</option>
+                        <option value="revenue">2022</option>
+                        <option value="partnerReservations">2021</option>
                     </select>
                 </div>
 
