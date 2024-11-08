@@ -9,6 +9,7 @@ import Activities from "../Pages/Activities";
 import Register from "../Pages/Register";
 import BackOfficeActivities from "../Pages/BackOfficeActivities";
 import BackOfficeDashboard from "../Pages/BackOfficeDashboard";
+import BackOfficeUser from "../Pages/BackOfficeUser";
 
 const router = createBrowserRouter([
 	{
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
 			{
 				path: "/admindashboard",
 				element: <BackOfficeDashboard />,
+			},
+			{
+				path: "/adminuser",
+				element: <BackOfficeUser />,
 			},
 		],
 	},
