@@ -67,7 +67,7 @@ const Activities = () => {
 							title={activity.title}
 							description={activity.description}
 							buttonText={activity.buttonText}
-							to={`/activity/${activity.id}`}
+							to="/activity"
 						/>
 					))}
 				</div>
