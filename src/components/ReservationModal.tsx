@@ -26,13 +26,23 @@ interface Period {
     name: string;
 }
 
+interface Reservations {
+    id?: number; // id optionnel pour la création
+    date_start: string;
+    date_end: string;
+    number_tickets: number;
+    user_id: number;
+    period_id: number;
+}
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (reservation: ReservationFormData | Reservation) => void | Promise<void>;
     periods: Period[];
     users: User[];
-    reservation?: Reservation | null; 
+    reservation?: Reservation | null;
+    reservations: Reservations;
 }
 
 const ReservationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, periods, users, reservation }) => {
@@ -46,6 +56,7 @@ const ReservationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, per
    });
 
    useEffect(() => {
+    console.log("Reservation passée à ReservationModal:", reservation);
        if (reservation) {
            setFormData({
                date_start: reservation.date_start,
@@ -59,11 +70,13 @@ const ReservationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, per
                date_start:'',
                date_end:'',
                number_tickets :0,
-               user_id :0,
+               user_id : 0,
                period_id :0,
            });
        }
    }, [reservation]);
+
+   console.log(formData);
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
        const { name, value } = e.target;

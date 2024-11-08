@@ -22,7 +22,7 @@ const BackOfficeDashboard: React.FC = () => {
 	const [dashboardData, setDashboardData] = useState<Dashboard | null>(null);
 	const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
-	const [selectedCategory, setSelectedCategory] = useState("all");
+	const [selectedYear, setSelectedYear] = useState("all");
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -50,8 +50,8 @@ const BackOfficeDashboard: React.FC = () => {
     };
 
     // Fonction pour gérer le changement dans le filtre de catégorie
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedCategory(e.target.value);
+    const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedYear(e.target.value);
         console.log("Catégorie sélectionnée:", e.target.value);
     };
 
@@ -63,13 +63,15 @@ const BackOfficeDashboard: React.FC = () => {
         let data = { ...dashboardData };
 
         // Exemple de filtrage
-        if (selectedCategory !== "all") {
-            // Filtrage par catégorie
-            data = {
-                ...data,
-                // Ajoute
-            }
+        if (selectedYear !== "all") {
+            
         }
+
+        if (searchTerm) {
+
+        }
+
+        
         return data;
     };
 
@@ -98,8 +100,8 @@ const BackOfficeDashboard: React.FC = () => {
                     />
                     <select
                         className="px-4 py-2 border rounded-md w-1/5"
-                        value={selectedCategory}
-                        onChange={handleCategoryChange}
+                        value={selectedYear}
+                        onChange={handleYearChange}
                     >
                         <option value="all">Toutes les années</option>
                         {/* Ajoute ici des catégories spécifiques si tu en as */}

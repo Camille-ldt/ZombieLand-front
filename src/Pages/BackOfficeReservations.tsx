@@ -94,6 +94,7 @@ const BackOfficeReservations: React.FC = () => {
   const handleEditClick = () => {
     if (selectedReservations.length === 1) {
       const reservationToEdit = reservations.find(reservation => reservation.id === selectedReservations[0]);
+      console.log("Reservation sélectionnée pour l'édition:", reservationToEdit);
       if (reservationToEdit) {
         setReservationToEdit(reservationToEdit);
         setIsModalOpen(true);
@@ -136,6 +137,8 @@ const BackOfficeReservations: React.FC = () => {
       }
     }
   };
+
+  console.log(reservationToEdit);
 
   return (
     <div className="flex h-screen bg-gray-100">
