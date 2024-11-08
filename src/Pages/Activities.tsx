@@ -1,13 +1,14 @@
+// Dossier: src/Pages/Activities.tsx
 import { useEffect, useState } from "react";
 import { Card, CardProps } from "../components/ActivityCard";
 import { getDatas } from "../services/api";
-import { Link } from "react-router-dom"; 
 
 export interface ActivitiesProps {
 	items: CardProps[];
 	activitiesButtonText: string;
 }
 
+// Interface for API response data (Interface pour les données de réponse API)
 interface ActivityData {
 	id: number;
 	title: string;
@@ -27,10 +28,10 @@ const Activities = () => {
 				const mappedActivities: CardProps[] = data.map((activity) => {
 					return {
 						id: activity.id,
-						backgroundImage: activity.multimedias?.[0]?.url || "", 
+						backgroundImage: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
 						title: activity.title,
 						description: activity.description,
-						buttonText: "Découvrir", // 
+						buttonText: "Découvrir", // Set button text for activities
 						to: `/activity/${activity.id}`
 					};
 				});
@@ -59,21 +60,15 @@ const Activities = () => {
 				</h1>
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 					{activities.map((activity) => (
-						<Link
+						<Card
 							key={activity.id}
+							id={activity.id}
+							backgroundImage={activity.backgroundImage}
+							title={activity.title}
+							description={activity.description}
+							buttonText={activity.buttonText}
 							to={`/activity/${activity.id}`}
-							state={{ activity }} 
-							className="block"
-						>
-							<Card
-								id={activity.id}
-								backgroundImage={activity.backgroundImage}
-								title={activity.title}
-								description={activity.description}
-								buttonText={activity.buttonText}
-								to=""
-							/>
-						</Link>
+						/>
 					))}
 				</div>
 			</div>
