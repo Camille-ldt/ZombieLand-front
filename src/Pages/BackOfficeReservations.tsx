@@ -14,8 +14,8 @@ interface Reservation {
 
 interface User {
   id: number;
-  firstname: string; 
-  lastname: string; 
+  firstname: string;
+  lastname: string;
 }
 
 interface Period {
@@ -24,9 +24,9 @@ interface Period {
 }
 
 interface ReservationFormData {
-  id?: number; // id optionnel pour la création
-  date_start: string; // Doit être au format "yyyy-MM-dd"
-  date_end: string; // Doit être au format "yyyy-MM-dd"
+  id?: number; // optionnel pour la création
+  date_start: string; // format "yyyy-MM-dd"
+  date_end: string; // format "yyyy-MM-dd"
   number_tickets: number;
   user_id: number;
   period_id: number;
@@ -54,7 +54,7 @@ const BackOfficeReservations: React.FC = () => {
         setUsers(usersData);
         setPeriods(periodsData);
 
-        // Log the data for debugging
+        // Logs pour le débogage
         console.log("Utilisateurs récupérés:", usersData);
         console.log("Réservations récupérées:", reservationsData);
       } catch (error) {
@@ -74,10 +74,30 @@ const BackOfficeReservations: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredReservations = reservations.filter(reservation =>
-    (selectedPeriod === "all" || reservation.period_id.toString() === selectedPeriod) &&
-    (reservation.date_start.includes(searchTerm) || reservation.date_end.includes(searchTerm))
-  );
+  const filteredReservations = reservations.filter(reservation => {
+    // Chercher l'utilisateur et la période associés à la réservation
+    const user = users.find(user => user.id === reservation.user_id);
+    const period = periods.find(period => period.id === reservation.period_id);
+
+    // Appliquer les filtres de période
+    const matchesPeriodFilter = selectedPeriod === "all" || reservation.period_id.toString() === selectedPeriod;
+
+    // Vérification de la recherche dans le nom de l'utilisateur et le nom de la période
+    const matchesSearchFilter = searchTerm === "" || (
+      // Recherche dans le prénom et nom de l'utilisateur
+      (user && (
+        user.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastname.toLowerCase().includes(searchTerm.toLowerCase())
+      )) ||
+      // Recherche dans le nom de la période
+      (period?.name?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      // Recherche dans les dates
+      reservation.date_start.includes(searchTerm) ||
+      reservation.date_end.includes(searchTerm)
+    );
+
+    return matchesPeriodFilter && matchesSearchFilter;
+  });
 
   const handleCreateReservation = async (newReservation: ReservationFormData) => {
     try {
@@ -170,17 +190,17 @@ const BackOfficeReservations: React.FC = () => {
           <div className="mb-4 flex space-x-4 justify-end ">
             <button
               type="button"
-              className="bg-grey text-white rounded p-2 hover:bg-grey-500"
+              className="bg-gray-600 text-white rounded p-2 hover:bg-gray-700"
               onClick={() => { 
                 setIsModalOpen(true); 
-                setReservationToEdit(null); // Reset for new reservation
+                setReservationToEdit(null); // Reset pour nouvelle réservation
               }}
             >
               Créer
             </button>
             <button
               type="button"
-              className="bg-grey text-white rounded p-2 hover:bg-grey-50"
+              className="bg-gray-600 text-white rounded p-2 hover:bg-gray-700"
               onClick={handleEditClick}
               disabled={selectedReservations.length !== 1}
             >
@@ -188,7 +208,7 @@ const BackOfficeReservations: React.FC = () => {
             </button>
             <button
               type="button"
-              className="bg-grey text-white rounded p-2 hover:bg-grey-50"
+              className="bg-gray-600 text-white rounded p-2 hover:bg-gray-700"
               onClick={handleDeleteSelectedReservations}
               disabled={selectedReservations.length === 0}
             >
@@ -208,7 +228,7 @@ const BackOfficeReservations: React.FC = () => {
           />
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-grey text-white">
+              <thead className="bg-gray-600 text-white">
                 <tr>
                   <th>ID</th>
                   <th>Date de début</th>
@@ -220,26 +240,27 @@ const BackOfficeReservations: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredReservations.map((reservation) => (
-                  <tr key={reservation.id}>
-                    <td>{reservation.id}</td>
-                    <td>{new Date(reservation.date_start).toLocaleDateString()}</td>
-                    <td>{new Date(reservation.date_end).toLocaleDateString()}</td>
-                    <td>{reservation.number_tickets}</td>
-                    {/* Affichage du nom de l'utilisateur */}
-                    <td>{`${users.find(user => user.id === reservation.user_id)?.firstname || 'Utilisateur inconnu'} ${users.find(user => user.id === reservation.user_id)?.lastname || ''}`}</td>
-                    {/* Affichage du nom de la période */}
-                    <td>{periods.find(period => period.id === reservation.period_id)?.name || 'Période inconnue'}</td>
-                    {/* Checkbox pour sélection */}
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedReservations.includes(reservation.id)}
-                        onChange={() => handleSelectionChange(reservation.id)}
-                      />
-                    </td>
-                  </tr>
-                ))}
+                {filteredReservations.map((reservation) => {
+                  const user = users.find(user => user.id === reservation.user_id);
+                  const period = periods.find(period => period.id === reservation.period_id);
+                  return (
+                    <tr key={reservation.id}>
+                      <td className="text-center">{reservation.id}</td>
+                      <td className="text-center">{new Date(reservation.date_start).toLocaleDateString()}</td>
+                      <td className="text-center">{new Date(reservation.date_end).toLocaleDateString()}</td>
+                      <td className="text-center">{reservation.number_tickets}</td>
+                      <td className="text-center">{user?.firstname} {user?.lastname}</td>
+                      <td className="text-center">{period?.name}</td>
+                      <td className="text-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedReservations.includes(reservation.id)}
+                          onChange={() => handleSelectionChange(reservation.id)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
