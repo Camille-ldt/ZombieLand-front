@@ -6,10 +6,11 @@ import { Card } from "./ActivityCard";
 // Props type for Carousel (Type des props pour Carousel)
 export interface CarouselProps {
 	items: CardProps[];
+	carouselButtonText: string;
 }
 
 // Carousel component (Composant Carousel)
-export const Carousel: React.FC<CarouselProps> = ({ items }) => {
+export const Carousel: React.FC<CarouselProps> = ({ items, carouselButtonText }) => {
 	const [displayItems, setDisplayItems] = useState([
 		...items,
 		...items,
@@ -88,7 +89,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
 	};
 
 	return (
-		<div className="flex justify-center items-center">
+		<div className="flex justify-center items-center relative">
 			<div className="relative w-4/5 overflow-hidden">
 				<div ref={carouselRef} className="flex">
 					{displayItems.map((item, index) => {
@@ -104,16 +105,17 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
 								style={{ width: `${100 / cardsToShow}%` }} // Set card width (Définir la largeur)
 							>
 								<div className="h-full flex justify-center items-center overflow-hidden">
-									<Card {...item} /> {/* Render card (Rendu de la carte) */}
+									<Card {...item} buttonText={carouselButtonText} to="/activity"  /> {/* Render card (Rendu de la carte) */}
 								</div>
 							</div>
 						);
 					})}
 				</div>
+				{/* Buttons always visible, even in mobile */}
 				<button
 					type="button"
 					onClick={prevSlide}
-					className="absolute left-4 ml-4 top-1/2 transform -translate-y-1/2 bg-[#7B0002] text-white p-2 rounded-full transition hover:bg-opacity-90 focus:outline-none active:bg-[#3E0A16]"
+					className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-[#7B0002] text-white p-2 rounded-full transition hover:bg-opacity-90 focus:outline-none active:bg-[#3E0A16] z-20"
 					aria-label="Previous"
 				>
 					&lsaquo;
@@ -121,7 +123,7 @@ export const Carousel: React.FC<CarouselProps> = ({ items }) => {
 				<button
 					type="button"
 					onClick={nextSlide}
-					className="absolute right-4 mr-4 top-1/2 transform -translate-y-1/2 bg-[#7B0002] text-white p-2 rounded-full transition hover:bg-opacity-90 focus:outline-none active:bg-[#3E0A16]"
+					className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-[#7B0002] text-white p-2 rounded-full transition hover:bg-opacity-90 focus:outline-none active:bg-[#3E0A16] z-20"
 					aria-label="Next"
 				>
 					&rsaquo;

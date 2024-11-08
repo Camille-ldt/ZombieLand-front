@@ -6,11 +6,11 @@ const Activity = () => {
 	const activity = location.state?.activity as CardProps;
 
 	if (!activity) {
-		return <p className="text-center">Aucune activité sélectionnée.</p>;
+		return <p className="text-center text-white">Aucune activité sélectionnée.</p>;
 	}
 
 	return (
-		<div className="flex justify-center items-center min-h-screen bg-gray-800 p-4">
+		<div className="flex justify-center items-center min-h-screen bg-black p-4">
 			<div className="w-full max-w-3xl">
 				<Card
 					id={activity.id}
@@ -18,6 +18,7 @@ const Activity = () => {
 					title={activity.title}
 					description={activity.description}
 					buttonText="Retour"
+					to="/"
 				/>
 			</div>
 		</div>
