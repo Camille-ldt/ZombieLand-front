@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    @apply font-body;
+}
+
 /* Animation underline pour les link de la barre de navigation Desktop */
 @layer utilities {
     .navigation a { 

@@ -44,7 +44,7 @@ export const createData = async (endpoint: string, data: string) => {
 // Fonction PUT : Mettre à jour une ressource
 export const updateData = async (endpoint: string, id: number | string, data: string) => {
   try {
-    const response = await api.put(`${endpoint}/${id}/modify`, data);
+    const response = await api.put(`${endpoint}/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('PUT error:', error);
@@ -55,7 +55,7 @@ export const updateData = async (endpoint: string, id: number | string, data: st
 // Fonction DELETE : Supprimer une ressource
 export const deleteData = async (endpoint: string, id: number | string) => {
   try {
-    const response = await api.delete(`${endpoint}/${id}/delete`);
+    const response = await api.delete(`${endpoint}/${id}`);
     return response.data;
   } catch (error) {
     console.error('DELETE error:', error);
