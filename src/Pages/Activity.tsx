@@ -1,4 +1,3 @@
-// Dossier: src/Pages/Activity.tsx
 import { useLocation } from "react-router-dom";
 import { CardProps, Card } from "../components/ActivityCard";
 
