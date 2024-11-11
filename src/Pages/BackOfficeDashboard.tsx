@@ -28,6 +28,7 @@ const BackOfficeDashboard: React.FC = () => {
 		const fetchData = async () => {
 			try {
 				const data = await getDatas("/dashboard");
+                console.log("Dashboard Data:", data);
 				setDashboardData(data);
 			} catch (error) {
 				setError("Erreur lors du chargement des données.");
