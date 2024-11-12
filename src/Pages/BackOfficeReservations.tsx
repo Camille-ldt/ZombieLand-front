@@ -33,23 +33,34 @@ interface ReservationFormData {
 }
 
 const BackOfficeReservations: React.FC = () => {
+  // Stocke la liste des réservations
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  // Stocke la liste des utilisateurs
   const [users, setUsers] = useState<User[]>([]);
+  // Stocke la liste des périodes
   const [periods, setPeriods] = useState<Period[]>([]);
+  // Garde une trace des IDs des réservations sélectionnées
   const [selectedReservations, setSelectedReservations] = useState<number[]>([]);
+  // Stocke le terme de recherche actuel
   const [searchTerm, setSearchTerm] = useState("");
+  // Stocke la période sélectionnée pour le filtrage
   const [selectedPeriod, setSelectedPeriod] = useState("all");
+  // Contrôle l'ouverture/fermeture du modal de réservation
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Stocke la réservation en cours d'édition (null si création d'une nouvelle réservation)
   const [reservationToEdit, setReservationToEdit] = useState<Reservation | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      // Définition d'une fonction asynchrone pour récupérer les données
       try {
+        // Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
         const [reservationsData, usersData, periodsData] = await Promise.all([
-          getDatas("/bookings"),
-          getDatas("/users"),
-          getDatas("/periods")
+          getDatas("/bookings"), // Récupération des réservations
+          getDatas("/users"), // Récupération des utilisateurs
+          getDatas("/periods") // Récupération des périodes
         ]);
+         // Mise à jour des états avec les données récupérées
         setReservations(reservationsData);
         setUsers(usersData);
         setPeriods(periodsData);
@@ -58,19 +69,30 @@ const BackOfficeReservations: React.FC = () => {
         console.log("Utilisateurs récupérés:", usersData);
         console.log("Réservations récupérées:", reservationsData);
       } catch (error) {
+        // Gestion des erreurs en cas d'échec de la récupération des données
         console.error("Erreur lors de la récupération des données", error);
       }
     };
+    // Appel de la fonction fetchData
     fetchData();
+    // Le tableau vide [] comme second argument signifie que cet effet 
+  // ne s'exécutera qu'une seule fois, au montage du composant
   }, []);
 
   const handleSelectionChange = (id: number) => {
+    // Cette fonction gère la sélection ou la désélection d'une réservation
     setSelectedReservations(prev =>
-      prev.includes(id) ? prev.filter(reservationId => reservationId !== id) : [...prev, id]
+      // Si l'ID est déjà dans la liste des réservations sélectionnées
+      prev.includes(id)
+        // Alors on le retire de la liste (désélection)
+        ? prev.filter(reservationId => reservationId !== id)
+        // Sinon, on l'ajoute à la liste (sélection)
+        : [...prev, id]
     );
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Cette fonction gère le changement du terme de recherche
     setSearchTerm(e.target.value);
   };
 
@@ -100,64 +122,94 @@ const BackOfficeReservations: React.FC = () => {
   });
 
   const handleCreateReservation = async (newReservation: ReservationFormData) => {
+    // Cette fonction gère la création d'une nouvelle réservation
     try {
+      // Affiche les données de la nouvelle réservation dans la console (pour le débogage)
       console.log('Données envoyées au serveur :', newReservation);
+      // Appel à l'API pour créer la nouvelle réservation
       const createdReservation = await createData('/bookings', newReservation);
+      // Affiche la réservation créée dans la console (pour le débogage)
       console.log('Réservation créée :', createdReservation);
+      // Met à jour l'état local des réservations en ajoutant la nouvelle réservation
       setReservations(prevReservations => [...prevReservations, createdReservation]);
+      // Ferme le modal après la création réussie
       setIsModalOpen(false);
     } catch (error) {
+      // Gère les erreurs qui peuvent survenir lors de la création
       console.error("Erreur lors de la création de la réservation:", error);
     }
   };
 
   const handleEditClick = () => {
+    // Cette fonction gère le clic sur le bouton "Modifier"
+    // Vérifie si une seule réservation est sélectionnée
     if (selectedReservations.length === 1) {
+      // Recherche la réservation sélectionnée dans la liste des réservations
       const reservationToEdit = reservations.find(reservation => reservation.id === selectedReservations[0]);
+      // Affiche la réservation sélectionnée dans la console (pour le débogage)
       console.log("Reservation sélectionnée pour l'édition:", reservationToEdit);
+      // Si une réservation correspondante est trouvée
       if (reservationToEdit) {
+        // Met à jour l'état avec la réservation à éditer
         setReservationToEdit(reservationToEdit);
+        // Ouvre le modal d'édition
         setIsModalOpen(true);
       }
     }
   };
+  
 
   const handleUpdateReservation = async (updatedReservation: ReservationFormData) => {
+    // Cette fonction gère la mise à jour d'une réservation existante
     try {
+      // Vérifie si la réservation à mettre à jour a un ID
       if (updatedReservation.id) {
+        // Appel à l'API pour mettre à jour la réservation
         const updatedReservationFromServer = await updateData('/bookings', updatedReservation.id, updatedReservation);
+        // Met à jour l'état local des réservations
         setReservations(prevReservations => prevReservations.map(reservation =>
+          // Si l'ID correspond, remplace l'ancienne réservation par la nouvelle
           reservation.id === updatedReservationFromServer.id ? updatedReservationFromServer : reservation
         ));
+        // Ferme le modal après la mise à jour réussie
         setIsModalOpen(false);
+        // Réinitialise la réservation en cours d'édition
         setReservationToEdit(null);
+        // Efface la sélection de réservations
         setSelectedReservations([]);
       }
     } catch (error) {
+      // Gère les erreurs qui peuvent survenir lors de la mise à jour
       console.error("Erreur lors de la mise à jour de la réservation:", error);
     }
   };
 
   const handleDeleteSelectedReservations = async () => {
+    // Vérifie si des réservations sont sélectionnées pour la suppression
     if (selectedReservations.length === 0) {
       alert("Veuillez sélectionner au moins une réservation à supprimer");
       return;
     }
-
+    // Demande une confirmation à l'utilisateur avant de procéder à la suppression
     if (window.confirm(`Êtes-vous sûr de vouloir supprimer ${selectedReservations.length} réservation(s)?`)) {
       try {
+        // Supprime chaque réservation sélectionnée
         for (const reservationId of selectedReservations) {
           await deleteData('/bookings', reservationId);
         }
-        setReservations(prevReservations => prevReservations.filter(reservation => !selectedReservations.includes(reservation.id)));
+        // Met à jour l'état local en filtrant les réservations supprimées
+        setReservations(prevReservations => 
+          prevReservations.filter(reservation => !selectedReservations.includes(reservation.id))
+        );
+        // Réinitialise la liste des réservations sélectionnées
         setSelectedReservations([]);
         console.log('Réservations supprimées avec succès');
       } catch (error) {
+        // Gère les erreurs qui peuvent survenir pendant la suppression
         console.error("Erreur lors de la suppression des réservations:", error);
       }
     }
   };
-
   console.log(reservationToEdit);
 
   return (
