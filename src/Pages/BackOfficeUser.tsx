@@ -1,18 +1,26 @@
 import { useEffect, useState } from "react";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
-import ActivitiesModal from "../components/ActivitiesModal";
+import UserModal from "../components/UserModal";
 
 interface User {
 	id: number;
 	name: string;
 	lastname: string;
+	image: string;
 	role_id: number;
 }
 
-interface UserData {
+interface Role {
+	id: number;
+	name: string;
+}
+
+interface UserFormData {
+	id?: number;
 	name: string;
 	lastname: string;
+	image: string;
 	role_id: number;
 }
 
@@ -23,18 +31,32 @@ const BackOfficeUser: React.FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [userToEdit, setUserToEdit] = useState<User | null>(null);
+	const [roles, setRoles] = useState<Role[]>([]);
+	const [roleToEdit, setRoleToEdit] = useState<Role[] | null>(null);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [UserData] = await Promise.all([getDatas("/users")]);
-				setUsers(UserData);
+				const [UserFormData] = await Promise.all([getDatas("/users")]);
+				setUsers(UserFormData);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des données", error);
 			}
 		};
 		fetchData();
+	}, []);
+
+	useEffect(() => {
+		const fetchRoles = async () => {
+			try {
+				const rolesData = await getDatas("/roles");
+				setRoles(rolesData);
+			} catch (error) {
+				console.error("Erreur lors de la récupération des rôles", error);
+			}
+		};
+		fetchRoles();
 	}, []);
 
 	const handleSelectionChange = (id: number) => {
@@ -45,6 +67,12 @@ const BackOfficeUser: React.FC = () => {
 		);
 	};
 
+	const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+		}
+	};
+
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value);
 	};
@@ -52,7 +80,7 @@ const BackOfficeUser: React.FC = () => {
 	const filteredUser = users.filter(
 		(user) =>
 			(selectedUsers.length === 0 || selectedUsers.includes(user.id)) &&
-			user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+			user.name?.toLowerCase().includes(searchTerm.toLowerCase()),
 	);
 
 	if (users.length === 0) {
@@ -63,7 +91,7 @@ const BackOfficeUser: React.FC = () => {
 		);
 	}
 
-	const handleCreateUser = async (newUser: UserData) => {
+	const handleCreateUser = async (newUser: UserFormData) => {
 		try {
 			console.log("Données envoyées au serveur:", newUser);
 			const createdUser = await createData("/users", newUser);
@@ -85,7 +113,7 @@ const BackOfficeUser: React.FC = () => {
 		}
 	};
 
-	const handleUpdateUser = async (updatedUser: UserData) => {
+	const handleUpdateUser = async (updatedUser: UserFormData) => {
 		try {
 			if ("id" in updatedUser && typeof updatedUser.id === "number") {
 				const updatedUserFromServer = await updateData(
@@ -152,7 +180,7 @@ const BackOfficeUser: React.FC = () => {
 					<div className="mb-4 flex space-x-4">
 						<input
 							type="text"
-							placeholder="Rechercher une activité..."
+							placeholder="Rechercher un utilisateur..."
 							className="px-4 py-2 border rounded-md flex-grow"
 							value={searchTerm}
 							onChange={handleSearchChange}
@@ -162,7 +190,7 @@ const BackOfficeUser: React.FC = () => {
 							value={selectedUsers}
 							onChange={(e) => setSelectedUsers(e.target.value)}
 						>
-							<option value="all">Toutes les catégories</option>
+							<option value="all">Tous les utilisateurs</option>
 							{users.map((user) => (
 								<option key={user.id} value={user.id.toString()}>
 									{user.name}
@@ -195,7 +223,7 @@ const BackOfficeUser: React.FC = () => {
 							{isLoading ? "Suppression..." : "Supprimer"}
 						</button>
 					</div>
-					<ActivitiesModal
+					<UserModal
 						isOpen={isModalOpen || isEditModalOpen}
 						onClose={() => {
 							setIsModalOpen(false);
@@ -203,8 +231,8 @@ const BackOfficeUser: React.FC = () => {
 							setUserToEdit(null);
 						}}
 						onSubmit={isEditModalOpen ? handleUpdateUser : handleCreateUser}
-						categories={users}
-						activity={userToEdit}
+						user={userToEdit}
+						role={roles}
 					/>
 
 					<div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -219,6 +247,10 @@ const BackOfficeUser: React.FC = () => {
 									</th>
 									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
 										Prénom
+									</th>
+
+									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+										Image
 									</th>
 
 									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
