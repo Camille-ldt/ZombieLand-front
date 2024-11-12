@@ -5,7 +5,8 @@ export interface User {
     lastname: string,
     phoneNumber: string,
     email: string,
-    birthDate: string
+    birthDate: string,
+    role: number;
 };
 
 export interface Login {
@@ -14,11 +15,9 @@ export interface Login {
 };
 
 export interface Register {
-    
     firstname: string,
     lastname: string,
     email: string,
     password: string,
     confirmPassword: string,
 };
-

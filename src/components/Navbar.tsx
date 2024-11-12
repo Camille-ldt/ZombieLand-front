@@ -3,8 +3,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RedLink } from './RedLink';
 import { useAuth } from '../Auth/authContext';
+import { useMemo } from 'react';
 
-// Interface pour définir la structure d'un élément de navigation
 interface NavigationItem {
   name: string;
   to: string;
@@ -18,21 +18,23 @@ function classNames(...classes) {
 const Navbar = () => {
   const { user, logout } = useAuth();
 
-  // Liste des éléments de navigation
-  const navigation: NavigationItem[] = [
-    { name: 'Accueil', to: '/', current: true },
-    { name: 'Nos activités', to: '/activities', current: false },
-    { name: 'Réservation', to: '/bookings', current: false },
-    { name: 'Informations utiles', to: '/informations-utiles', current: false },
-  ];
+  const navigation: NavigationItem[] = useMemo(() => {
+    const baseNavigation = [
+      { name: 'Accueil', to: '/', current: true },
+      { name: 'Nos activités', to: '/activities', current: false },
+      { name: 'Informations utiles', to: '/informations-utiles', current: false },
+    ];
 
-  if (user?.role === 2) {
-    navigation.push({ name: 'Mon Profil', to: '/profile', current: false });
-  }
+    if (user?.role_id === 2) {
+      baseNavigation.push({ name: 'Mon Profil', to: '/profile', current: false });
+    }
+    
+    if (user?.role_id === 3) {
+      baseNavigation.push({ name: 'Administration', to: '/admin', current: false });
+    }
 
-  if (user?.role === 3) {
-    navigation.push({ name: 'Administration', to: '/admin', current: false });
-  }
+    return baseNavigation;
+  }, [user]);
 
   return (
     <Disclosure as="nav" className="bg-grey">
@@ -113,6 +115,8 @@ const Navbar = () => {
               </DisclosureButton>
             </NavLink>
           ))}
+
+          {/* Bouton Réservation */}
           <NavLink to="/">
             <DisclosureButton
               as="div"
@@ -121,6 +125,8 @@ const Navbar = () => {
               Réservation
             </DisclosureButton>
           </NavLink>
+
+          {/* Bouton Connexion/Déconnexion */}
           {user ? (
             <DisclosureButton
               as="button"
