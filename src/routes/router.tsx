@@ -10,6 +10,7 @@ import Profil from "../Pages/Profil";
 import Register from "../Pages/Register";
 import BackOfficeActivities from "../Pages/BackOfficeActivities";
 import BackOfficeDashboard from "../Pages/BackOfficeDashboard";
+import BackOfficeReservations from "../Pages/BackOfficeReservations";
 
 const router = createBrowserRouter([
 	{
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
 			{
 				path: "/admindashboard",
 				element: <BackOfficeDashboard />,
+			},
+			{
+				path: "/adminreservations",
+				element: <BackOfficeReservations />,
 			},
 		],
 	},
