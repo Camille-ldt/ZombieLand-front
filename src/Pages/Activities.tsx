@@ -25,19 +25,15 @@ const Activities = () => {
           getDatas("/categories"),
         ]);
 
-        // Si l'API te renvoie déjà l'objet complet de la catégorie pour chaque activité,
-        // nous n'avons pas besoin de rechercher la catégorie manuellement.
-        // Par exemple, `activity.category` peut être directement l'objet { id, name }.
-
-        // Ajout de la catégorie à chaque activité
+        // Ajout de la catégorie et de l'image à chaque activité
         const activitiesWithCategories = activitiesData.map((activity: CardProps) => {
-          // Si la catégorie est déjà incluse dans `activity.category`, pas besoin de recherche supplémentaire.
           const category = categoriesData.find(
-            (cat: Category) => cat.id === activity.category?.id
+            (cat: Category) => cat.id === activity.category_id // On utilise category_id pour relier l'activité à sa catégorie
           );
           return {
             ...activity,
             category: category || null, // Si aucune catégorie trouvée, on met `null`
+            backgroundImage: activity.multimedias?.[0]?.url || "", // Assurez-vous que `multimedias` contient l'image
           };
         });
 
@@ -59,16 +55,38 @@ const Activities = () => {
     setSelectedCategory(e.target.value);
   };
 
+  // Filtrage et normalisation sans fonction séparée
   const filteredActivities = activities.filter((activity) => {
-    const matchesCategory =
-      selectedCategory === "all" || activity.category?.id.toString() === selectedCategory;
-    const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const normalizedTitle = activity.title
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+    const normalizedSearchTerm = searchTerm
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+
+    return (normalizedTitle.includes(normalizedSearchTerm) || searchTerm.length <= 1) &&
+           (selectedCategory === "all" || activity.category?.id.toString() === selectedCategory);
   });
 
-  if (filteredActivities.length === 0) {
-    return <p className="text-center text-white">Aucune activité ne correspond à votre recherche.</p>;
-  }
+  // Vérifier si on a des activités qui correspondent à la recherche mais pas à la catégorie sélectionnée
+  const hasMatchingActivitiesButWrongCategory = activities.some((activity) => {
+    const normalizedTitle = activity.title
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+    const normalizedSearchTerm = searchTerm
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+
+    return normalizedTitle.includes(normalizedSearchTerm) && selectedCategory !== "all" && activity.category?.id.toString() !== selectedCategory;
+  });
 
   return (
     <div className="bg-black min-h-screen min-w-screen">
@@ -97,20 +115,29 @@ const Activities = () => {
           </select>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredActivities.map((activity) => (
-            <Card
-              key={activity.id}
-              id={activity.id}
-              backgroundImage={activity.backgroundImage}
-              title={activity.title}
-              description={activity.description}
-              buttonText="Découvrir"
-              to={`/activity/${activity.id}`}  // Assure-toi que le lien contient l'ID correct
-              category={activity.category}     // Passe la catégorie directement
-            />
-          ))}
-        </div>
+        {filteredActivities.length === 0 && searchTerm.length > 1 ? (
+          <p className="text-center text-white">
+            Aucune activité trouvée pour "{searchTerm}". 
+            {hasMatchingActivitiesButWrongCategory && (
+              <span> Vérifiez la catégorie dans le filtre.</span>
+            )}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredActivities.map((activity) => (
+              <Card
+                key={activity.id}
+                id={activity.id}
+                backgroundImage={activity.backgroundImage} // Affichage de l'image ici
+                title={activity.title}
+                description={activity.description}
+                buttonText="Découvrir"
+                to="/activity"
+                category={activity.category}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
