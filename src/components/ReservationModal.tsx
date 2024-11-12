@@ -42,8 +42,8 @@ interface ModalProps {
     periods: Period[];
     users: User[];
     reservation?: Reservation | null;
-    reservations: Reservations;
-    reservation?: Reservation | null;
+    reservations: Reservations[];
+    
 }
 
 const ReservationModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, periods, users, reservation }) => {

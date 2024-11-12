@@ -225,6 +225,8 @@ const BackOfficeReservations: React.FC = () => {
             periods={periods}
             users={users}
             reservation={reservationToEdit}
+            reservations={reservations}
+            
           />
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
