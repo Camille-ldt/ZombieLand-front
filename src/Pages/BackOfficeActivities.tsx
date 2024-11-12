@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getDatas, createData } from "../services/api";
 import Aside from "../components/Aside";
 import Modal from '../components/Modal';
+import { UserCircleIcon } from '@heroicons/react/24/solid'
 
 interface Activity {
     id: number;
@@ -19,11 +20,18 @@ interface ActivityFormData {
     title: string;
     description: string;
     category_id: number;
-  }
+}
+
+interface Multimedia {
+    id: number;
+    name: string;
+    url: string;
+}
 
 const BackOfficeActivities: React.FC = () => {
     const [activities, setActivities] = useState<Activity[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [multimedias, setMultimedias] = useState<Multimedia[]>([]);
     const [selectedActivities, setSelectedActivities] = useState<number[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -34,18 +42,35 @@ const BackOfficeActivities: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [activitiesData, categoriesData] = await Promise.all([
+                const [activitiesData, categoriesData, multimediasData] = await Promise.all([
                     getDatas("/activities"),
-                    getDatas("/categories")
+                    getDatas("/categories"),
+                    getDatas("/:activityId/multimedia")
                 ]);
                 setActivities(activitiesData);
                 setCategories(categoriesData);
+                setMultimedias(multimediasData);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
             }
         };
         fetchData();
     }, []);
+
+    const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
+        // On récupère le fichier que l'utilisateur vient de renseigner dans l'input
+        const file = evt.target.files[0]; // File
+    
+        // On convertit le fichier en data-url
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          setUser({
+            ...user,
+            image: reader.result
+          });
+        });
+        reader.readAsDataURL(file);
+    };
 
     const handleSelectionChange = (id: number) => {
         setSelectedActivities(prev =>
@@ -126,7 +151,7 @@ const BackOfficeActivities: React.FC = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nom</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
-                                    
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Image</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Catégorie</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sélection</th>
                                 </tr>
@@ -136,6 +161,23 @@ const BackOfficeActivities: React.FC = () => {
                                     <tr key={activity.id}>
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.title}</td>
+                                        <td>
+                                            <div className="flex items-center mt-2 gap-x-3">
+                                                {user.image === null ? (
+                                                  <UserCircleIcon aria-hidden="true" className="w-12 h-12 text-gray-300" />
+                                                ) : (
+                                                  <img
+                                                    alt=""
+                                                    src={user.image}
+                                                    className="inline-block h-12 w-12 rounded-md"
+                                                  />
+                                                )}
+                                                <label htmlFor="file-upload" className="rounded-md bg-white px-2.5 py-1.5 text-sm   font-semibold                         text-gray-900 shadow-sm ring-1 ring-inset   ring-gray-300 hover:bg-gray-50">
+                                                  Change
+                                                <input id="file-upload" name="file-upload" type="file" className="sr-only"  onInput={updateImage} />
+                                                </label>
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4">{activity.description}</td>
                                         
                                         <td className="px-6 py-4 whitespace-nowrap">
