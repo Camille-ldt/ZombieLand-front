@@ -1,38 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Auth/authContext';
-import { authService } from '../Auth/Services/authService';
 import MyImage from '../assets/img/zombie-accueil.webp';
 
-
-
-const Register = () => { // Etat pour stocker les éléments email, password avec une fonction pour le màj
-    const [firstname, setFirstname] = useState ('');
-    const [lastname, setLastname] = useState ('');
+const Register = () => {
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState ('');
-  const [confirmPassword, setConfirmPassword] = useState ('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
-  const [error, setError] = useState ('');
-  const [isLoading, setIsLoading]= useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
 
-  
-  // Fonction qui gère la soumission du formulaire
   const handleSubmitRegister = async (e: React.FormEvent) => {
-    e.preventDefault(); // Empêche le comportement par défaut du formulaire
-    if(password !== confirmPassword){ 
-        setError('Les mots de passe ne correspondent pas !') // Si les mdp ne correspondent pas, màj l'état d'erreur avec un message et arrête l'exécution de la fonction
-        return;
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Les mots de passe ne correspondent pas !');
+      return;
     }
-    
-    // Si les mdp correspondent, tente l'inscription
+    setError('');
+    setIsLoading(true);
     try {
-        await authService.register({firstname, lastname, email, password, confirmPassword}) // Appelle la méthode register du service d'authentification avec les données du formulaire
-        navigate('/');
+      await register({ firstname, lastname, email, password, confirmPassword });
+      navigate('/');
     } catch (error) {
-        setError("Échec de l'inscription. Veuillez réessayer."); // Si une erreur se produit pendant l'inscription
-      console.error("Erreur d'inscription:", error);  
+      setError("Échec de l'inscription. Veuillez réessayer.");
+      console.error("Erreur d'inscription:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   
