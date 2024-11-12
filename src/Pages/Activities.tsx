@@ -1,4 +1,3 @@
-// Dossier: src/Pages/Activities.tsx
 import { useEffect, useState } from "react";
 import { Card, CardProps } from "../components/ActivityCard";
 import { getDatas } from "../services/api";
@@ -10,22 +9,6 @@ interface Category {
 
 interface ActivityWithCategory extends CardProps {
   category: Category | null;
-}
-
-// Interface for API response data (Interface pour les données de réponse API)
-interface ActivityData {
-	id: number;
-	title: string;
-	description: string;
-	multimedias: { url: string }[];
-}
-
-// Interface for API response data (Interface pour les données de réponse API)
-interface ActivityData {
-	id: number;
-	title: string;
-	description: string;
-	multimedias: { url: string }[];
 }
 
 const Activities = () => {
