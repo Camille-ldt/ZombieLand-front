@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole !== undefined && user.role_id !== requiredRole) { // Comparer les nombres
+  if (requiredRole !== undefined && user.role_id !== requiredRole) { 
     return <p>Accès refusé : vous n'avez pas les autorisations nécessaires.</p>;
   }
 
