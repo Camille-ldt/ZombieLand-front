@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
 export interface CardProps {
-  multimedias: any;
-  category_id: number;
+  multimedias: { url: string }[];
+  category_id: number; // Permet de lier chaque activité à une catégorie
   id: number;
   backgroundImage: string;
   title: string;
