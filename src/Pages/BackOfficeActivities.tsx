@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { getDatas, createData } from "../services/api";
+import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
-import Modal from '../components/Modal';
 import { UserCircleIcon } from '@heroicons/react/24/solid'
+import ActivitiesModal from "../components/ActivitiesModal";
 
-interface Activity {
+interface ActiProps {
     id: number;
+    multimedias?: { url: string }[];
     title: string;
     description: string;
     category_id: number;
-}
+  }
 
 interface Category {
     id: number;
@@ -17,60 +18,58 @@ interface Category {
 }
 
 interface ActivityFormData {
+    id?: number;
     title: string;
     description: string;
     category_id: number;
 }
 
-interface Multimedia {
+interface Activity {
     id: number;
-    name: string;
-    url: string;
+    title: string;
+    description: string;
+    image: string;
+    category: number;
 }
 
 const BackOfficeActivities: React.FC = () => {
     const [activities, setActivities] = useState<Activity[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [multimedias, setMultimedias] = useState<Multimedia[]>([]);
     const [selectedActivities, setSelectedActivities] = useState<number[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [isModalOpen, setIsModalOpen]= useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [activityToEdit, setActivityToEdit] = useState<Activity | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen]= useState(false);
     
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [activitiesData, categoriesData, multimediasData] = await Promise.all([
+                const [activitiesData, categoriesData] = await Promise.all([
                     getDatas("/activities"),
                     getDatas("/categories"),
-                    getDatas("/:activityId/multimedia")
                 ]);
-                setActivities(activitiesData);
+
+                const activitiesDatas: Activity[] = activitiesData.map((activity: ActiProps) => {
+					return {
+						id: activity.id,
+						image: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
+						title: activity.title,
+						description: activity.description,
+						category: activity.category_id
+					};
+				});
+
+                setActivities(activitiesDatas);
                 setCategories(categoriesData);
-                setMultimedias(multimediasData);
             } catch (error) {
                 console.error("Erreur lors de la récupération des données", error);
             }
         };
         fetchData();
     }, []);
-
-    const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
-        // On récupère le fichier que l'utilisateur vient de renseigner dans l'input
-        const file = evt.target.files[0]; // File
-    
-        // On convertit le fichier en data-url
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          setUser({
-            ...user,
-            image: reader.result
-          });
-        });
-        reader.readAsDataURL(file);
-    };
 
     const handleSelectionChange = (id: number) => {
         setSelectedActivities(prev =>
@@ -83,7 +82,7 @@ const BackOfficeActivities: React.FC = () => {
     };
 
     const filteredActivities = activities.filter(activity =>
-        (selectedCategory === "all" || activity.category_id.toString() === selectedCategory) &&
+        (selectedCategory === "all" || activity.category.toString() === selectedCategory) &&
         activity.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -93,16 +92,78 @@ const BackOfficeActivities: React.FC = () => {
 
     const handleCreateActivity = async (newActivity: ActivityFormData) => {
         try {
-          console.log('Données envoyées au serveur:', newActivity); // Pour le débogage
-          const createdActivity = await createData('/activities', newActivity);
-          console.log('Activité créée:', createdActivity); // Pour le débogage
-          setActivities(prevActivities => [...prevActivities, createdActivity]);
-          setIsModalOpen(false);
+            console.log("handleCreateActivity déclenché");
+            console.log('Données envoyées au serveur:', newActivity); // Pour le débogage
+            const createdActivity = await createData('/activities', newActivity);
+            console.log('Activité créée:', createdActivity); // Pour le débogage
+            setActivities(prevActivities => [...prevActivities, createdActivity]);
+            setIsModalOpen(false);
         } catch (error) {
-          console.error("Erreur lors de la création de l'activité:", error);
-         
+            console.error("Erreur lors de la création de l'activité:", error);
         }
       };
+
+      const handleEditClick = () => {
+        if (selectedActivities.length === 1) {
+          const activityToEdit = activities.find(activity => activity.id === selectedActivities[0]);
+          if (activityToEdit) {
+            console.log("Activité à éditer avant la mise à jour de l'état :", activityToEdit);
+            setActivityToEdit(activityToEdit);
+            setIsEditModalOpen(true);
+          }
+        }
+      };
+
+      const handleUpdateActivity = async (updatedActivity: ActivityFormData) => {
+        try {
+
+            // Vérifiez si `category_id` est défini
+            if (updatedActivity.category_id === undefined || updatedActivity.category_id === null) {
+            console.error("category_id est manquant dans les données de mise à jour.");
+            return; // Arrête la fonction si `category_id` est `undefined` ou `null`
+            }
+
+            console.log("Données mises à jour envoyées:", updatedActivity);
+
+            if ('id' in updatedActivity && typeof updatedActivity.id === 'number') {
+                const updatedActivityFromServer = await updateData('/activities', updatedActivity.id, updatedActivity);
+                console.log("Activité mise à jour reçue du serveur:", updatedActivityFromServer);
+            
+                setActivities(prevActivities => prevActivities.map(activity => 
+                activity.id === updatedActivityFromServer.id ? updatedActivityFromServer : activity
+                ));
+                const refreshedActivities = await getDatas("/activities");
+                setActivities(refreshedActivities);
+                setIsEditModalOpen(false);
+                setSelectedActivities([]);
+            } else {
+                console.error("L'activité à mettre à jour n'a pas d'ID valide");
+            }
+            setActivityToEdit(null);
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour de l'activité:", error);
+        }
+      };
+
+    const handleDeleteSelectedActivities = async ()=> {
+        if (selectedActivities.length === 0){
+            alert("Veuillez sélectionner au moins une activité à supprimer")
+            return;
+        }
+        const confirmDelete = window.confirm(`Êtes-vous sur de vouloir supprimer ${selectedActivities.length} activité(s) ?`)
+        if(!confirmDelete) return;
+
+        try{
+            for(const activityId of selectedActivities) {
+                await deleteData('/activities', activityId)
+            }
+            setActivities(prevActivities=> prevActivities.filter(activity => !selectedActivities.includes(activity.id)));
+            setSelectedActivities([]);
+            console.log('Activités supprimées avec succès');
+        }catch(error){
+            console.error("Erreur lors de la suppression des activités:", error);
+        }
+    };
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -134,14 +195,33 @@ const BackOfficeActivities: React.FC = () => {
                     </div>
                     <div className="mb-4 flex space-x-4 justify-end ">
                         <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700" onClick={() => setIsModalOpen(true)}>Créer</button>
-                        <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700">Modifier</button>
-                        <button type="button" className="bg-grey text-white rounded p-2 hover:bg-gray-700">Supprimer</button>
+                        <button 
+                        type="button"
+                        className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+                        onClick={handleEditClick}
+                        disabled={selectedActivities.length !== 1}
+                        >Modifier
+                        </button>
+                        <button 
+                        type="button"
+                        className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+                        onClick={handleDeleteSelectedActivities}
+                        disabled={selectedActivities.length === 0 || isLoading}
+                        >{isLoading ? 'Suppression...' : 'Supprimer'}
+                        </button>
                     </div>
-                    <Modal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleCreateActivity}
-                    categories={categories}
+
+                    <ActivitiesModal
+                        isOpen={isModalOpen || isEditModalOpen}
+                        onClose={() => {
+                            setIsModalOpen(false);
+                            setIsEditModalOpen(false);
+                            //setActivityToEdit(null);
+                        }}
+                        onSubmit={isEditModalOpen ? handleUpdateActivity : handleCreateActivity}
+                        categories={categories}
+                        activity={activityToEdit}
+                        setActivity={setActivityToEdit}
                     />
 
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -150,8 +230,8 @@ const BackOfficeActivities: React.FC = () => {
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nom</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Image</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Catégorie</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sélection</th>
                                 </tr>
@@ -162,26 +242,22 @@ const BackOfficeActivities: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.title}</td>
                                         <td>
-                                            <div className="flex items-center mt-2 gap-x-3">
-                                                {user.image === null ? (
+                                            <div className="flex gap-2 items-center mt-2 gap-x-3">
+                                                {activity.image === null ? (
                                                   <UserCircleIcon aria-hidden="true" className="w-12 h-12 text-gray-300" />
                                                 ) : (
                                                   <img
                                                     alt=""
-                                                    src={user.image}
-                                                    className="inline-block h-12 w-12 rounded-md"
+                                                    src={activity.image}
+                                                    className="inline-block h-14 w-14 rounded-md"
                                                   />
                                                 )}
-                                                <label htmlFor="file-upload" className="rounded-md bg-white px-2.5 py-1.5 text-sm   font-semibold                         text-gray-900 shadow-sm ring-1 ring-inset   ring-gray-300 hover:bg-gray-50">
-                                                  Change
-                                                <input id="file-upload" name="file-upload" type="file" className="sr-only"  onInput={updateImage} />
-                                                </label>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">{activity.description}</td>
                                         
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {categories.find(cat => cat.id === activity.category_id)?.name || 'Non catégorisé'}
+                                            {categories.find(cat => cat.id === activity.category)?.name || 'Non catégorisé'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <input 

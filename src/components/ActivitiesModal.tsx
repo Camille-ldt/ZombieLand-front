@@ -1,38 +1,98 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 interface ActivityFormData {
   title: string;
   description: string;
   category_id: number;
+  image: string;
+}
+
+interface Activity extends ActivityFormData {
+  id: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
 }
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (activity: ActivityFormData) => void;
-  categories: { id: number; name: string }[];
+  onSubmit: (activity: ActivityFormData | Activity) => void | Promise<void>;
+  categories: Category[];
+  activity?: Activity | null;
+  setActivity: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) => {
+const ActivitiesModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories, activity, setActivity}) => {
   const [formData, setFormData] = useState<ActivityFormData>({
     title: '',
     description: '',
-    category_id: 0
+    category_id: 0,
+    image: ''
   });
+  
+  useEffect(() => {
+    console.log("Activité transmise pour l'édition :", activity);
 
+    if (activity) {
+      setFormData({
+        title: activity.title,
+        description: activity.description,
+        category_id: activity.category_id,
+        image: activity.image
+      });
+    } else {
+      setFormData({
+        title: '',
+        description: '',
+        category_id: 0,
+        image: ''
+      });
+    }
+  }, [activity]);
+
+  const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    // On récupère le fichier que l'utilisateur vient de renseigner dans l'input
+    const file = evt.target.files[0]; // File
+    if (!file) return;
+
+    // On convertit le fichier en data-url
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      setFormData(prevFormData => ({
+        ...prevFormData,
+        image: reader.result as string // Met uniquement à jour l'image sans toucher aux autres valeurs
+    }));
+    });
+    reader.readAsDataURL(file);
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    console.log(`handleChange - Champ : ${name}, Valeur : ${value}`);
     setFormData(prev => ({
       ...prev,
       [name]: name === 'category_id' ? Number(value) : value
     }));
+    console.log("formData après handleChange :", formData);
   };
+
+  useEffect(() => {
+    console.log("formData mis à jour après handleChange :", formData); // Vérifie le changement
+}, [formData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    console.log("Soumission du formulaire dans Modal", formData);
+    if (activity) {
+      onSubmit({ ...formData, id: activity.id });
+    } else {
+      onSubmit(formData);
+    }
     onClose();
   };
 
@@ -63,7 +123,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
     >
       <div className="bg-white rounded-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Créer une nouvelle activité</h2>
+          <h2 className="text-xl font-bold">
+            {activity ? 'Modifier une activité' : 'Créer une nouvelle activité'}
+          </h2>
           <button 
             type="button" 
             onClick={onClose} 
@@ -105,7 +167,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
             value={formData.category_id}
             onChange={handleChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
+            required
             >
               <option value="">Sélectionnez une catégorie</option>
               {categories.map(category => (
@@ -113,12 +175,35 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
               ))}
             </select>
           </div>
+          
+          <div className="col-span-full">
+              <label htmlFor="cover-photo" className="block text-sm/6 font-medium text-gray-900">
+                Image de couverture
+              </label>
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                <div className="text-center">
+                  <PhotoIcon aria-hidden="true" className="mx-auto h-12 w-12 text-gray-300" />
+                  <div className="mt-4 flex text-sm/6 text-gray-600">
+                    <label
+                      htmlFor="file-upload"
+                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                    >
+                      <span>Télécharger un fichier</span>
+                      <input id="file-upload" name="file-upload" type="file" className="sr-only" onInput={updateImage}/>
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs/5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              </div>
+            </div>
+
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
               Annuler
             </button>
             <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Créer
+            {activity ? 'Modifier' : 'Créer'}
             </button>
           </div>
         </form>
@@ -127,4 +212,4 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories }) 
   );
 };
 
-export default Modal;
+export default ActivitiesModal;
