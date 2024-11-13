@@ -1,7 +1,7 @@
 const Newsletter = () => {
 	return (
 		<div className="relative text-white px-10 py-4 mt-11 text-center lg:mx-52">
-			<div className="absolute inset-0 bg-[url('./assets/img/mains-zombie.webp')] bg-cover bg-bottom rounded-md"></div>
+			<div className="absolute inset-0 bg-[url('./assets/img/mains-zombie.webp')] bg-cover bg-bottom rounded-md" />
 			<div className="relative p-7 rounded-md bg-grey/70">
 				<div className="pb-6">
 					<h2 className="text-2xl font-bold text-center">
