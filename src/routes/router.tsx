@@ -11,6 +11,7 @@ import Register from "../Pages/Register";
 import BackOfficeActivities from "../Pages/BackOfficeActivities";
 import BackOfficeDashboard from "../Pages/BackOfficeDashboard";
 import BackOfficeReservations from "../Pages/BackOfficeReservations";
+import UserReservation from "../Pages/Booking";
 
 const router = createBrowserRouter([
 	{
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/bookings",
-				element: <HomePage />,
+				element: <UserReservation />,
 			},
 			{
 				path: "/aboutus",

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 export interface CardProps {
-  multimedias: any;
+  multimedias: { url: string }[];
   category_id: number;
   id: number;
   backgroundImage: string;
