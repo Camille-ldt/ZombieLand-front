@@ -26,9 +26,16 @@ interface UserFormData {
 }
 
 const BackOfficeUser: React.FC = () => {
+	// Tableau des utilisateurs récupérés depuis l'API
 	const [users, setUsers] = useState<User[]>([]);
+	// Tableau des utilisateurs sélectionnés avec les checkboxes
 	const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+
+	// Filtre des utilisateurs par nom ou prénom
 	const [searchTerm, setSearchTerm] = useState("");
+	// Filtre des utilisateurs par rôle
+	const [searchRole, setSearchRole] = useState("all");
+
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [userToEdit, setUserToEdit] = useState<User | null>(null);
@@ -36,11 +43,34 @@ const BackOfficeUser: React.FC = () => {
 	const [roleToEdit, setRoleToEdit] = useState<Role[] | null>(null);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+	// Tableau des utilisateurs à afficher, il est construit à partir
+	// des utilisateurs récupérés depuis l'API et des filtres de recherche
+	const usersToDisplay = users.filter((user) => {
+		// 1. on vérifie si l'utilisateur correspond au filtre de recherche par nom/prénom
+		// (vrai si on n'a pas de filtre actuellement)
+		let matchesSearchTerm = true;
+		if (searchTerm !== "") {
+			matchesSearchTerm =
+				user.firstname.toLowerCase().includes(searchTerm) ||
+				user.lastname.toLowerCase().includes(searchTerm);
+		}
+
+		// 2. on vérifie si l'utilisateur correspond au filtre de recherche par rôle
+		// (vrai si le filtre actuel est sur "tous les rôles")
+		let matchesSearchRole = true;
+		if (searchRole !== "all") {
+			matchesSearchRole = user.role_id === Number.parseInt(searchRole);
+		}
+
+		// 3. on retourne true si l'utilisateur correspond à tous les filtres
+		return matchesSearchTerm && matchesSearchRole;
+	});
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [UserFormData] = await Promise.all([getDatas("/users")]);
-				setUsers(UserFormData);
+				const users = await getDatas("/users");
+				setUsers(users);
 			} catch (error) {
 				console.error("Erreur lors de la récupération des données", error);
 			}
@@ -83,15 +113,29 @@ const BackOfficeUser: React.FC = () => {
 		reader.readAsDataURL(file);
 	};
 
-	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(e.target.value);
+	/**
+	 * Met à jour filtre de recherche par nom/prénom
+	 * @param {Event} event L'événement survenu sur le champ de recherche
+	 */
+	const handleSearch = (event: React.UIEvent<HTMLInputElement>) => {
+		// 1. on lit la valeur qui est actuellement dans notre <input>
+		const value = event.target.value.toLowerCase();
+
+		// 2. on met à jour le state avec le nouveau filtre de recherche par nom/prénom
+		setSearchTerm(value);
 	};
 
-	const filteredUser = users.filter(
-		(user) =>
-			(selectedUsers.length === 0 || selectedUsers.includes(user.id)) &&
-			user.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-	);
+	/**
+	 * Met à jour filtre de recherche par rôle
+	 * @param {Event} event L'événement survenu sur le champ de recherche
+	 */
+	const handleRoleSearch = (event: React.UIEvent<HTMLSelectElement>) => {
+		// 1. on lit la valeur qui est actuellement sélectionnée dans notre <select>
+		const roleId = event.target.value;
+
+		// 2. on met à jour le state avec le nouveau filtre de recherche par rôle
+		setSearchRole(roleId);
+	};
 
 	if (users.length === 0) {
 		return (
@@ -189,51 +233,22 @@ const BackOfficeUser: React.FC = () => {
 
 					<div className="flex mb-4 space-x-4">
 						<input
-							type="text"
+							type="search"
 							placeholder="Rechercher un utilisateur..."
 							className="flex-grow px-4 py-2 border rounded-md"
-							value={searchTerm}
-							onChange={handleSearchChange}
+							onInput={handleSearch}
 						/>
 						<select
 							className="w-1/5 px-4 py-2 border rounded-md"
-							// value={selectedUsers}
-							onChange={(e) => setSelectedUsers(e.target.value)}
+							onInput={handleRoleSearch}
 						>
-							<option value="all">Tous les utilisateurs</option>
-							{users.map((user) => (
-								<option key={user.id} value={user.id.toString()}>
-									{user.name}
+							<option value="all">Tous les rôles</option>
+							{roles.map((role) => (
+								<option key={role.id} value={role.id}>
+									{role.name}
 								</option>
 							))}
 						</select>
-					</div>
-					<div className="flex items-center mt-2 gap-x-3">
-						{users.image === null ? (
-							<UserCircleIcon
-								aria-hidden="true"
-								className="w-12 h-12 text-gray-300"
-							/>
-						) : (
-							<img
-								alt=""
-								src={users.image}
-								className="inline-block w-12 h-12 rounded-md"
-							/>
-						)}
-						<label
-							htmlFor="file-upload"
-							className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-						>
-							Change
-							<input
-								id="file-upload"
-								name="file-upload"
-								type="file"
-								className="sr-only"
-								onInput={updateImage}
-							/>
-						</label>
 					</div>
 					<div className="flex justify-end mb-4 space-x-4 ">
 						<button
@@ -297,7 +312,7 @@ const BackOfficeUser: React.FC = () => {
 								</tr>
 							</thead>
 							<tbody className="bg-white divide-y divide-gray-200 ">
-								{users.map((user) => (
+								{usersToDisplay.map((user) => (
 									<tr key={user.id}>
 										{/* ID de l'utilisateur */}
 										<td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
