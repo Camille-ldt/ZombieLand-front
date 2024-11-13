@@ -1,5 +1,5 @@
 //Importation des éléments necessaires
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import { UserCircleIcon } from '@heroicons/react/24/solid'
@@ -54,41 +54,41 @@ const BackOfficeActivities: React.FC = () => {
     //Permet de gérer l'état d'ouverture de la modal de modification
     const [isEditModalOpen, setIsEditModalOpen]= useState(false);
 
-    
+    // Définition d'une fonction asynchrone pour récupérer les données
+    const fetchData = useCallback(async () => {
+        try {
+            // Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
+            const [activitiesData, categoriesData] = await Promise.all([
+                getDatas("/activities"),
+                getDatas("/categories"),
+            ]);
+
+            const activitiesDatas: Activity[] = activitiesData.map((activity: ActiProps) => {
+                return {
+                    id: activity.id,
+                    image: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
+                    title: activity.title,
+                    description: activity.description,
+                    category: activity.category_id
+                };
+            });
+
+            setActivities(activitiesDatas);
+            setCategories(categoriesData);
+        } catch (error) {
+            // Gestion des erreurs en cas d'échec de la récupération des données
+            console.error("Erreur lors de la récupération des données", error);
+        }
+    }, []);
 
     useEffect(() => {
-        // Définition d'une fonction asynchrone pour récupérer les données
-        const fetchData = async () => {
-            try {
-                // Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
-                const [activitiesData, categoriesData] = await Promise.all([
-                    getDatas("/activities"),
-                    getDatas("/categories"),
-                ]);
-
-                const activitiesDatas: Activity[] = activitiesData.map((activity: ActiProps) => {
-					return {
-						id: activity.id,
-						image: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
-						title: activity.title,
-						description: activity.description,
-						category: activity.category_id
-					};
-				});
-
-                setActivities(activitiesDatas);
-                setCategories(categoriesData);
-            } catch (error) {
-                // Gestion des erreurs en cas d'échec de la récupération des données
-                console.error("Erreur lors de la récupération des données", error);
-            }
-        };
         // Appel de la fonction fetchData
         fetchData();
         // Le tableau vide [] comme second argument signifie que cet effet 
         // ne s'exécutera qu'une seule fois, au montage du composant
-    }, []);
+    }, [fetchData]);
 
+    console.table(activities)
     const handleSelectionChange = (id: number) => {
         // Met à jour l'état des activités sélectionnées
         setSelectedActivities(prev =>
@@ -280,7 +280,10 @@ const BackOfficeActivities: React.FC = () => {
                             setIsEditModalOpen(false);
                             setActivityToEdit(null);
                         }}
-                        onSubmit={isEditModalOpen ? handleUpdateActivity : handleCreateActivity}
+                        onSubmit={async (formData) => {
+                            await (isEditModalOpen ? handleUpdateActivity : handleCreateActivity) (formData);
+                            fetchData();
+                        }}
                         categories={categories}
                         activity={activityToEdit}
                         setActivity={setActivityToEdit}
