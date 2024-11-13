@@ -1,33 +1,31 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../Auth/Services/authService';
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
 
-
-const Login = () => { // Etat pour stocker les éléments email, password avec une fonction pour le màj
+const Login = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState ('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const [error, setError] = useState ('');
-  const {login} = useAuth();
-  const [isLoading, setIsLoading]= useState(false);
-  
-  const handleSubmitLogin = async (e: React.FormEvent) => { // Gérer la soumission du formulaire
-    e.preventDefault(); // Empêche le comportement par défaut du formulaire
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmitLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
     setIsLoading(true);
-    try { 
-      await authService.login({ email, password }); // Appel à la fonction d'authentification en passant par email et password
-      navigate('/'); // Note à nous-même : en attente de la création de la page -- Si la connexion est ok alors redirection vers la page d'accueil
-    } catch (error){
-      setError("Échec de la connexion. Veuillez vérifier vos identifiants."); // Met à jour l'état 'error' avec un message d'erreur pour l'utilisateur
-      console.error('Erreur de connexion:', error); // L'erreur iriginal est passée en second argument pour plus de détails
-    }finally {
+    try {
+      await login({ email, password });
+      navigate('/');
+    } catch (error) {
+      setError("Échec de la connexion. Veuillez vérifier vos identifiants.");
+      console.error('Erreur de connexion:', error);
+    } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
       <>
         {/*

@@ -1,79 +1,146 @@
-// Dossier: src/Pages/Activities.tsx
 import { useEffect, useState } from "react";
 import { Card, CardProps } from "../components/ActivityCard";
 import { getDatas } from "../services/api";
 
-export interface ActivitiesProps {
-	items: CardProps[];
-	activitiesButtonText: string;
+interface Category {
+  id: number;
+  name: string;
 }
 
-// Interface for API response data (Interface pour les données de réponse API)
-interface ActivityData {
-	id: number;
-	title: string;
-	description: string;
-	multimedias: { url: string }[];
+interface ActivityWithCategory extends CardProps {
+  category: Category | null;
 }
 
 const Activities = () => {
-	const [activities, setActivities] = useState<CardProps[]>([]);
+  const [activities, setActivities] = useState<ActivityWithCategory[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-	useEffect(() => {
-		const fetchActivities = async () => {
-			try {
-				const data: ActivityData[] = await getDatas("/activities");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [activitiesData, categoriesData] = await Promise.all([
+          getDatas("/activities"),
+          getDatas("/categories"),
+        ]);
 
-				// Mapping data to fit CardProps structure
-				const mappedActivities: CardProps[] = data.map((activity) => {
-					return {
-						id: activity.id,
-						backgroundImage: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
-						title: activity.title,
-						description: activity.description,
-						buttonText: "Découvrir", // Set button text for activities
-						to: `/activity/${activity.id}`
-					};
-				});
+        // Ajout de la catégorie et de l'image à chaque activité
+        const activitiesWithCategories = activitiesData.map((activity: CardProps) => {
+          const category = categoriesData.find(
+            (cat: Category) => cat.id === activity.category_id // On utilise category_id pour relier l'activité à sa catégorie
+          );
+          return {
+            ...activity,
+            category: category || null, // Si aucune catégorie trouvée, on met `null`
+            backgroundImage: activity.multimedias?.[0]?.url || "", // Assurez-vous que `multimedias` contient l'image
+          };
+        });
 
-				setActivities(mappedActivities);
-			} catch (error) {
-				console.error("Erreur lors de la récupération des activités", error);
-			}
-		};
-		fetchActivities();
-	}, []);
+        setActivities(activitiesWithCategories);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données", error);
+      }
+    };
 
-	if (!activities || activities.length === 0) {
-		return (
-			<p className="text-center text-white">
-				Aucune activité disponible pour le moment.
-			</p>
-		);
-	}
+    fetchData();
+  }, []);
 
-	return (
-		<div className="bg-black min-h-screen min-w-screen">
-			<div className="container mx-auto p-4">
-				<h1 className="text-3xl font-bold text-center text-white mb-8">
-					Toutes les activités
-				</h1>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-					{activities.map((activity) => (
-						<Card
-							key={activity.id}
-							id={activity.id}
-							backgroundImage={activity.backgroundImage}
-							title={activity.title}
-							description={activity.description}
-							buttonText={activity.buttonText}
-							to="/activity"
-						/>
-					))}
-				</div>
-			</div>
-		</div>
-	);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  // Filtrage et normalisation sans fonction séparée
+  const filteredActivities = activities.filter((activity) => {
+    const normalizedTitle = activity.title
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+    const normalizedSearchTerm = searchTerm
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+
+    return (normalizedTitle.includes(normalizedSearchTerm) || searchTerm.length <= 1) &&
+           (selectedCategory === "all" || activity.category?.id.toString() === selectedCategory);
+  });
+
+  // Vérifier si on a des activités qui correspondent à la recherche mais pas à la catégorie sélectionnée
+  const hasMatchingActivitiesButWrongCategory = activities.some((activity) => {
+    const normalizedTitle = activity.title
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+    const normalizedSearchTerm = searchTerm
+      .toLowerCase()
+      .normalize("NFD")
+      // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
+      .replace(/[\u0300-\u036f]/g, "");
+
+    return normalizedTitle.includes(normalizedSearchTerm) && selectedCategory !== "all" && activity.category?.id.toString() !== selectedCategory;
+  });
+
+  return (
+    <div className="bg-black min-h-screen min-w-screen">
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold text-center text-white mb-8">Toutes les activités</h1>
+
+        <div className="mb-4 flex space-x-4">
+          <input
+            type="text"
+            placeholder="Rechercher une activité..."
+            className="px-4 py-2 border rounded-md flex-grow"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <select
+            className="px-4 py-2 border rounded-md w-1/5"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            <option value="all">Toutes les catégories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id.toString()}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {filteredActivities.length === 0 && searchTerm.length > 1 ? (
+          <p className="text-center text-white">
+            Aucune activité trouvée pour "{searchTerm}". 
+            {hasMatchingActivitiesButWrongCategory && (
+              <span> Vérifiez la catégorie dans le filtre.</span>
+            )}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredActivities.map((activity) => (
+              <Card
+                key={activity.id}
+                id={activity.id}
+                backgroundImage={activity.backgroundImage} // Affichage de l'image ici
+                title={activity.title}
+                description={activity.description}
+                buttonText="Découvrir"
+                to="/activity"
+                category={activity.category}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Activities;

@@ -19,6 +19,15 @@ interface Category {
   name: string;
 }
 
+interface Activity extends ActivityFormData {
+  id: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -203,7 +212,7 @@ const ActivitiesModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, cate
               Annuler
             </button>
             <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            {activity ? 'Modifier' : 'Créer'}
+              {activity ? 'Modifier' : 'Créer'}
             </button>
           </div>
         </form>
