@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Title } from '../components/Title';
 
 interface UserProps {
+    id: number;
     firstname: string;
     lastname: string;
     phone_number: string;
@@ -20,6 +21,7 @@ interface UserProps {
 const Profil = () => {
 
   const [user, setUser] = useState<UserProps>({
+    id: 0,
     firstname: '',
     lastname: '',
     phone_number: '',
@@ -64,7 +66,7 @@ const Profil = () => {
     reader.addEventListener('load', () => {
       setUser({
         ...user,
-        image: reader.result
+        image: reader.result as string
       });
     });
     reader.readAsDataURL(file);

@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 
 export interface CardProps {
-	multimedias: any;
-	category_id: number;
-	id: number;
-	backgroundImage: string;
-	title: string;
-	description: string;
-	buttonText: string;
-	to: string;
-	category: { id: number; name: string } | null; // La catégorie peut être null
+  multimedias: any;
+  category_id: number;
+  id: number;
+  backgroundImage: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  to: string;
+  category: { id: number; name: string } | null; // La catégorie peut être null
 }
 
 export const Card = ({
