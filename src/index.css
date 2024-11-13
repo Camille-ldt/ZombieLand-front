@@ -3,9 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
+/* html {
     @apply font-body;
-}
+} */
 
 /* Animation underline pour les link de la barre de navigation Desktop */
 @layer utilities {
@@ -50,4 +50,3 @@ html {
         @apply w-[100%]
     }
 }
-
