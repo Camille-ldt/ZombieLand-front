@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import UserModal from "../components/UserModal";
 
 interface User {
 	id: number;
-	name: string;
+	firstname: string;
 	lastname: string;
 	image: string;
 	role_id: number;
@@ -18,7 +19,7 @@ interface Role {
 
 interface UserFormData {
 	id?: number;
-	name: string;
+	firstname: string;
 	lastname: string;
 	image: string;
 	role_id: number;
@@ -67,10 +68,19 @@ const BackOfficeUser: React.FC = () => {
 		);
 	};
 
-	const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-		}
+	const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		// On récupère le fichier que l'utilisateur vient de renseigner dans l'input
+		const file = evt.target.files[0]; // File
+
+		// On convertit le fichier en data-url
+		const reader = new FileReader();
+		reader.addEventListener("load", () => {
+			setUser({
+				...user,
+				image: reader.result,
+			});
+		});
+		reader.readAsDataURL(file);
 	};
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,22 +182,22 @@ const BackOfficeUser: React.FC = () => {
 		<div className="flex h-screen bg-gray-100">
 			<Aside />
 			<div className="flex-1 overflow-auto">
-				<div className="container mx-auto p-4">
-					<h1 className="text-2xl font-bold mb-4">
+				<div className="container p-4 mx-auto">
+					<h1 className="mb-4 text-2xl font-bold">
 						Administration des Utilisateurs
 					</h1>
 
-					<div className="mb-4 flex space-x-4">
+					<div className="flex mb-4 space-x-4">
 						<input
 							type="text"
 							placeholder="Rechercher un utilisateur..."
-							className="px-4 py-2 border rounded-md flex-grow"
+							className="flex-grow px-4 py-2 border rounded-md"
 							value={searchTerm}
 							onChange={handleSearchChange}
 						/>
 						<select
-							className="px-4 py-2 border rounded-md w-1/5"
-							value={selectedUsers}
+							className="w-1/5 px-4 py-2 border rounded-md"
+							// value={selectedUsers}
 							onChange={(e) => setSelectedUsers(e.target.value)}
 						>
 							<option value="all">Tous les utilisateurs</option>
@@ -198,17 +208,44 @@ const BackOfficeUser: React.FC = () => {
 							))}
 						</select>
 					</div>
-					<div className="mb-4 flex space-x-4 justify-end ">
+					<div className="flex items-center mt-2 gap-x-3">
+						{users.image === null ? (
+							<UserCircleIcon
+								aria-hidden="true"
+								className="w-12 h-12 text-gray-300"
+							/>
+						) : (
+							<img
+								alt=""
+								src={users.image}
+								className="inline-block w-12 h-12 rounded-md"
+							/>
+						)}
+						<label
+							htmlFor="file-upload"
+							className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+						>
+							Change
+							<input
+								id="file-upload"
+								name="file-upload"
+								type="file"
+								className="sr-only"
+								onInput={updateImage}
+							/>
+						</label>
+					</div>
+					<div className="flex justify-end mb-4 space-x-4 ">
 						<button
 							type="button"
-							className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
 							onClick={() => setIsModalOpen(true)}
 						>
 							Créer
 						</button>
 						<button
 							type="button"
-							className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
 							onClick={handleEditClick}
 							disabled={selectedUsers.length !== 1}
 						>
@@ -216,7 +253,7 @@ const BackOfficeUser: React.FC = () => {
 						</button>
 						<button
 							type="button"
-							className="bg-grey text-white rounded p-2 hover:bg-gray-700"
+							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
 							onClick={handleDeleteSelectedUser}
 							disabled={selectedUsers.length === 0 || isLoading}
 						>
@@ -235,47 +272,71 @@ const BackOfficeUser: React.FC = () => {
 						role={roles}
 					/>
 
-					<div className="bg-white shadow-md rounded-lg overflow-hidden">
+					<div className="overflow-hidden bg-white rounded-lg shadow-md">
 						<table className="min-w-full divide-y divide-gray-200">
 							<thead className="bg-grey">
 								<tr>
-									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										ID
 									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										Nom
 									</th>
-									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										Prénom
 									</th>
 
-									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										Image
 									</th>
 
-									<th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										Rôle
 									</th>
+									<th className="px-6 py-3" />
 								</tr>
 							</thead>
-							<tbody className="bg-white divide-y divide-gray-200">
-								{filteredUser.map((user) => (
+							<tbody className="bg-white divide-y divide-gray-200 ">
+								{users.map((user) => (
 									<tr key={user.id}>
+										{/* ID de l'utilisateur */}
 										<td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
-										<td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-										<td className="px-6 py-4">{user.lastname}</td>
 
+										{/* Nom de l'utilisateur */}
 										<td className="px-6 py-4 whitespace-nowrap">
-											{users.find((cat) => cat.id === user.role_id)?.name ||
-												"Non catégorisé"}
+											{user.lastname}
+										</td>
+
+										{/* Prénom de l'utilisateur */}
+										<td className="px-6 py-4">{user.firstname}</td>
+
+										{/* Image de l'utilisateur */}
+										<td className="px-6 py-4">
+											{user.image ? (
+												<img
+													className="inline-block w-12 h-12 rounded-md"
+													src={user.image}
+													alt={`Avatar de l'utilisateur ${user.id}`}
+												/>
+											) : (
+												<UserCircleIcon
+													aria-hidden="true"
+													className="w-12 h-12 text-gray-300"
+												/>
+											)}
+										</td>
+
+										{/* Rôle de l'utilisateur */}
+										<td className="px-6 py-4 whitespace-nowrap ">
+											{roles.find((role) => role.id === user.role_id)?.name}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											<input
+											{/* <input
 												type="checkbox"
 												checked={selectedUsers.includes(user.id)}
 												onChange={() => handleSelectionChange(user.id)}
-												className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-											/>
+												className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+											/> */}
 										</td>
 									</tr>
 								))}

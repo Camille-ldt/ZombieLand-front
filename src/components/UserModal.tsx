@@ -30,6 +30,7 @@ const UserModal: React.FC<ModalProps> = ({
 	onClose,
 	onSubmit,
 	user,
+	role, // Ajout des rôles ici
 }) => {
 	const [formData, setFormData] = useState<UserFormData>({
 		name: "",
@@ -68,6 +69,16 @@ const UserModal: React.FC<ModalProps> = ({
 		}));
 	};
 
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setFormData((prev) => ({
+				...prev,
+				image: URL.createObjectURL(file),
+			}));
+		}
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		console.log("Soumission du formulaire dans Modal", formData);
@@ -97,7 +108,7 @@ const UserModal: React.FC<ModalProps> = ({
 
 	return (
 		<div
-			className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
 			onClick={handleBackgroundClick}
 			onKeyDown={handleKeyDown}
 			role="dialog"
@@ -105,10 +116,10 @@ const UserModal: React.FC<ModalProps> = ({
 			tabIndex={-1}
 		>
 			<div
-				className="bg-white rounded-lg p-6 w-full max-w-md"
+				className="w-full max-w-md p-6 bg-white rounded-lg"
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex justify-between items-center mb-4">
+				<div className="flex items-center justify-between mb-4">
 					<h2 className="text-xl font-bold">
 						{user ? "Modifier un utilisateur" : "Créer un nouvel utilisateur"}
 					</h2>
@@ -118,7 +129,7 @@ const UserModal: React.FC<ModalProps> = ({
 						className="text-gray-500 hover:text-gray-700"
 						aria-label="Fermer"
 					>
-						<FontAwesomeIcon icon={faTimes} className="h-6 w-6" />
+						<FontAwesomeIcon icon={faTimes} className="w-6 h-6" />
 					</button>
 				</div>
 				<form onSubmit={handleSubmit} className="space-y-4">
@@ -130,12 +141,12 @@ const UserModal: React.FC<ModalProps> = ({
 							Prénom
 						</label>
 						<input
-							type="name"
+							type="text"
 							id="name"
 							name="name"
 							value={formData.name}
 							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							required
 						/>
 					</div>
@@ -147,11 +158,12 @@ const UserModal: React.FC<ModalProps> = ({
 							Nom
 						</label>
 						<input
+							type="text"
 							id="lastname"
 							name="lastname"
 							value={formData.lastname}
 							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							required
 						/>
 					</div>
@@ -166,8 +178,8 @@ const UserModal: React.FC<ModalProps> = ({
 							type="file"
 							id="image"
 							name="image"
-							onChange={(e) => handleImageChange(e)} // Fonction de gestion de fichier
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							onChange={handleImageChange}
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						/>
 					</div>
 					<div>
@@ -182,14 +194,13 @@ const UserModal: React.FC<ModalProps> = ({
 							name="role_id"
 							value={formData.role_id}
 							onChange={handleChange}
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							required
 						>
-							<option value="">Sélectionnez un rôle</option>{" "}
-							{/* Option par défaut */}
-							{role.map((role) => (
-								<option key={role.id} value={role.id}>
-									{role.name}
+							<option value="0">Sélectionnez un rôle</option>
+							{role.map((r) => (
+								<option key={r.id} value={r.id}>
+									{r.name}
 								</option>
 							))}
 						</select>
@@ -198,13 +209,13 @@ const UserModal: React.FC<ModalProps> = ({
 						<button
 							type="button"
 							onClick={onClose}
-							className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+							className="px-4 py-2 text-gray-800 bg-gray-200 rounded hover:bg-gray-300"
 						>
 							Annuler
 						</button>
 						<button
 							type="submit"
-							className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+							className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
 						>
 							{user ? "Modifier" : "Créer"}
 						</button>
