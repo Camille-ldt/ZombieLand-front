@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface UserFormData {
-	name: string;
+	firstname: string;
 	lastname: string;
 	image: string;
 	role_id: number;
@@ -33,7 +33,7 @@ const UserModal: React.FC<ModalProps> = ({
 	role, // Ajout des rôles ici
 }) => {
 	const [formData, setFormData] = useState<UserFormData>({
-		name: "",
+		firstname: "",
 		lastname: "",
 		image: "",
 		role_id: 0,
@@ -42,14 +42,14 @@ const UserModal: React.FC<ModalProps> = ({
 	useEffect(() => {
 		if (user) {
 			setFormData({
-				name: user.name,
+				firstname: user.firstname,
 				lastname: user.lastname,
 				image: "",
 				role_id: user.role_id,
 			});
 		} else {
 			setFormData({
-				name: "",
+				firstname: "",
 				lastname: "",
 				image: "",
 				role_id: 0,
@@ -135,16 +135,16 @@ const UserModal: React.FC<ModalProps> = ({
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div>
 						<label
-							htmlFor="name"
+							htmlFor="firstname"
 							className="block text-sm font-medium text-gray-700"
 						>
 							Prénom
 						</label>
 						<input
 							type="text"
-							id="name"
-							name="name"
-							value={formData.name}
+							id="firstname"
+							name="firstname"
+							value={formData.firstname}
 							onChange={handleChange}
 							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 							required
@@ -167,7 +167,7 @@ const UserModal: React.FC<ModalProps> = ({
 							required
 						/>
 					</div>
-					<div>
+					{/* <div>
 						<label
 							htmlFor="image"
 							className="block text-sm font-medium text-gray-700"
@@ -181,7 +181,7 @@ const UserModal: React.FC<ModalProps> = ({
 							onChange={handleImageChange}
 							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						/>
-					</div>
+					</div> */}
 					<div>
 						<label
 							htmlFor="role_id"

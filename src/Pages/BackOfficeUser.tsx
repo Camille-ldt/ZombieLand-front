@@ -78,6 +78,8 @@ const BackOfficeUser: React.FC = () => {
 		fetchData();
 	}, []);
 
+	console.log(fetchData);
+
 	useEffect(() => {
 		const fetchRoles = async () => {
 			try {
@@ -222,6 +224,10 @@ const BackOfficeUser: React.FC = () => {
 		}
 	};
 
+	function fetchData() {
+		throw new Error("Function not implemented.");
+	}
+
 	return (
 		<div className="flex h-screen bg-gray-100">
 			<Aside />
@@ -282,11 +288,15 @@ const BackOfficeUser: React.FC = () => {
 							setIsEditModalOpen(false);
 							setUserToEdit(null);
 						}}
-						onSubmit={isEditModalOpen ? handleUpdateUser : handleCreateUser}
+						onSubmit={async (formData) => {
+							await (isEditModalOpen ? handleUpdateUser : handleCreateUser)(
+								formData,
+							);
+							fetchData();
+						}}
 						user={userToEdit}
 						role={roles}
 					/>
-
 					<div className="overflow-hidden bg-white rounded-lg shadow-md">
 						<table className="min-w-full divide-y divide-gray-200">
 							<thead className="bg-grey">
