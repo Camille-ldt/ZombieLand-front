@@ -12,34 +12,36 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { register, login } = useAuth();
 
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
+
+    // Vérification des mots de passe
     if (password !== confirmPassword) {
-      setError('Les mots de passe ne correspondent pas !');
+      toast.error('Les mots de passe ne correspondent pas !');
       return;
     }
-    setError('');
+
     setIsLoading(true);
     try {
       // Appel à la fonction d'enregistrement
-      await register({ firstname, lastname, email, password, confirmPassword });
+      await register({ firstname, lastname, email, password });
 
-      // Notification de succès
-      toast.success("Compte créé avec succès ! Redirection vers la page d'accueil...");
+      // Afficher un toast pour signaler le succès
+      toast.success("Inscription réussie ! Redirection vers la page d'accueil...");
 
-      // Connexion automatique
+      // Connexion automatique après inscription
       await login({ email, password });
 
       // Redirection vers la page d'accueil
       setTimeout(() => {
         navigate('/');
-      }, 2000); // Petite pause pour laisser le toast s'afficher avant la redirection
+      }, 2000);
     } catch (error) {
-      setError("Échec de l'inscription. Veuillez réessayer.");
+      // Gestion des erreurs avec un toast
+      toast.error("Échec de l'inscription. Veuillez réessayer.");
       console.error("Erreur d'inscription:", error);
     } finally {
       setIsLoading(false);
@@ -132,8 +134,6 @@ const Register = () => {
                     className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm"
                   />
                 </div>
-
-                {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <div>
                   <button

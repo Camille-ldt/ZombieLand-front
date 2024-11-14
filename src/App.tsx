@@ -1,12 +1,26 @@
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./Auth/authContext";
+import { ToastContainer } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
 import router from "./routes/router";
 
 const App = () => {
-	return (
-	<AuthProvider>
-		<RouterProvider router={router} />
-	</AuthProvider>
-	);
+  return (
+    <AuthProvider>
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        hideProgressBar={false} 
+        newestOnTop={false} 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 };
+
 export default App;
