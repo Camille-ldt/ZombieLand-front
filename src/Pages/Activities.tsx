@@ -27,13 +27,14 @@ const Activities = () => {
 
         // Ajout de la catégorie et de l'image à chaque activité
         const activitiesWithCategories = activitiesData.map((activity: CardProps) => {
+          // Trouve la catégorie associée à l'activité
           const category = categoriesData.find(
-            (cat: Category) => cat.id === activity.category_id // On utilise category_id pour relier l'activité à sa catégorie
+            (cat: Category) => cat.id === activity.category_id // Utilisation de category_id pour lier l'activité à sa catégorie
           );
           return {
             ...activity,
             category: category || null, // Si aucune catégorie trouvée, on met `null`
-            backgroundImage: activity.multimedias?.[0]?.url || "", // Assurez-vous que `multimedias` contient l'image
+            backgroundImage: activity.multimedias?.[0]?.url || "", // Récupération de la première image des médias associés à l'actitvité
           };
         });
 
@@ -45,12 +46,14 @@ const Activities = () => {
     };
 
     fetchData();
-  }, []);
+  }, []); // Le tableau vide signifie que l'effet de bord se déclenche une seule fois lors du montage du composant
 
+  // Fonction de gestion du changement du champ de recherche
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
+  // Fonction de gestion du changement de la catégorie sélectionnée
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
   };
@@ -58,10 +61,10 @@ const Activities = () => {
   // Filtrage et normalisation sans fonction séparée
   const filteredActivities = activities.filter((activity) => {
     const normalizedTitle = activity.title
-      .toLowerCase()
-      .normalize("NFD")
+      .toLowerCase() // Conversion du titre en minuscle pour une comparaison insensible à la casse
+      .normalize("NFD") // Normaliser le titre pour enlever les conflits avec les accents
       // biome-ignore lint/suspicious/noMisleadingCharacterClass: <explanation>
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, ""); // Retirer les caractères diacritiques qui peuvent générer des conflits
     const normalizedSearchTerm = searchTerm
       .toLowerCase()
       .normalize("NFD")
@@ -72,7 +75,7 @@ const Activities = () => {
            (selectedCategory === "all" || activity.category?.id.toString() === selectedCategory);
   });
 
-  // Vérifier si on a des activités qui correspondent à la recherche mais pas à la catégorie sélectionnée
+  // Vérification des activités qui correspondent à la recherche mais pas à la catégorie sélectionnée
   const hasMatchingActivitiesButWrongCategory = activities.some((activity) => {
     const normalizedTitle = activity.title
       .toLowerCase()
@@ -115,6 +118,7 @@ const Activities = () => {
           </select>
         </div>
 
+        {/* Affichage d'un message si aucune activité ne correspond aux critères de recherche */}
         {filteredActivities.length === 0 && searchTerm.length > 1 ? (
           <p className="text-center text-white">
             Aucune activité trouvée pour "{searchTerm}". 
@@ -123,6 +127,7 @@ const Activities = () => {
             )}
           </p>
         ) : (
+          // Si les activités sont filtrées, on les affiche dans un grid
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredActivities.map((activity) => (
               <Card

@@ -1,12 +1,26 @@
-// services/api.ts
+// src/services/api.ts
+
 import axios from 'axios';
 
+// Créer une instance Axios avec une baseURL et des en-têtes par défaut
 const api = axios.create({
-  baseURL: 'http://localhost:3000/', // URL de base de l'API
+  baseURL: 'http://localhost:3000/',
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Intercepteur pour ajouter le token JWT à chaque requête
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Fonction GET : Récupérer une liste de ressources
 export const getDatas = async (endpoint: string) => {
@@ -31,7 +45,7 @@ export const getDataById = async (endpoint: string, id: number | string) => {
 };
 
 // Fonction POST : Créer une nouvelle ressource
-export const createData = async (endpoint: string, data: string) => {
+export const createData = async (endpoint: string, data: any) => {
   try {
     const response = await api.post(endpoint, data);
     return response.data;
@@ -42,7 +56,7 @@ export const createData = async (endpoint: string, data: string) => {
 };
 
 // Fonction PUT : Mettre à jour une ressource
-export const updateData = async (endpoint: string, id: number | string, data: string) => {
+export const updateData = async (endpoint: string, id: number | string, data: any) => { 
   try {
     const response = await api.put(`${endpoint}/${id}`, data);
     return response.data;

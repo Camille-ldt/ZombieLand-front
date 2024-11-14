@@ -11,7 +11,7 @@ interface NavigationItem {
   current: boolean;
 }
 
-function classNames(...classes) {
+function classNames(...classes: string[]): string {
   return classes.filter(Boolean).join(' ');
 }
 
@@ -30,7 +30,7 @@ const Navbar = () => {
     }
     
     if (user?.role_id === 3) {
-      baseNavigation.push({ name: 'Administration', to: '/admin', current: false });
+      baseNavigation.push({ name: 'Administration', to: '/admindashboard', current: false });
     }
 
     return baseNavigation;

@@ -1,7 +1,6 @@
-// Importation des hooks et types
 import { useContext, useState, useEffect, createContext, ReactNode } from "react";
-import {User, Login, Register} from './types';
-import {authService} from './Services/authService';
+import { User, Login, Register } from './types';
+import authService from './Services/authService'; // Import par défaut
 
 interface AuthContextType {
   user: User | null;
