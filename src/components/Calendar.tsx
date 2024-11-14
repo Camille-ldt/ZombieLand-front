@@ -1,7 +1,9 @@
+//Import des éléments nécessaires
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameMonth, isToday, isSameDay, addDays } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
+//Interface pour définir les périodes qui ont un id, un nom, un date de débutn une date de fin et un prix associé
 interface Period {
   id: number;
   name: string;
@@ -10,6 +12,7 @@ interface Period {
   price: number;
 }
 
+//Interface pour les propriétés du calendrier qui a les périodes (un tableau), les dates sélectionnées (avec la date de début, de fin ou null), une date de début et de fin et un nombre de tickets
 interface CalendarProps {
   periods: Period[];
   onDateSelect: (startDate: Date | null, endDate: Date | null) => void;
@@ -18,95 +21,149 @@ interface CalendarProps {
   numberOfTickets: number;
 }
 
+//Variable pour définir les couleurs associés au périodes pour les différencier sur le calendrier
 const periodColors: { [key: string]: string } = {
   'Basse saison': 'bg-green-200',
   'Moyenne saison': 'bg-orange-200',
   'Haute saison': 'bg-red-200',
 };
 
+//Variable pour définir la couleur de la page sélectionnée
 const selectedRangeColor = 'bg-blue-300';
+//Variable pour définir la couleur des jours sélectionnées (qui sont les dates de début et de fin)
 const selectedDateColor = 'bg-blue-600 text-white';
+//Variable pour définir la couleur de fond du jour actuel
 const todayColor = 'bg-purple-500 text-white';
 
+//Fonction qui permet d'ajouter ou de retirer des class CSS ou autre selon des conditions. Elle accepte un nombre variable d'arguments (...classes), qui peuvent être des chaînes, des booléens ou undefined.
+//Elle simplifie la gestion des classes CSS dans les composants React où les classes peuvent changer en fonction de l'état ou des props.
 function classNames(...classes: (string | boolean | undefined)[]) {
+  // le filter sur les booleens élimine toutes les valeurs falsy (comme false, null, undefined, 0, "") de l'array. et le join concatène ce qu'il reste en 1 seule chaine
   return classes.filter(Boolean).join(' ');
 }
-
+//Calendar est un composant fonctionnel de React qui accèpte en props CalendarProps. Il Utilise la syntaxe de déstructuration pour extraire les props spécifiques passées au composant.
 const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect, startDate, endDate, numberOfTickets }) => {
+  //Variable d'état pour la définition d'une date de départ. Crée un nouvel objet Date qui représente le 1er Novembre
   const [currentDate, setCurrentDate] = useState(new Date(2024, 10, 1));
+  //Variable d'état qui permet de définir le prix total et de la mettre à jour via le state, il est de base à 0
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
+  //Fonction pour trouver une période selon une date donnée, elle retourne soit un objet period soit undefines si aucune période n'est associée à cette date
   const getPeriodForDate = (date: Date): Period | undefined => {
     return periods.find(
+      //Pour chaque période, elle vérifie si la date donnée est comprise entre la date de début (period.date_start) et la date de fin (period.date_end) de la période.
+      //Elle convertir les chaine de date de début et de fin en objet Date. Elle sert à appliquer le bon tarif et la bonne couleur à chaque jour du calendrier en fonction de la période
       (period) => date >= new Date(period.date_start) && date <= new Date(period.date_end)
     );
   };
 
+  //Fonction pour générer un tableau de dates qui représente un mois entier dans le calendrier et rajoute les jours du mois d'avant ou d'après pour compléter
   const getDaysInMonth = (date: Date) => {
+    //Trouve le premier jour du mois pour la date donnée.
     const start = startOfMonth(date);
+    //Trouve le dernier jour du mois pour la date donnée.
     const end = endOfMonth(date);
+    //Crée un tableau contenant tous les jours du mois, du premier au dernier.
     const days = eachDayOfInterval({ start, end });
+    //Obtient le jour de la semaine pour le premier jour du mois (0 pour dimanche, 1 pour lundi, etc.).
     const startDay = getDay(start);
+    //Calcule combien de jours du mois précédent doivent être ajoutés pour que la semaine commence un lundi.
     const daysToAdd = startDay === 0 ? 6 : startDay - 1;
+    //Crée un tableau des jours du mois précédent à ajouter.
+    //Utilise Array.from pour créer un tableau de la longueur nécessaire.
+    //Pour chaque élément, soustrait le nombre de jours à ajouter du premier jour du mois, puis ajoute l'index actuel.
     const previousMonthDays = Array.from({ length: daysToAdd }, (_, i) => addDays(start, -daysToAdd + i));
+    //Combine les jours du mois précédent avec les jours du mois actuel dans un seul tableau.
     return [...previousMonthDays, ...days];
   };
 
+  //Elle utilise la date actuelle (currentDate) qui est stockée dans l'état du composant.
+  //Elle appelle la fonction getDaysInMonth avec cette date.
+  //days est maintenant un tableau contenant tous les objets Date à afficher dans le calendrier
   const days = getDaysInMonth(currentDate);
 
+  //Fonction pour naviguer vers le mois précédent dans le calendrier
   const goToPreviousMonth = () => {
+    //Cette ligne utilise la fonction setCurrentDate pour mettre à jour la date actuelle du calendrier.
+    //cette fonction met à jour currentDate pour qu'elle pointe vers le premier jour du mois précédent, permettant ainsi au calendrier d'afficher le mois précédent lorsqu'elle est appelée
     setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
   };
 
+  //Même principe mais pour le mois suivant
   const goToNextMonth = () => {
     setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
   };
 
+  //Gère la logique de sélection des dates dans le calendrier, elle prend en param la date sur laquelle l'utilisateur a cliqué.
   const handleDateClick = (date: Date) => {
+    //Si une date de début (startDate) est déjà sélectionnée, mais pas de date de fin (endDate)
     if (startDate && !endDate) {
+      //Si la date cliquée est la même que la date de début, elle désélectionne tout
       if (isSameDay(date, startDate)) {
         onDateSelect(null, null);
+        //Si la date cliquée est avant la date de début, elle inverse le début et la fin
       } else if (date < startDate) {
         onDateSelect(date, startDate);
+        //Sinon, elle définit la plage de dates 
       } else {
         onDateSelect(startDate, date);
       }
+      //Si une date de début et une date de fin sont déjà sélectionnées
     } else if (startDate && endDate) {
+      //Si la date cliquée est la même que la date de début, elle désélectionne tout.
       if (isSameDay(date, startDate)) {
         onDateSelect(null, null);
+        //Sinon, elle commence une nouvelle sélection avec la date cliquée comme nouvelle date de début.
       } else {
         onDateSelect(date, null);
       }
+      //Si aucune date n'est sélectionnée Elle définit la date cliquée comme date de début.
     } else {
       onDateSelect(date, null);
     }
   };
 
+  //calcule le prix total pour la période sélectionnée dans le calendrier.
   const calculateTotalPrice = () => {
+    //Si aucune date de début n'est sélectionnée, la fonction retourne 0.
     if (!startDate) return 0;
+    //Définit la date de fin. Si endDate n'est pas définie, elle utilise startDate, permettant ainsi de calculer le prix pour une seule journée.
     const end = endDate || startDate;
+    //Initialise la variable qui va stocker le prix total.
     let total = 0;
+    //Utilise la fonction eachDayOfInterval de date-fns pour itérer sur chaque jour de l'intervalle sélectionné.
     eachDayOfInterval({ start: startDate, end }).forEach((day) => {
+      //Trouve la période tarifaire correspondant à chaque jour.
       const period = getPeriodForDate(day);
+      //Si une période est trouvée, ajoute son prix au total.
       if (period) total += period.price;
     });
+    //Multiplie le total calculé par le nombre de billets sélectionnés.
     return total * numberOfTickets;
   };
 
   useEffect(() => {
+    //recalcule le prix total chaque fois que la date de début, la date de fin ou le nombre de billets change. 
+    //Il assure que le prix affiché est toujours à jour.
     setTotalPrice(calculateTotalPrice());
   }, [startDate, endDate, numberOfTickets]);
 
+  //récupère le prix pour une date spécifique. Elle est utilisée pour afficher le prix sous chaque jour dans le calendrier. 
+  //Si aucune période n'est trouvée pour la date, elle retourne une chaîne vide.
   const getPeriodPrice = (date: Date) => {
     const period = getPeriodForDate(date);
     return period ? `${period.price}€` : '';
   };
 
+  //vérifie si une date donnée est dans la plage de dates sélectionnée. Elle est utilisée pour appliquer un style visuel aux dates comprises 
+  //entre la date de début et la date de fin sélectionnées.
   const isDateInRange = (date: Date) => {
     if (!startDate || !endDate) return false;
     return date >= startDate && date <= endDate;
   };
 
+  //vérifie si une date est soit la date de début, soit la date de fin de la plage sélectionnée. 
+  //Elle est utilisée pour appliquer un style spécifique aux dates de début et de fin de la sélection.
   const isStartOrEndDate = (date: Date) => {
     return isSameDay(date, startDate) || isSameDay(date, endDate);
   };
