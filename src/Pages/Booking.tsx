@@ -32,15 +32,9 @@ const UserReservation: React.FC = () => {
     fetchPeriods();
   }, []);
 
-  const handleDateSelect = (date: Date) => {
-    if (!startDate || (startDate && endDate)) {
-      setStartDate(date);
-      setEndDate(null);
-    } else if (startDate && !endDate && date > startDate) {
-      setEndDate(date);
-    } else {
-      setStartDate(date);
-    }
+  const handleDateSelect = (start: Date | null, end: Date | null) => {
+    setStartDate(start);
+    setEndDate(end);
   };
 
   const calculateTotalAmount = () => {
@@ -58,6 +52,16 @@ const UserReservation: React.FC = () => {
           ) + 1;
         const total = numberOfDays * period.price * numberOfTickets;
         setTotalAmount(total);
+      }
+    } else if (startDate) {
+      const period = periods.find(
+        (period) =>
+          startDate >= new Date(period.date_start) &&
+          startDate <= new Date(period.date_end)
+      );
+
+      if (period) {
+        setTotalAmount(period.price * numberOfTickets);
       }
     } else {
       setTotalAmount(0);
@@ -87,35 +91,32 @@ const UserReservation: React.FC = () => {
 
   return (
     <div className="bg-black min-h-screen flex flex-col">
-      {/* Titre */}
       <div className="text-center pt-10 px-4 sm:px-10 md:px-20">
         <Title>Calendrier</Title>
       </div>
 
-      {/* Contenu principal */}
       <div className="flex flex-col md:flex-row justify-center items-start gap-10 px-4 sm:px-10 md:px-20 mt-10 grow pb-20">
-        {/* Calendrier */}
-        <div className="flex-1 max-w-full md:max-w-[50%] flex justify-center">
+        <div className="flex md:w-[60%] flex-grow justify-center">
           <Calendar
             periods={periods}
             onDateSelect={handleDateSelect}
             startDate={startDate}
             endDate={endDate}
+            numberOfTickets={numberOfTickets}
           />
         </div>
-        {/* Formulaire */}
-        <div className="flex-1 w-[90%] sm:w-[90%] md:w-[50%] flex justify-center items-center mx-auto">
-  <BookingForm
-    startDate={startDate}
-    endDate={endDate}
-    periods={periods}
-    totalAmount={totalAmount}
-    numberOfTickets={numberOfTickets}
-    onTicketChange={handleTicketChange}
-    onSubmit={handleSubmit}
-  />
-</div>
 
+        <div className="flex md:w-[35%] justify-center items-center mx-auto">
+          <BookingForm
+            startDate={startDate}
+            endDate={endDate}
+            periods={periods}
+            totalAmount={totalAmount}
+            numberOfTickets={numberOfTickets}
+            onTicketChange={handleTicketChange}
+            onSubmit={handleSubmit}
+          />
+        </div>
       </div>
     </div>
   );
