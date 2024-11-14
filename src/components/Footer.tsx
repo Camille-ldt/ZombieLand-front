@@ -70,23 +70,25 @@ const footer: Footer = {
   }
   
   const Footer = () => {
-      
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  
     return (
       <footer className="bg-red-primary my-0">
         <div className="mx-auto max-w-7xl overflow-hidden px-6 py-4 sm:py-4 lg:px-8">
           <div className="flex justify-center items-center">
-        <img className="h-20 w-auto" src="src/assets/img/logo.png" alt="Logo" />
-        </div>
+            <img className="h-20 w-auto" src="src/assets/img/logo.png" alt="Logo" />
+          </div>
           {/* Section title */}
           <div className="flex items-center mt-5">
-        
-        <div className="flex-grow border-t border-white" />
-          <p className="mx-4 text-center text-lg text-white uppercase font-semibold">Retrouvez-nous</p>
-        <div className="flex-grow border-t border-white"/>
-        </div>
-
-        {/* Social media icons */}
-          <div className=" mt-5 mb-5 flex justify-center gap-x-10">
+            <div className="flex-grow border-t border-white" />
+            <p className="mx-4 text-center text-lg text-white uppercase font-semibold">Retrouvez-nous</p>
+            <div className="flex-grow border-t border-white" />
+          </div>
+  
+          {/* Social media icons */}
+          <div className="mt-5 mb-5 flex justify-center gap-x-10">
             {footer.social.map((item) => (
               <a key={item.name} href={item.href} className="transform transition-transform duration-200 hover:scale-150 text-dark">
                 <span className="sr-only">{item.name}</span>
@@ -94,11 +96,16 @@ const footer: Footer = {
               </a>
             ))}
           </div>
-          
+  
           {/* Footer navigation links */}
           <nav aria-label="Footer" className="footer-link -mb-6 flex max-md:flex-col max-md:items-center flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6 uppercase font-semibold">
             {footer.main.map((item) => (
-              <a key={item.name} href={item.href} className="text-white">
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={scrollToTop} 
+                className="text-white"
+              >
                 {item.name}
               </a>
             ))}
@@ -107,8 +114,8 @@ const footer: Footer = {
           <p className="mb-5 text-center text-sm/6 text-gray-300">Copyright &copy; 2024 ZombieLand - Tous droits réservés.</p>
         </div>
       </footer>
-    )
-  }
+    );
+  };
   
 
 

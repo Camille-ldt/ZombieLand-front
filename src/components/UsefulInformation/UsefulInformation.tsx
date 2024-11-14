@@ -19,12 +19,17 @@ export const UsefulInformation = () => {
   // Détection de l'ancre dans l'URL pour choisir la section correspondante
   useEffect(() => {
     if (location.hash) {
-      const hashValue = location.hash.substring(1); // Retirer le '#' du hash
+      const hashValue = location.hash.substring(1); 
       if (optionItems.some((item) => item.value === hashValue)) {
         setSelectedItem(hashValue as UsefulInformationContentItem);
       }
     }
   }, [location]);
+
+  // Fonction pour remonter en haut de la page lors de la navigation
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Déclaration des options disponibles pour le Select, sous forme d'un tableau d'objets
   const optionItems: SelectOptionItem<UsefulInformationContentItem>[] = [
@@ -44,7 +49,10 @@ export const UsefulInformation = () => {
         {optionItems.map((item) => (
           <GreenLink
             key={item.value}
-            onClick={() => setSelectedItem(item.value)}
+            onClick={() => {
+              setSelectedItem(item.value);
+              scrollToTop(); 
+            }}
             textSize="text-sm"
             position="relative"
           >
@@ -59,9 +67,10 @@ export const UsefulInformation = () => {
             label="Sélectionne ton choix"
             items={optionItems}
             selectedItem={selectedItem}
-            onSelectedItem={(nextSelectedItem: UsefulInformationContentItem) =>
-              setSelectedItem(nextSelectedItem)
-            }
+            onSelectedItem={(nextSelectedItem: UsefulInformationContentItem) => {
+              setSelectedItem(nextSelectedItem);
+              scrollToTop(); 
+            }}
           />
         </div>
 
