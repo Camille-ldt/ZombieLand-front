@@ -10,11 +10,6 @@ interface UserFormData {
 	role_id: number;
 }
 
-interface Role {
-	id: number;
-	name: string;
-}
-
 interface User extends UserFormData {
 	id: number;
 }
@@ -47,8 +42,8 @@ const UserModal: React.FC<ModalProps> = ({
 			setFormData({
 				firstname: user.firstname,
 				lastname: user.lastname,
-				email: user.email,
 				password: "",
+				email: user.email,
 				role_id: user.role_id,
 			});
 		} else {
@@ -76,7 +71,7 @@ const UserModal: React.FC<ModalProps> = ({
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!formData.email || !formData.password) {
+		if (!formData.email) {
 			alert("Les champs email et mot de passe sont requis.");
 			return;
 		}
@@ -149,7 +144,7 @@ const UserModal: React.FC<ModalProps> = ({
 							name="firstname"
 							value={formData.firstname}
 							onChange={handleChange}
-							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							required
 						/>
 					</div>
@@ -166,7 +161,7 @@ const UserModal: React.FC<ModalProps> = ({
 							name="lastname"
 							value={formData.lastname}
 							onChange={handleChange}
-							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							required
 						/>
 					</div>
@@ -183,27 +178,30 @@ const UserModal: React.FC<ModalProps> = ({
 							name="email"
 							value={formData.email}
 							onChange={handleChange}
-							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							required
 						/>
 					</div>
-					<div>
-						<label
-							htmlFor="password"
-							className="block text-sm font-medium text-gray-700"
-						>
-							Password
-						</label>
-						<input
-							type="password"
-							id="password"
-							name="password"
-							value={formData.password}
-							onChange={handleChange}
-							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-							required
-						/>
-					</div>
+
+					{!user && (
+						<div>
+							<label
+								htmlFor="password"
+								className="block text-sm font-medium text-gray-700"
+							>
+								Mot de passe
+							</label>
+							<input
+								type="password"
+								id="password"
+								name="password"
+								value={formData.password}
+								onChange={handleChange}
+								className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
+								required
+							/>
+						</div>
+					)}
 					<div>
 						<label
 							htmlFor="role_id"
@@ -216,7 +214,7 @@ const UserModal: React.FC<ModalProps> = ({
 							name="role_id"
 							value={formData.role_id}
 							onChange={handleChange}
-							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							required
 						>
 							<option value="0">Sélectionnez un rôle</option>
@@ -238,7 +236,7 @@ const UserModal: React.FC<ModalProps> = ({
 						<button
 							type="submit"
 							onSubmit={handleSubmit}
-							className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+							className="px-4 py-2 text-white bg-red-primary rounded hover:bg-red-secondary"
 						>
 							{user ? "Modifier" : "Créer"}
 						</button>

@@ -227,11 +227,11 @@ const BackOfficeUser: React.FC = () => {
 						<input
 							type="search"
 							placeholder="Rechercher un utilisateur..."
-							className="flex-grow px-4 py-2 border rounded-md"
+							className="flex-grow px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							onInput={handleSearch}
 						/>
 						<select
-							className="w-1/5 px-4 py-2 border rounded-md"
+							className="w-1/5 px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
 							onInput={handleRoleSearch}
 						>
 							<option value="all">Tous les rôles</option>
