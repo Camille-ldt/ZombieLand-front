@@ -166,11 +166,16 @@ const BackOfficeUser: React.FC = () => {
 					updatedUserFromServer,
 				);
 
-				setUsers((prevUsers) =>
-					prevUsers.map((user) =>
-						user.id === updatedUserFromServer.id ? updatedUserFromServer : user,
-					),
+				const userIndex = users.findIndex(
+					(user) => user.id === updatedUserFromServer.id,
 				);
+				const updatedUsers = users.toSpliced(
+					userIndex,
+					1,
+					updatedUserFromServer,
+				);
+
+				setUsers(updatedUsers);
 				const refreshedUsers = await getDatas("/users");
 				setUsers(refreshedUsers);
 				setIsEditModalOpen(false);
@@ -190,7 +195,7 @@ const BackOfficeUser: React.FC = () => {
 			return;
 		}
 		const confirmDelete = window.confirm(
-			`Êtes-vous sur de vouloir supprimer ${selectedUsers.length} activité(s) ?`,
+			`Êtes-vous sur de vouloir supprimer ${selectedUsers.length} utilisateur(s) ?`,
 		);
 		if (!confirmDelete) return;
 

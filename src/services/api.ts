@@ -44,7 +44,7 @@ export const createData = async (endpoint: string, data) => {
 // Fonction PUT : Mettre à jour une ressource
 export const updateData = async (endpoint: string, id: number | string, data) => {
   try {
-    const response = await api.put(`${endpoint}/${id}/modify`, data);
+    const response = await api.put(`${endpoint}/${id}`, data);
     return response.data;
   } catch (error) {
     console.error('PUT error:', error);
