@@ -4,6 +4,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RedLink } from './RedLink';
 import { useAuth } from '../Auth/authContext';
 import { useMemo } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface NavigationItem {
   name: string;
@@ -17,6 +19,11 @@ function classNames(...classes: string[]): string {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    toast.success("vous êtes déconnectés, à bientot !");
+  };
 
   const navigation: NavigationItem[] = useMemo(() => {
     const baseNavigation = [
@@ -85,7 +92,7 @@ const Navbar = () => {
             {user ? (
               <button
                 type="button"
-                onClick={logout}
+                onClick={handleLogout}
                 className="min-w-[120px] w-full flex justify-center items-center rounded-md bg-red-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-secondary transform transition-transform duration-400 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 Déconnexion
