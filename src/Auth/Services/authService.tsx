@@ -1,27 +1,24 @@
 // src/services/authService.ts
 
-import axios, { AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { User, Login, Register } from "../types";
+import api, { getDatas } from '../../services/api'; 
 
-const API_URL = "http://localhost:3000"; // URL de base
-
-export const authService = {
-  // Correction de la syntaxe des méthodes
-
+const authService = {
+  // Connexion de l'utilisateur
   login: async (data: Login): Promise<User> => {
     try {
-      // Obtenir le token
-      const response: AxiosResponse<{ token: string }> = await axios.post(`${API_URL}/auth/login`, data);
+      // Obtenir le token via l'instance `api`
+      const response: AxiosResponse<{ token: string }> = await api.post('auth/login', data);
       const token = response.data.token;
 
       if (token) {
         // Stocker le token
         localStorage.setItem('token', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        // L'intercepteur dans `api` ajoutera automatiquement le token aux requêtes suivantes
 
         // Récupérer les informations de l'utilisateur
-        const userResponse: AxiosResponse<User> = await axios.get(`${API_URL}/users/me`);
-        const userData = userResponse.data;
+        const userData: User = await getDatas('users/me');
 
         // Combiner le token et les données utilisateur
         const loggedInUser = { ...userData, token };
@@ -30,9 +27,8 @@ export const authService = {
         localStorage.setItem('user', JSON.stringify(loggedInUser));
 
         return loggedInUser;
-      } else {
-        throw new Error("Token non reçu");
       }
+      throw new Error("Token non reçu");
     } catch (error: unknown) {
       // Gestion des erreurs
       console.error("Erreur lors de la connexion:", error);
@@ -40,10 +36,11 @@ export const authService = {
     }
   },
 
+  // Inscription de l'utilisateur
   register: async (data: Register): Promise<User> => {
     try {
-      // Appel à l'endpoint d'inscription
-      const response: AxiosResponse<User> = await axios.post(`${API_URL}/users`, data); // Ajustez l'URL si nécessaire
+      // Appel à l'endpoint d'inscription via l'instance `api`
+      const response: AxiosResponse<User> = await api.post('users', data);
       const registeredUser = response.data;
 
       if (registeredUser) {
@@ -62,23 +59,26 @@ export const authService = {
     }
   },
 
-  // Autres méthodes (logout, getCurrentUser, etc.)
+  // Déconnexion de l'utilisateur
   logout: () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+    api.defaults.headers.common['Authorization'] = ''; 
   },
 
+  // Récupérer l'utilisateur actuel
   getCurrentUser: (): User | null => {
     const userStr = localStorage.getItem('user');
     if (userStr) return JSON.parse(userStr) as User;
     return null;
   },
 
+  // Vérifier si l'utilisateur est connecté
   isLoggedIn: (): boolean => {
     return !!localStorage.getItem('user');
   },
 
+  // Mettre à jour le token
   updateToken: (token: string) => {
     const user = authService.getCurrentUser();
     if (user) {

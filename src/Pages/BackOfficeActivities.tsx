@@ -1,12 +1,13 @@
 //Importation des éléments necessaires
-import { useEffect, useState } from "react";
-import { getDatas, createData, deleteData, updateData } from "../services/api";
+import { useCallback, useEffect, useState } from "react";
+import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
+import { UserCircleIcon } from '@heroicons/react/24/solid'
 import ActivitiesModal from "../components/ActivitiesModal";
 
-//Interface pour récupérer les informations des activités
-interface Activity {
+interface ActiProps {
     id: number;
+    multimedias?: { url: string }[];
     title: string;
     description: string;
     category_id: number;
@@ -22,7 +23,15 @@ interface ActivityFormData {
     title: string;
     description: string;
     category_id: number;
-  }
+}
+
+interface Activity {
+    id: number;
+    title: string;
+    description: string;
+    image: string;
+    category: number;
+}
 
 const BackOfficeActivities: React.FC = () => {
     //Definition des variables d'etat necessaires pour le backoffice des activités
@@ -45,31 +54,41 @@ const BackOfficeActivities: React.FC = () => {
     //Permet de gérer l'état d'ouverture de la modal de modification
     const [isEditModalOpen, setIsEditModalOpen]= useState(false);
 
-    
+    // Définition d'une fonction asynchrone pour récupérer les données
+    const fetchData = useCallback(async () => {
+        try {
+            // Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
+            const [activitiesData, categoriesData] = await Promise.all([
+                getDatas("/activities"),
+                getDatas("/categories"),
+            ]);
+
+            const activitiesDatas: Activity[] = activitiesData.map((activity: ActiProps) => {
+                return {
+                    id: activity.id,
+                    image: activity.multimedias?.[0]?.url || "", // Extracting the first multimedia URL if available
+                    title: activity.title,
+                    description: activity.description,
+                    category: activity.category_id
+                };
+            });
+
+            setActivities(activitiesDatas);
+            setCategories(categoriesData);
+        } catch (error) {
+            // Gestion des erreurs en cas d'échec de la récupération des données
+            console.error("Erreur lors de la récupération des données", error);
+        }
+    }, []);
 
     useEffect(() => {
-        // Définition d'une fonction asynchrone pour récupérer les données
-        const fetchData = async () => {
-            try {
-                // Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
-                const [activitiesData, categoriesData] = await Promise.all([
-                    getDatas("/activities"), // Récupération des données des activités
-                    getDatas("/categories") // Récupération des données des catégories
-                ]);
-                // Mise à jour de l'état avec les données récupérées
-                setActivities(activitiesData);
-                setCategories(categoriesData);
-            } catch (error) {
-                // Gestion des erreurs en cas d'échec de la récupération des données
-                console.error("Erreur lors de la récupération des données", error);
-            }
-        };
         // Appel de la fonction fetchData
         fetchData();
         // Le tableau vide [] comme second argument signifie que cet effet 
         // ne s'exécutera qu'une seule fois, au montage du composant
-    }, []);
+    }, [fetchData]);
 
+    console.table(activities)
     const handleSelectionChange = (id: number) => {
         // Met à jour l'état des activités sélectionnées
         setSelectedActivities(prev =>
@@ -132,6 +151,7 @@ const BackOfficeActivities: React.FC = () => {
           const activityToEdit = activities.find(activity => activity.id === selectedActivities[0]);
           // Si l'activité est trouvée
           if (activityToEdit) {
+            console.log("Activité à éditer avant la mise à jour de l'état :", activityToEdit);
             // Met à jour l'état avec l'activité à éditer
             setActivityToEdit(activityToEdit);
             // Ouvre le modal d'édition
@@ -145,6 +165,15 @@ const BackOfficeActivities: React.FC = () => {
         try {
             // Vérifie si l'activité à mettre à jour a un ID valide
             if ('id' in updatedActivity && typeof updatedActivity.id === 'number') {
+
+                // Vérifiez si `category_id` est défini
+                if (updatedActivity.category_id === undefined || updatedActivity.category_id === null) {
+                    console.error("category_id est manquant dans les données de mise à jour.");
+                    return; // Arrête la fonction si `category_id` est `undefined` ou `null`
+                }
+        
+                console.log("Données mises à jour envoyées:", updatedActivity)
+
                 // Appel à l'API pour mettre à jour l'activité
                 const updatedActivityFromServer = await updateData('/activities', updatedActivity.id, updatedActivity);
                 console.log("Activité mise à jour reçue du serveur:", updatedActivityFromServer);
@@ -199,8 +228,6 @@ const BackOfficeActivities: React.FC = () => {
         }
     };
 
-    
-
     return (
         <div className="flex h-screen bg-gray-100">
             <Aside/>
@@ -253,9 +280,13 @@ const BackOfficeActivities: React.FC = () => {
                             setIsEditModalOpen(false);
                             setActivityToEdit(null);
                         }}
-                        onSubmit={isEditModalOpen ? handleUpdateActivity : handleCreateActivity}
+                        onSubmit={async (formData) => {
+                            await (isEditModalOpen ? handleUpdateActivity : handleCreateActivity) (formData);
+                            fetchData();
+                        }}
                         categories={categories}
                         activity={activityToEdit}
+                        setActivity={setActivityToEdit}
                     />
 
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -264,8 +295,8 @@ const BackOfficeActivities: React.FC = () => {
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nom</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Image</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
-                                    
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Catégorie</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sélection</th>
                                 </tr>
@@ -275,10 +306,23 @@ const BackOfficeActivities: React.FC = () => {
                                     <tr key={activity.id}>
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">{activity.title}</td>
+                                        <td>
+                                            <div className="flex gap-2 items-center mt-2 gap-x-3">
+                                                {activity.image === null ? (
+                                                  <UserCircleIcon aria-hidden="true" className="w-12 h-12 text-gray-300" />
+                                                ) : (
+                                                  <img
+                                                    alt=""
+                                                    src={activity.image}
+                                                    className="inline-block h-14 w-14 rounded-md"
+                                                  />
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="px-6 py-4">{activity.description}</td>
                                         
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {categories.find(cat => cat.id === activity.category_id)?.name || 'Non catégorisé'}
+                                            {categories.find(cat => cat.id === activity.category)?.name || 'Non catégorisé'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <input 
