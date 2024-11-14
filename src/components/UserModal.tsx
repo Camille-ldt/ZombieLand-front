@@ -5,11 +5,13 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 interface UserFormData {
 	firstname: string;
 	lastname: string;
-	image: string;
+	email: string;
+	password: string;
 	role_id: number;
 }
 
 interface Role {
+	id: number;
 	name: string;
 }
 
@@ -35,8 +37,9 @@ const UserModal: React.FC<ModalProps> = ({
 	const [formData, setFormData] = useState<UserFormData>({
 		firstname: "",
 		lastname: "",
-		image: "",
-		role_id: 0,
+		email: "",
+		password: "",
+		role_id: 2,
 	});
 
 	useEffect(() => {
@@ -44,15 +47,17 @@ const UserModal: React.FC<ModalProps> = ({
 			setFormData({
 				firstname: user.firstname,
 				lastname: user.lastname,
-				image: "",
+				email: user.email,
+				password: "",
 				role_id: user.role_id,
 			});
 		} else {
 			setFormData({
 				firstname: "",
 				lastname: "",
-				image: "",
-				role_id: 0,
+				email: "",
+				password: "",
+				role_id: 2,
 			});
 		}
 	}, [user]);
@@ -69,25 +74,23 @@ const UserModal: React.FC<ModalProps> = ({
 		}));
 	};
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			setFormData((prev) => ({
-				...prev,
-				image: URL.createObjectURL(file),
-			}));
-		}
-	};
-
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("Soumission du formulaire dans Modal", formData);
-		if (user) {
-			onSubmit({ ...formData, id: user.id });
-		} else {
-			onSubmit(formData);
+		if (!formData.email || !formData.password) {
+			alert("Les champs email et mot de passe sont requis.");
+			return;
 		}
-		onClose();
+		try {
+			console.log("Données soumises :", formData);
+			if (user) {
+				onSubmit({ ...formData, id: user.id });
+			} else {
+				onSubmit(formData);
+			}
+			onClose();
+		} catch (error) {
+			console.error("Erreur lors de la soumission :", error);
+		}
 	};
 
 	const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -167,21 +170,40 @@ const UserModal: React.FC<ModalProps> = ({
 							required
 						/>
 					</div>
-					{/* <div>
+					<div>
 						<label
-							htmlFor="image"
+							htmlFor="email"
 							className="block text-sm font-medium text-gray-700"
 						>
-							Image
+							Email
 						</label>
 						<input
-							type="file"
-							id="image"
-							name="image"
-							onChange={handleImageChange}
+							type="text"
+							id="email"
+							name="email"
+							value={formData.email}
+							onChange={handleChange}
 							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							required
 						/>
-					</div> */}
+					</div>
+					<div>
+						<label
+							htmlFor="password"
+							className="block text-sm font-medium text-gray-700"
+						>
+							Password
+						</label>
+						<input
+							type="password"
+							id="password"
+							name="password"
+							value={formData.password}
+							onChange={handleChange}
+							className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							required
+						/>
+					</div>
 					<div>
 						<label
 							htmlFor="role_id"
@@ -215,6 +237,7 @@ const UserModal: React.FC<ModalProps> = ({
 						</button>
 						<button
 							type="submit"
+							onSubmit={handleSubmit}
 							className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
 						>
 							{user ? "Modifier" : "Créer"}

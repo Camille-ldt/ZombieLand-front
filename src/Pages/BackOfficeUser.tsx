@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import UserModal from "../components/UserModal";
@@ -8,7 +7,8 @@ interface User {
 	id: number;
 	firstname: string;
 	lastname: string;
-	image: string;
+	email: string;
+	password: string;
 	role_id: number;
 }
 
@@ -21,7 +21,8 @@ interface UserFormData {
 	id?: number;
 	firstname: string;
 	lastname: string;
-	image: string;
+	password: string;
+	email: string;
 	role_id: number;
 }
 
@@ -78,8 +79,6 @@ const BackOfficeUser: React.FC = () => {
 		fetchData();
 	}, []);
 
-	console.log(fetchData);
-
 	useEffect(() => {
 		const fetchRoles = async () => {
 			try {
@@ -98,21 +97,6 @@ const BackOfficeUser: React.FC = () => {
 				? prev.filter((userID) => userID !== id)
 				: [...prev, id],
 		);
-	};
-
-	const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		// On récupère le fichier que l'utilisateur vient de renseigner dans l'input
-		const file = evt.target.files[0]; // File
-
-		// On convertit le fichier en data-url
-		const reader = new FileReader();
-		reader.addEventListener("load", () => {
-			setUser({
-				...user,
-				image: reader.result,
-			});
-		});
-		reader.readAsDataURL(file);
 	};
 
 	/**
@@ -288,12 +272,7 @@ const BackOfficeUser: React.FC = () => {
 							setIsEditModalOpen(false);
 							setUserToEdit(null);
 						}}
-						onSubmit={async (formData) => {
-							await (isEditModalOpen ? handleUpdateUser : handleCreateUser)(
-								formData,
-							);
-							fetchData();
-						}}
+						onSubmit={userToEdit ? handleUpdateUser : handleCreateUser}
 						user={userToEdit}
 						role={roles}
 					/>
@@ -310,9 +289,8 @@ const BackOfficeUser: React.FC = () => {
 									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
 										Prénom
 									</th>
-
 									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										Image
+										Email
 									</th>
 
 									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
@@ -335,33 +313,21 @@ const BackOfficeUser: React.FC = () => {
 										{/* Prénom de l'utilisateur */}
 										<td className="px-6 py-4">{user.firstname}</td>
 
-										{/* Image de l'utilisateur */}
-										<td className="px-6 py-4">
-											{user.image ? (
-												<img
-													className="inline-block w-12 h-12 rounded-md"
-													src={user.image}
-													alt={`Avatar de l'utilisateur ${user.id}`}
-												/>
-											) : (
-												<UserCircleIcon
-													aria-hidden="true"
-													className="w-12 h-12 text-gray-300"
-												/>
-											)}
-										</td>
+										{/* Email de l'utilisateur */}
+										<td className="px-6 py-4">{user.email}</td>
 
 										{/* Rôle de l'utilisateur */}
 										<td className="px-6 py-4 whitespace-nowrap ">
 											{roles.find((role) => role.id === user.role_id)?.name}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap">
-											{/* <input
+											{/* Checkbox pour modifier ou supprimer un utilisateur */}
+											<input
 												type="checkbox"
 												checked={selectedUsers.includes(user.id)}
 												onChange={() => handleSelectionChange(user.id)}
 												className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-											/> */}
+											/>
 										</td>
 									</tr>
 								))}
