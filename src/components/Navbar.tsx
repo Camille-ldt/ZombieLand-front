@@ -78,19 +78,24 @@ const Navbar = () => {
 
           {/* Section de droite contenant les boutons Réservation et Connexion/Déconnexion */}
           <div className="flex items-center gap-3">
-            <RedLink to="/" textSize="text-sm">
+            {/* Bouton Réservation */}
+            <RedLink to="/" textSize="text-sm" position="min-w-[120px] w-full flex justify-center">
               Réservation
             </RedLink>
-
             {user ? (
               <button
+                type="button"
                 onClick={logout}
-                className="rounded-md bg-red-primary px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
+                className="min-w-[120px] w-full flex justify-center items-center rounded-md bg-red-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-secondary transform transition-transform duration-400 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 Déconnexion
               </button>
             ) : (
-              <RedLink to="/login" textSize="text-sm">
+              <RedLink
+                to="/login"
+                textSize="text-sm"
+                position="min-w-[120px] w-full flex justify-center"
+              >
                 Connexion
               </RedLink>
             )}

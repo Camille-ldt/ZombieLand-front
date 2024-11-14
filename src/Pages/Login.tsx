@@ -80,7 +80,7 @@ const Login = () => {
                           autoComplete="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
+                          className="block w-full rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
                     </div>
@@ -98,7 +98,7 @@ const Login = () => {
                           autoComplete="current-password"
                           value={password}
                           onChange={(e)=> setPassword(e.target.value)}
-                          className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
+                          className="block w-full rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
                     </div>
@@ -128,7 +128,7 @@ const Login = () => {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex w-full justify-center rounded-md bg-red-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
+                        className="flex w-full justify-center rounded-md bg-red-primary px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
                       >
                        {isLoading ? 'Connexion...' : 'Se connecter'}
                       </button>
