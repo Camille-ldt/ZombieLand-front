@@ -282,7 +282,7 @@ const BackOfficeReservations: React.FC = () => {
           />
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-600 text-white">
+              <thead className="bg-grey text-white">
                 <tr>
                   <th>ID</th>
                   <th>Date de début</th>
