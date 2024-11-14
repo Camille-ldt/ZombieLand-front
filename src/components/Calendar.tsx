@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   format,
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
+  getDay,
   isSameMonth,
   isToday,
-  addDays,
-  getDay,
   isSameDay,
-  isAfter,
-  isWithinInterval,
+  addDays,
 } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
@@ -23,28 +21,30 @@ interface Period {
 }
 
 interface CalendarProps {
-    periods: Period[];
-    onDateSelect: (date: Date) => void;
-    startDate: Date | null;
-    endDate: Date | null;
-  }
+  periods: Period[];
+  onDateSelect: (date: Date) => void;
+  startDate: Date | null;
+  endDate: Date | null;
+}
 
 const periodColors: { [key: string]: string } = {
   'Basse saison': 'bg-green-200',
-  'Moyenne saison': 'bg-yellow-200',
+  'Moyenne saison': 'bg-orange-200',
   'Haute saison': 'bg-red-200',
 };
+
 const selectedRangeColor = 'bg-blue-300'; // Couleur pour la plage de dates sélectionnée
+const selectedDateColor = 'bg-blue-600 text-white'; // Couleur pour les dates de début et fin sélectionnées
+const todayColor = 'bg-purple-500 text-white'; // Couleur pour le jour actuel (violet)
 
 function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
+const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect, startDate, endDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date(2024, 10, 1)); // Novembre 2024
-  const [startDate, setStartDate] = useState<Date | null>(null); // Date de début de séjour
-  const [endDate, setEndDate] = useState<Date | null>(null); // Date de fin de séjour
 
+  // Récupérer la période associée à une date donnée
   const getPeriodForDate = (date: Date): Period | undefined => {
     return periods.find(
       (period) =>
@@ -52,6 +52,7 @@ const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
     );
   };
 
+  // Récupérer les jours du mois en cours
   const getDaysInMonth = (date: Date) => {
     const start = startOfMonth(date);
     const end = endOfMonth(date);
@@ -69,6 +70,7 @@ const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
 
   const days = getDaysInMonth(currentDate);
 
+  // Gérer la navigation entre les mois
   const goToPreviousMonth = () => {
     setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
   };
@@ -77,31 +79,39 @@ const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
     setCurrentDate((prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
   };
 
+  // Gérer la sélection de date
   const handleDateClick = (date: Date) => {
-    if (startDate && isSameDay(startDate, date)) {
-      setStartDate(null);
-      setEndDate(null);
-    } else if (endDate && isSameDay(endDate, date)) {
-      setStartDate(null);
-      setEndDate(null);
-    } else if (!startDate || (startDate && endDate)) {
-      setStartDate(date);
-      setEndDate(null);
-    } else if (startDate && !endDate) {
-      if (isAfter(date, startDate)) {
-        setEndDate(date);
-      } else {
-        setStartDate(date);
-      }
+    if (isSameDay(date, startDate)) {
+      // Si la date de début est sélectionnée, on la désélectionne
+      onDateSelect(null);
+    } else if (isSameDay(date, endDate)) {
+      // Si la date de fin est sélectionnée, on la désélectionne
+      onDateSelect(null);
+    } else {
+      // Sinon, on sélectionne la date de début
+      onDateSelect(date);
     }
   };
 
-  const isWithinRange = (day: Date) => {
-    return startDate && endDate && isWithinInterval(day, { start: startDate, end: endDate });
+  // Vérifier si la date fait partie de la plage sélectionnée
+  const isDateInRange = (date: Date) => {
+    if (!startDate || !endDate) return false;
+    return date >= startDate && date <= endDate;
+  };
+
+  // Afficher le prix de la période sous le jour
+  const getPeriodPrice = (date: Date) => {
+    const period = getPeriodForDate(date);
+    return period ? `${period.price}€` : '';
+  };
+
+  // Vérifier si la date est une des dates sélectionnées (début ou fin)
+  const isStartOrEndDate = (date: Date) => {
+    return isSameDay(date, startDate) || isSameDay(date, endDate);
   };
 
   return (
-    <body className="bg-black w-[100%] h-[100%]">
+    <div className="bg-black w-screen h-600">
       <div className="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
         <div className="md:pr-14">
           <div className="flex items-center">
@@ -137,9 +147,19 @@ const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
           <div className="mt-2 grid grid-cols-7 text-sm">
             {days.map((day) => {
               const period = getPeriodForDate(day);
-              const isSelectedStart = startDate && isSameDay(startDate, day);
-              const isSelectedEnd = endDate && isSameDay(endDate, day);
-              const isInRange = isWithinRange(day);
+              const isInRange = isDateInRange(day);
+              const isSelected = isStartOrEndDate(day);
+              const price = getPeriodPrice(day);
+
+              // Déterminer la couleur de fond en fonction de la saison
+              const periodBackgroundColor = period ? periodColors[period.name] : '';
+
+              // Appliquer la couleur de fond pour les dates sélectionnées et pour la plage
+              const backgroundColor = isSelected
+                ? selectedDateColor
+                : isInRange
+                ? selectedRangeColor
+                : periodBackgroundColor;
 
               return (
                 <div key={day.toString()} className="py-2">
@@ -148,39 +168,47 @@ const Calendar: React.FC<CalendarProps> = ({ periods, onDateSelect }) => {
                     onClick={() => handleDateClick(day)}
                     className={classNames(
                       'mx-auto flex h-8 w-8 items-center justify-center rounded-full',
-                      period ? periodColors[period.name] : '',
-                      isToday(day) ? 'bg-indigo-600 text-white' : '',
-                      isSelectedStart || isSelectedEnd || isInRange ? selectedRangeColor : '',
+                      backgroundColor, // Appliquer la couleur de fond
+                      isToday(day) ? todayColor : '', // Appliquer violet au jour actuel
+                      isToday(day) ? 'text-white' : '', // Texte blanc pour le jour actuel
                       isSameMonth(day, currentDate) ? 'text-gray-900' : 'text-gray-400'
                     )}
                   >
                     <time dateTime={format(day, 'yyyy-MM-dd')}>{format(day, 'd')}</time>
                   </button>
-                  {period && isSameMonth(day, currentDate) && (
-                    <div className="text-xs mt-1 text-center text-white">{period.price}€</div>
-                  )}
+                  {price && <div className="text-xs mt-1 text-center text-white">{price}</div>}
                 </div>
               );
             })}
           </div>
         </div>
-        <section className="mt-12 md:mt-0 md:pl-14">
-          <h2 className="text-base font-semibold text-white">Légende des périodes</h2>
-          <div className="mt-6 space-y-6">
-            {Object.entries(periodColors).map(([name, color]) => (
-              <div key={name} className="flex items-center">
-                <div className={`w-4 h-4 ${color} rounded-full mr-2`}></div>
-                <span className="text-sm text-gray-700 text-white">{name}</span>
-              </div>
-            ))}
-            <div className="flex items-center">
-              <div className={`w-4 h-4 ${selectedRangeColor} rounded-full mr-2`}></div>
-              <span className="text-sm text-gray-700 text-white">Plage de séjour sélectionnée</span>
-            </div>
-          </div>
-        </section>
+
+        {/* Légende à droite */}
+        <div className="md:pl-14 pt-5">
+          <h3 className="text-white font-semibold">Légende</h3>
+          <ul className="text-white text-xs mt-4 space-y-2">
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-red-200 rounded-full mr-2"></div> Haute Saison
+            </li>
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-orange-200 rounded-full mr-2"></div> Moyenne Saison
+            </li>
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-green-200 rounded-full mr-2"></div> Basse Saison
+            </li>
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-blue-300 rounded-full mr-2"></div> Plage de Dates Sélectionnées
+            </li>
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-blue-600 rounded-full mr-2"></div> Date de Début / Date de Fin
+            </li>
+            <li className="flex items-center">
+              <div className="w-4 h-4 bg-purple-500 rounded-full mr-2"></div> Jour Actuel
+            </li>
+          </ul>
+        </div>
       </div>
-    </body>
+    </div>
   );
 };
 
