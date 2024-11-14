@@ -89,12 +89,14 @@ const footer: Footer = {
   
           {/* Social media icons */}
           <div className="mt-5 mb-5 flex justify-center gap-x-10">
-            {footer.social.map((item) => (
-              <a key={item.name} href={item.href} className="transform transition-transform duration-200 hover:scale-150 text-dark">
-                <span className="sr-only">{item.name}</span>
-                <item.icon aria-hidden="true" className="h-9 w-9" />
-              </a>
-            ))}
+          {footer.social.map((item) => (
+  item.icon ? (
+    <a key={item.name} href={item.href} className="transform transition-transform duration-200 hover:scale-150 text-dark">
+      <span className="sr-only">{item.name}</span>
+      <item.icon aria-hidden="true" className="h-9 w-9" />
+    </a>
+  ) : null
+))}
           </div>
   
           {/* Footer navigation links */}
