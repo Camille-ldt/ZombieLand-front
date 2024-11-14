@@ -1,5 +1,9 @@
+// Login.js
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Importer react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import des styles pour react-toastify
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
 
@@ -11,14 +15,25 @@ const Login = () => {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmitLogin = async (e: React.FormEvent) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+
     try {
+      // Attempt to log in
       await login({ email, password });
-      navigate('/');
+
+      // Toast success message
+      toast.success("Connexion réussie ! Vous allez être redirigé.");
+
+      // Redirect after successful login
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
+      // Toast error message
+      toast.error("Échec de la connexion. Vérifiez vos identifiants.");
       setError("Échec de la connexion. Veuillez vérifier vos identifiants.");
       console.error('Erreur de connexion:', error);
     } finally {
