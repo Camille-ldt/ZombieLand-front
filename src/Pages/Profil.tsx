@@ -1,8 +1,9 @@
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
-import { getDataById, createData, updateData } from '../services/api';
-import { useParams } from 'react-router-dom';
+import { getDataById, createData, updateData, deleteData } from '../services/api';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Title } from '../components/Title';
+import PasswordModal from '../components/PasswordModal';
 
 interface UserProps {
     id: number;
@@ -20,6 +21,8 @@ interface UserProps {
 
 const Profil = () => {
 
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen]= useState(false);
   const [user, setUser] = useState<UserProps>({
     id: 0,
     firstname: '',
@@ -83,6 +86,25 @@ const Profil = () => {
     }
   };
 
+  //Fonction pour gérer la suppression du profil
+  const handleDeleteProfile = async () => {
+    console.log("handleDeleteProfile called");
+    const confirmation = window.confirm("Voulez-vous vraiment supprimer votre profil ? Cette action est irréversible.");
+    if (confirmation) {
+      try {
+        if (userId) {
+          await deleteData("/users", userId);
+          console.log("Data deleted, navigating to home...");
+          alert("Votre profil a été supprimé avec succès.");
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la suppression du profil :', error);
+        alert("Une erreur est survenue lors de la tentative de suppression de votre profil. Veuillez réessayer.");
+      }
+    }
+  };
+
   // Fonction générique pour gérer les changements d'input
   const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.target;
@@ -93,6 +115,8 @@ const Profil = () => {
   };
 
   return (
+
+    
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 pt-10 gap-x-8 gap-y-8 m-6">
 
@@ -271,9 +295,35 @@ const Profil = () => {
                 </div>
               </div>
 
-            </div>
+              <div className="sm:col-span-3">
+                <button 
+                  type="button"
+                  className="px-3 py-2 sm:col-span-2 text-sm font-semibold text-white rounded-md shadow-sm bg-red-primary hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-secondary" 
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Modifier le mot de passe
+                </button>
+
+                <PasswordModal
+                    isOpen={isModalOpen}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        //setActivityToEdit(null);
+                    }}
+                    onSubmit='submit'
+                />
+              </div>
+              </div>
           </div>
           <div className="flex items-center justify-end px-4 py-4 border-t gap-x-6 border-gray-900/10 sm:px-8">
+            <button
+              onClick={handleDeleteProfile}
+              type="button"
+              className="px-3 py-2 text-sm font-semibold text-white rounded-md shadow-sm bg-red-primary hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-secondary"
+            >
+              Supprimer le Profil
+            </button>
+          <div className="flex ml-auto gap-x-3">
             <button type="button" className="font-semibold text-gray-900 text-sm/6">
               Cancel
             </button>
@@ -284,9 +334,11 @@ const Profil = () => {
               Enregistrer
             </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
+      
     </div>
+  </div>
   )
 };
 
