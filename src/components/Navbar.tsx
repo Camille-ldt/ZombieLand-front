@@ -79,7 +79,7 @@ const Navbar = () => {
           {/* Section de droite contenant les boutons Réservation et Connexion/Déconnexion */}
           <div className="flex items-center gap-3">
             {/* Bouton Réservation */}
-            <RedLink to="/" textSize="text-sm" position="min-w-[120px] w-full flex justify-center">
+            <RedLink to="/bookings" textSize="text-sm" position="min-w-[120px] w-full flex justify-center">
               Réservation
             </RedLink>
             {user ? (
@@ -122,7 +122,7 @@ const Navbar = () => {
           ))}
 
           {/* Bouton Réservation */}
-          <NavLink to="/">
+          <NavLink to="/bookings">
             <DisclosureButton
               as="div"
               className="block rounded-md px-3 py-2 text-base font-medium text-white hover:text-white"

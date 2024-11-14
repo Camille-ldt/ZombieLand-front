@@ -1,36 +1,36 @@
 import { SVGProps } from "react";
-
-// Interface pour définir la structure d'un élément de footer
-// Interface for defining the structure of a footer item
+// Interface for defining the structure of a footer item (Interface pour définir la structure d'un élément de footer)
 interface FooterItem {
   name: string;
   href: string;
   icon?: (props: SVGProps<SVGSVGElement>) => JSX.Element;
 }
 
-// Interface pour définir la structure principale du footer
-// Interface for defining the main structure of the footer
+// Interface pour définir la structure principale du footer(Interface for defining the main structure of the footer)
+
 interface Footer {
   main: FooterItem[];
   social: FooterItem[];
 }
 
-// Contenu du footer avec les liens de navigation et les liens vers les réseaux sociaux
-// Content of the footer with navigation and social links
+// Content of the footer with navigation and social links (Contenu du footer avec les liens de navigation et les liens vers les réseaux sociaux)
 const footer: Footer = {
     main: [
-      { name: 'Accueil', href: '#' },
-      { name: 'Nos actvités', href: '#' },
-      { name: 'Réservations', href: '#' },
-      { name: 'À propos', href: '/informations/aboutus' },
-      { name: 'Contact', href: '#' },
-      { name: 'Mentions légales', href: '#' },
-      { name: 'CGV', href: '#' },
+      { name: 'Accueil', href: '/' },
+      { name: 'Nos activités', href: '/activities' },
+      { name: 'Réservations', href: '/bookings' },
+      { name: 'À propos', href: '/informations-utiles#aboutus' },
+      { name: 'Plan du site', href: '/informations-utiles#sitemap' },
+      { name: 'Mentions légales', href: '/informations-utiles#legal-notices' },
+      { name: 'CGV', href: '/informations-utiles#cgv' },
+      { name: 'Newsletter', href: '/informations-utiles#newsletter' },
+      { name: 'Glossaire', href: '/informations-utiles#glossary' },
+      { name: 'Support', href: '/informations-utiles#support' },
     ],
     social: [
       {
         name: 'Facebook',
-        href: '#',
+        href: 'https://www.facebook.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>Facebbok</title>
@@ -44,7 +44,7 @@ const footer: Footer = {
       },
       {
         name: 'Instagram',
-        href: '#',
+        href: 'https://www.instagram.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>Instagram</title>
@@ -58,7 +58,7 @@ const footer: Footer = {
       },
       {
         name: 'X',
-        href: '#',
+        href: 'https://x.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>X</title>
