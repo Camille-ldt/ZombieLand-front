@@ -136,7 +136,7 @@ const BackOfficeUser: React.FC = () => {
 			console.log("Données envoyées au serveur:", newUser);
 			const createdUser = await createData("/users", newUser);
 			console.log("Utilisateur créé:", createdUser);
-			setUsers((prevUsers) => [...prevUsers, createdUser]);
+			setUsers([...users, createdUser]);
 			setIsModalOpen(false);
 		} catch (error) {
 			console.error("Erreur lors de la création de l'utilisateur:", error);
