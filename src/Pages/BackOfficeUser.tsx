@@ -41,7 +41,6 @@ const BackOfficeUser: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [userToEdit, setUserToEdit] = useState<User | null>(null);
 	const [roles, setRoles] = useState<Role[]>([]);
-	const [roleToEdit, setRoleToEdit] = useState<Role[] | null>(null);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	// Tableau des utilisateurs à afficher, il est construit à partir
@@ -200,6 +199,7 @@ const BackOfficeUser: React.FC = () => {
 		if (!confirmDelete) return;
 
 		try {
+			setIsLoading(true);
 			for (const userId of selectedUsers) {
 				await deleteData("/users", userId);
 			}
@@ -208,14 +208,11 @@ const BackOfficeUser: React.FC = () => {
 			);
 			setSelectedUsers([]);
 			console.log("Utilisateurs suprimées avec succès");
+			setIsLoading(false);
 		} catch (error) {
 			console.error("Erreur lors de la suppression des utilisateurs:", error);
 		}
 	};
-
-	function fetchData() {
-		throw new Error("Function not implemented.");
-	}
 
 	return (
 		<div className="flex h-screen bg-gray-100">
@@ -331,7 +328,7 @@ const BackOfficeUser: React.FC = () => {
 												type="checkbox"
 												checked={selectedUsers.includes(user.id)}
 												onChange={() => handleSelectionChange(user.id)}
-												className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+												className="w-4 h-4 border-gray-300 rounded text-red-primary focus:ring-red-primary"
 											/>
 										</td>
 									</tr>

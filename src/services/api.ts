@@ -55,7 +55,7 @@ export const updateData = async (endpoint: string, id: number | string, data) =>
 // Fonction DELETE : Supprimer une ressource
 export const deleteData = async (endpoint: string, id: number | string) => {
   try {
-    const response = await api.delete(`${endpoint}/${id}/delete`);
+    const response = await api.delete(`${endpoint}/${id}`);
     return response.data;
   } catch (error) {
     console.error('DELETE error:', error);
