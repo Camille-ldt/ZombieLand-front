@@ -56,8 +56,7 @@ const router = createBrowserRouter([
 					<ProtectedRoute requiredRole={2 || 3}>
 						<Profil />
 					</ProtectedRoute>
-
-						),
+				),
 			},
 			{
 				path: "/informations-utiles",
@@ -98,14 +97,10 @@ const router = createBrowserRouter([
 						<BackOfficeUser />
 					</ProtectedRoute>
 				),
-<<<<<<< HEAD
-=======
-				errorElement: <Error403 />,
->>>>>>> acdc3192bb7951c4eca51c15eefb241bd8007717
+				errorElement: <Error403 />, 
 			},
 		],
 	},
-	// 403 en accés libre pour test
 	{
 		path: "/403",
 		element: <Error403 />,
