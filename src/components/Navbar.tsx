@@ -4,6 +4,8 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RedLink } from './RedLink';
 import { useAuth } from '../Auth/authContext';
 import { useMemo } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface NavigationItem {
   name: string;
@@ -17,6 +19,11 @@ function classNames(...classes: string[]): string {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    toast.success("vous êtes déconnectés, à bientot !");
+  };
 
   const navigation: NavigationItem[] = useMemo(() => {
     const baseNavigation = [
@@ -78,19 +85,24 @@ const Navbar = () => {
 
           {/* Section de droite contenant les boutons Réservation et Connexion/Déconnexion */}
           <div className="flex items-center gap-3">
-            <RedLink to="/" textSize="text-sm">
+            {/* Bouton Réservation */}
+            <RedLink to="/bookings" textSize="text-sm" position="min-w-[120px] w-full flex justify-center">
               Réservation
             </RedLink>
-
             {user ? (
               <button
-                onClick={logout}
-                className="rounded-md bg-red-primary px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
+                type="button"
+                onClick={handleLogout}
+                className="min-w-[120px] w-full flex justify-center items-center rounded-md bg-red-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-secondary transform transition-transform duration-400 hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 Déconnexion
               </button>
             ) : (
-              <RedLink to="/login" textSize="text-sm">
+              <RedLink
+                to="/login"
+                textSize="text-sm"
+                position="min-w-[120px] w-full flex justify-center"
+              >
                 Connexion
               </RedLink>
             )}
@@ -117,7 +129,7 @@ const Navbar = () => {
           ))}
 
           {/* Bouton Réservation */}
-          <NavLink to="/">
+          <NavLink to="/bookings">
             <DisclosureButton
               as="div"
               className="block rounded-md px-3 py-2 text-base font-medium text-white hover:text-white"

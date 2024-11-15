@@ -67,7 +67,7 @@ const HomePage = () => {
                     <p className="text-white max-w-xs sm:max-w-sm md:max-w-md text-lg sm:text-lg md:text-xl font-semibold bg-gray-800/50 rounded-xl p-4 mb-4">
                         Préparez-vous à survivre à l'impensable : entrez dans le monde des zombies, où chaque seconde compte !
                     </p>
-                    <RedLink to="" textSize="text-lg sm:text-xl" position="">
+                    <RedLink to="/bookings" textSize="text-lg sm:text-xl" position="">
                         Réservation
                     </RedLink>
                 </div>

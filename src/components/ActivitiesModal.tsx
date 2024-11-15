@@ -37,7 +37,7 @@ interface ModalProps {
   setActivity: (evt: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ActivitiesModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories, activity, setActivity}) => {
+const ActivitiesModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, categories, activity}) => {
   const [formData, setFormData] = useState<ActivityFormData>({
     title: '',
     description: '',

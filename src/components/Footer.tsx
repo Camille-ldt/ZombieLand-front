@@ -1,36 +1,36 @@
 import { SVGProps } from "react";
-
-// Interface pour définir la structure d'un élément de footer
-// Interface for defining the structure of a footer item
+// Interface for defining the structure of a footer item (Interface pour définir la structure d'un élément de footer)
 interface FooterItem {
   name: string;
   href: string;
   icon?: (props: SVGProps<SVGSVGElement>) => JSX.Element;
 }
 
-// Interface pour définir la structure principale du footer
-// Interface for defining the main structure of the footer
+// Interface pour définir la structure principale du footer(Interface for defining the main structure of the footer)
+
 interface Footer {
   main: FooterItem[];
   social: FooterItem[];
 }
 
-// Contenu du footer avec les liens de navigation et les liens vers les réseaux sociaux
-// Content of the footer with navigation and social links
+// Content of the footer with navigation and social links (Contenu du footer avec les liens de navigation et les liens vers les réseaux sociaux)
 const footer: Footer = {
     main: [
-      { name: 'Accueil', href: '#' },
-      { name: 'Nos actvités', href: '#' },
-      { name: 'Réservations', href: '#' },
-      { name: 'À propos', href: '/informations/aboutus' },
-      { name: 'Contact', href: '#' },
-      { name: 'Mentions légales', href: '#' },
-      { name: 'CGV', href: '#' },
+      { name: 'Accueil', href: '/' },
+      { name: 'Nos activités', href: '/activities' },
+      { name: 'Réservations', href: '/bookings' },
+      { name: 'À propos', href: '/informations-utiles#aboutus' },
+      { name: 'Plan du site', href: '/informations-utiles#sitemap' },
+      { name: 'Mentions légales', href: '/informations-utiles#legal-notices' },
+      { name: 'CGV', href: '/informations-utiles#cgv' },
+      { name: 'Newsletter', href: '/informations-utiles#newsletter' },
+      { name: 'Glossaire', href: '/informations-utiles#glossary' },
+      { name: 'Support', href: '/informations-utiles#support' },
     ],
     social: [
       {
         name: 'Facebook',
-        href: '#',
+        href: 'https://www.facebook.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>Facebbok</title>
@@ -44,7 +44,7 @@ const footer: Footer = {
       },
       {
         name: 'Instagram',
-        href: '#',
+        href: 'https://www.instagram.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>Instagram</title>
@@ -58,7 +58,7 @@ const footer: Footer = {
       },
       {
         name: 'X',
-        href: '#',
+        href: 'https://x.com/',
         icon: (props) => (
           <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
             <title>X</title>
@@ -70,35 +70,44 @@ const footer: Footer = {
   }
   
   const Footer = () => {
-      
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  
     return (
       <footer className="bg-red-primary my-0">
         <div className="mx-auto max-w-7xl overflow-hidden px-6 py-4 sm:py-4 lg:px-8">
           <div className="flex justify-center items-center">
-        <img className="h-20 w-auto" src="src/assets/img/logo.png" alt="Logo" />
-        </div>
+            <img className="h-20 w-auto" src="src/assets/img/logo.png" alt="Logo" />
+          </div>
           {/* Section title */}
           <div className="flex items-center mt-5">
-        
-        <div className="flex-grow border-t border-white" />
-          <p className="mx-4 text-center text-lg text-white uppercase font-semibold">Retrouvez-nous</p>
-        <div className="flex-grow border-t border-white"/>
-        </div>
-
-        {/* Social media icons */}
-          <div className=" mt-5 mb-5 flex justify-center gap-x-10">
-            {footer.social.map((item) => (
-              <a key={item.name} href={item.href} className="transform transition-transform duration-200 hover:scale-150 text-dark">
-                <span className="sr-only">{item.name}</span>
-                <item.icon aria-hidden="true" className="h-9 w-9" />
-              </a>
-            ))}
+            <div className="flex-grow border-t border-white" />
+            <p className="mx-4 text-center text-lg text-white uppercase font-semibold">Retrouvez-nous</p>
+            <div className="flex-grow border-t border-white" />
           </div>
-          
+  
+          {/* Social media icons */}
+          <div className="mt-5 mb-5 flex justify-center gap-x-10">
+          {footer.social.map((item) => (
+  item.icon ? (
+    <a key={item.name} href={item.href} className="transform transition-transform duration-200 hover:scale-150 text-dark">
+      <span className="sr-only">{item.name}</span>
+      <item.icon aria-hidden="true" className="h-9 w-9" />
+    </a>
+  ) : null
+))}
+          </div>
+  
           {/* Footer navigation links */}
           <nav aria-label="Footer" className="footer-link -mb-6 flex max-md:flex-col max-md:items-center flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6 uppercase font-semibold">
             {footer.main.map((item) => (
-              <a key={item.name} href={item.href} className="text-white">
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={scrollToTop} 
+                className="text-white"
+              >
                 {item.name}
               </a>
             ))}
@@ -107,8 +116,8 @@ const footer: Footer = {
           <p className="mb-5 text-center text-sm/6 text-gray-300">Copyright &copy; 2024 ZombieLand - Tous droits réservés.</p>
         </div>
       </footer>
-    )
-  }
+    );
+  };
   
 
 

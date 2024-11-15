@@ -1,5 +1,9 @@
+// Login.js
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Importer react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import des styles pour react-toastify
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
 
@@ -11,14 +15,25 @@ const Login = () => {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmitLogin = async (e: React.FormEvent) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+
     try {
+      // Attempt to log in
       await login({ email, password });
-      navigate('/');
+
+      // Toast success message
+      toast.success("Connexion réussie ! Vous allez être redirigé.");
+
+      // Redirect after successful login
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
+      // Toast error message
+      toast.error("Échec de la connexion. Vérifiez vos identifiants.");
       setError("Échec de la connexion. Veuillez vérifier vos identifiants.");
       console.error('Erreur de connexion:', error);
     } finally {
@@ -65,7 +80,7 @@ const Login = () => {
                           autoComplete="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
+                          className="block w-full rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
                     </div>
@@ -83,7 +98,7 @@ const Login = () => {
                           autoComplete="current-password"
                           value={password}
                           onChange={(e)=> setPassword(e.target.value)}
-                          className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
+                          className="block w-full rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm/6"
                         />
                       </div>
                     </div>
@@ -113,7 +128,7 @@ const Login = () => {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="flex w-full justify-center rounded-md bg-red-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
+                        className="flex w-full justify-center rounded-md bg-red-primary px-3 py-2 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-primary"
                       >
                        {isLoading ? 'Connexion...' : 'Se connecter'}
                       </button>

@@ -1,7 +1,7 @@
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../Auth/authContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../Auth/authContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,8 +19,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole !== undefined && user.role_id !== requiredRole) { 
-    return <p>Accès refusé : vous n'avez pas les autorisations nécessaires.</p>;
+  if (requiredRole !== undefined && user.role_id !== requiredRole) {
+    return <Navigate to="/403" replace />;
   }
 
   return <>{children}</>;
