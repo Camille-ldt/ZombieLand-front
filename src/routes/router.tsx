@@ -98,6 +98,10 @@ const router = createBrowserRouter([
 						<BackOfficeUser />
 					</ProtectedRoute>
 				),
+<<<<<<< HEAD
+=======
+				errorElement: <Error403 />,
+>>>>>>> acdc3192bb7951c4eca51c15eefb241bd8007717
 			},
 		],
 	},
