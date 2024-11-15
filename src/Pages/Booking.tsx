@@ -114,40 +114,33 @@ const UserReservation: React.FC = () => {
       navigate('/login');
       return;
     }
-
+  
     if (!startDate) {
       toast.error("Veuillez sélectionner une date de début.");
       return;
     }
-
-    if (!endDate) {
-      toast.error("Veuillez sélectionner une date de fin.");
-      return;
-    }
-
-    if (endDate && endDate <= startDate) {
-      toast.error("La date de fin doit être postérieure à la date de début.");
-      return;
-    }
-
+  
+    // Utilisez startDate comme endDate si endDate n'est pas défini (cas d'un seul jour sélectionné)
+    const effectiveEndDate = endDate || startDate;
+  
     if (numberOfTickets <= 0) {
       toast.error("Veuillez entrer un nombre de billets supérieur à zéro.");
       return;
     }
-
+  
     try {
       const reservationData = {
         date_start: startDate.toISOString().split('T')[0],
-        date_end: endDate.toISOString().split('T')[0],
+        date_end: effectiveEndDate.toISOString().split('T')[0],
         number_tickets: numberOfTickets,
         user_id: user.id,
         period_id: periods.find(
           (period) =>
             startDate >= new Date(period.date_start) &&
-            endDate <= new Date(period.date_end)
+            effectiveEndDate <= new Date(period.date_end)
         )?.id,
       };
-
+  
       await createData("/bookings", reservationData);
       toast.success("Réservation enregistrée avec succès !");
     } catch (error) {
@@ -155,7 +148,6 @@ const UserReservation: React.FC = () => {
       toast.error("Erreur lors de l'enregistrement de la réservation. Veuillez réessayer plus tard.");
     }
   };
-
   // Gère le cas où aucune période n'est trouvée
   if (isLoading) {
     return (
