@@ -271,6 +271,7 @@ const ActivitiesModal: React.FC<ModalProps> = ({
 			</div>
 		</div>
 	);
+
 };
 
 export default ActivitiesModal;

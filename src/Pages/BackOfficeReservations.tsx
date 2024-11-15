@@ -245,6 +245,7 @@ const BackOfficeReservations: React.FC = () => {
 	};
 	console.log(reservationToEdit);
 
+
 	return (
 		<div className="flex h-screen bg-gray-100">
 			<Aside />
@@ -389,6 +390,8 @@ const BackOfficeReservations: React.FC = () => {
 			</div>
 		</div>
 	);
+  
+
 };
 
 export default BackOfficeReservations;
