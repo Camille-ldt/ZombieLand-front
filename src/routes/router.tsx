@@ -88,7 +88,12 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/adminuser",
-				element: <BackOfficeUser />,
+				element: (
+					<ProtectedRoute requiredRole={3}>
+						<BackOfficeUser />
+					</ProtectedRoute>
+				),
+				errorElement: <Error403 />,
 			},
 		],
 	},
