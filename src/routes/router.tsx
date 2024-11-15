@@ -57,10 +57,6 @@ const router = createBrowserRouter([
 				path: "/admindashboard",
 				element: <BackOfficeDashboard />,
 			},
-			{
-				path: "/adminuser",
-				element: <BackOfficeUser />,
-			},
 		],
 	},
 ]);
