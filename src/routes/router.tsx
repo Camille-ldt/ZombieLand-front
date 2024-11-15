@@ -52,7 +52,12 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/user/:userId",
-				element: <Profil />,
+				element: (
+					<ProtectedRoute requiredRole={2 || 3}>
+						<Profil />
+					</ProtectedRoute>
+
+						),
 			},
 			{
 				path: "/informations-utiles",
@@ -88,7 +93,11 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "/adminuser",
-				element: <BackOfficeUser />,
+				element: (
+					<ProtectedRoute requiredRole={3}>
+						<BackOfficeUser />
+					</ProtectedRoute>
+				),
 			},
 		],
 	},

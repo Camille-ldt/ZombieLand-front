@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { RedLink } from './RedLink';
@@ -33,7 +33,7 @@ const Navbar = () => {
     ];
 
     if (user?.role_id === 2) {
-      baseNavigation.push({ name: 'Mon Profil', to: '/profile', current: false });
+      baseNavigation.push({ name: 'Mon Profil', to: `/user/${user.id}`, current: false });
     }
     
     if (user?.role_id === 3) {
@@ -61,9 +61,9 @@ const Navbar = () => {
             </div>
 
             {/* Logo du site */}
-            <div className="flex flex-shrink-0 items-center">
+            <Link to="/" className="flex flex-shrink-0 items-center">
               <img alt="Logo" src="src/assets/img/logo.png" className="h-11 w-auto " />
-            </div>
+            </Link>
 
             {/* Menu navigation */}
             <div className="navigation hidden md:ml-6 md:flex md:items-center md:space-x-4">
