@@ -66,6 +66,17 @@ export const updateData = async (endpoint: string, id: number | string, data: an
   }
 };
 
+// Fonction PUT : Mettre à jour une ressource
+export const updateDataPassword = async (endpoint: string, id: number | string, data: any) => { 
+  try {
+    const response = await api.patch(`${endpoint}/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('PUT error:', error);
+    throw error;
+  }
+};
+
 // Fonction DELETE : Supprimer une ressource
 export const deleteData = async (endpoint: string, id: number | string) => {
   try {

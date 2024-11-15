@@ -286,7 +286,6 @@ const BackOfficeActivities: React.FC = () => {
                         }}
                         categories={categories}
                         activity={activityToEdit}
-                        setActivity={setActivityToEdit}
                     />
 
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
