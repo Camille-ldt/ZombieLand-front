@@ -1,11 +1,14 @@
-//Import des éléments nécessaires
+// Import des éléments nécessaires
 import { useEffect, useState } from "react";
 import Calendar from "../components/Calendar";
 import BookingForm from "../components/BookingForm";
-import { getDatas } from "../services/api";
+import { getDatas, createData } from "../services/api"; 
 import { Title } from "../components/Title";
+import { useAuth } from "../Auth/authContext"; 
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-//Interface pour définir la période
+// Interface pour définir la période
 interface Period {
   id: number;
   name: string;
@@ -14,49 +17,53 @@ interface Period {
   price: number;
 }
 
-//déclare un composant fonctionnel React nommé UserReservation.
+// Déclare un composant fonctionnel React nommé UserReservation.
 const UserReservation: React.FC = () => {
-  //Crée un état periods pour stocker un tableau de périodes.
+  const { user } = useAuth(); // Appel direct au hook personnalisé
+  const navigate = useNavigate();
+
+  // Crée un état periods pour stocker un tableau de périodes.
   const [periods, setPeriods] = useState<Period[]>([]);
-  //Crée un état startDate pour la date de début de la réservation.
   const [startDate, setStartDate] = useState<Date | null>(null);
-  //Similaire à startDate, mais pour la date de fin de la réservation.
   const [endDate, setEndDate] = useState<Date | null>(null);
-  //Crée un état numberOfTickets pour le nombre de billets.
   const [numberOfTickets, setNumberOfTickets] = useState<number>(1);
-  //Crée un état totalAmount pour le montant total de la réservation.
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    //Fetch à l'API pour récupérer toutes les périodes de la base de donnée
+    // Fetch à l'API pour récupérer toutes les périodes de la base de données
     const fetchPeriods = async () => {
+      setIsLoading(true);
       try {
         const periodsData = await getDatas("/periods");
         setPeriods(periodsData);
       } catch (error) {
         console.error("Erreur lors de la récupération des périodes", error);
+        toast.error("Erreur lors de la récupération des périodes. Veuillez réessayer plus tard.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchPeriods();
   }, []);
 
-  //gérer la sélection des dates dans le composant UserReservation.
+  // Gérer la sélection des dates dans le composant UserReservation.
+  //const handleDateSelect = (start: Date | null, end: Date | null) => {
+    //setStartDate(start);
+    //setEndDate(end || start);
+  //};
   const handleDateSelect = (start: Date | null, end: Date | null) => {
-    //Mise à jour de la date de début
     setStartDate(start);
-    //Mise à jour de la date de fin
     setEndDate(end);
   };
+      //if (!endDate) {
+       // setEndDate(startDate);
+      //}
 
-  //calculer le montant total d'une réservation en fonction des dates sélectionnées, du nombre de billets, et des périodes tarifaires
-  const calculateTotalAmount = () => {
-    //Cas où une plage de dates est sélectionnée 
+  // Calculer le montant total d'une réservation
+  useEffect(() => {
     if (startDate && endDate) {
-      //Elle cherche une période qui englobe entièrement la plage de dates sélectionnée.
-      //Si une telle période est trouvée : Elle calcule le nombre de jours entre startDate et endDate (inclus).
-      //Elle multiplie ce nombre de jours par le prix de la période et le nombre de billets.
-      //Elle met à jour totalAmount avec ce résultat.
       const period = periods.find(
         (period) =>
           startDate >= new Date(period.date_start) &&
@@ -70,12 +77,9 @@ const UserReservation: React.FC = () => {
           ) + 1;
         const total = numberOfDays * period.price * numberOfTickets;
         setTotalAmount(total);
+      } else {
+        setTotalAmount(0); 
       }
-      //Cas où seule une date de début est sélectionnée :
-      //Elle cherche la période correspondant à la date de début.
-      //Si une période est trouvée :
-      //Elle calcule le total en multipliant le prix de la période par le nombre de billets.
-      //Elle met à jour totalAmount avec ce résultat.
     } else if (startDate) {
       const period = periods.find(
         (period) =>
@@ -85,36 +89,88 @@ const UserReservation: React.FC = () => {
 
       if (period) {
         setTotalAmount(period.price * numberOfTickets);
+      } else {
+        setTotalAmount(0); 
       }
-      //Si aucune date n'est sélectionnée : Elle met totalAmount à 0.
     } else {
       setTotalAmount(0);
     }
-  };
+  }, [startDate, endDate, numberOfTickets, periods]);
 
-  //recalculer le montant total de la réservation chaque fois que certaines dépendances changent. 
-  useEffect(() => {
-    calculateTotalAmount();
-  }, [startDate, endDate, numberOfTickets]);
-
-  //Permet de gérer les changements de nombres de billets
+  // Permet de gérer les changements de nombres de billets
   const handleTicketChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNumberOfTickets(Number(e.target.value));
+    const value = Number(e.target.value);
+    if (value > 0) {
+      setNumberOfTickets(value);
+    } else {
+      toast.error("Le nombre de billets doit être supérieur à zéro.");
+    }
   };
 
-  //Gère la soumission de la réservation
-  const handleSubmit = () => {
-    console.log("Réservation soumise", {
-      startDate,
-      endDate,
-      numberOfTickets,
-      totalAmount,
-    });
+  // Gère la soumission de la réservation
+  const handleSubmit = async () => {
+    if (!user) {
+      toast.warning("Veuillez vous connecter pour réserver");
+      navigate('/login');
+      return;
+    }
+
+    if (!startDate) {
+      toast.error("Veuillez sélectionner une date de début.");
+      return;
+    }
+
+    if (!endDate) {
+      toast.error("Veuillez sélectionner une date de fin.");
+      return;
+    }
+
+    if (endDate && endDate <= startDate) {
+      toast.error("La date de fin doit être postérieure à la date de début.");
+      return;
+    }
+
+    if (numberOfTickets <= 0) {
+      toast.error("Veuillez entrer un nombre de billets supérieur à zéro.");
+      return;
+    }
+
+    try {
+      const reservationData = {
+        date_start: startDate.toISOString().split('T')[0],
+        date_end: endDate.toISOString().split('T')[0],
+        number_tickets: numberOfTickets,
+        user_id: user.id,
+        period_id: periods.find(
+          (period) =>
+            startDate >= new Date(period.date_start) &&
+            endDate <= new Date(period.date_end)
+        )?.id,
+      };
+
+      await createData("/bookings", reservationData);
+      toast.success("Réservation enregistrée avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement de la réservation", error);
+      toast.error("Erreur lors de l'enregistrement de la réservation. Veuillez réessayer plus tard.");
+    }
   };
 
-  //Gère le cas ou aucune période n'est trouvée
+  // Gère le cas où aucune période n'est trouvée
+  if (isLoading) {
+    return (
+    <div>
+      <p>Chargement en cours...</p>
+    </div>
+  );
+  }
+
   if (!periods || periods.length === 0) {
-    return <div>Chargement des périodes...</div>;
+    return (
+    <div>
+      <p>Aucune période disponible pour la réservation.</p>
+    </div>
+  );
   }
 
   return (
