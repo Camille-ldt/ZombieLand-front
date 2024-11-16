@@ -9,7 +9,6 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const validateEmail = (email: string): boolean => {
-  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -32,7 +31,7 @@ const ForgotPassword = () => {
       toast.success('Un lien de réinitialisation a été envoyé à votre adresse e-mail.');
       setTimeout(() => navigate('/login'), 3000);
     } catch (error) {
-      console.error('Erreur lors de l\'envoi de l\'e-mail :', error);
+      console.error("Erreur lors de l'envoi de l'e-mail :", error);
       toast.error('Une erreur est survenue. Veuillez réessayer.');
     }
   };
@@ -44,10 +43,12 @@ const ForgotPassword = () => {
           <div>
             <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900">Mot de passe oublié</h2>
             <p className="mt-2 text-sm/6 text-gray-500">
-              Retourner à la{' '}
+              Entrez l'adresse email associé à votre compte pour modifier votre mot de passe.{' '}
+              Retournez à la{' '}
               <a href="/login" className="font-semibold text-red-primary hover:text-red-secondary">
                 connexion
               </a>
+              .
             </p>
           </div>
 
