@@ -11,12 +11,35 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false,
+  });
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { register, login } = useAuth();
 
+  const validatePassword = (value) => {
+    setPasswordCriteria({
+      length: value.length >= 6,
+      uppercase: /[A-Z]/.test(value),
+      lowercase: /[a-z]/.test(value),
+      number: /[0-9]/.test(value),
+      specialChar: /[@$!%*?&]/.test(value),
+    });
+    setPassword(value);
+  };
+
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
+
+    if (Object.values(passwordCriteria).some((criterion) => !criterion)) {
+      toast.error('Votre mot de passe ne respecte pas les critères.');
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast.error('Les mots de passe ne correspondent pas !');
@@ -25,18 +48,14 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-
       await register({ firstname, lastname, email, password });
-
       toast.success("Inscription réussie ! Redirection vers la page d'accueil...");
-
       await login({ email, password });
 
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (error) {
-
       toast.error("Échec de l'inscription. Veuillez réessayer.");
       console.error("Erreur d'inscription:", error);
     } finally {
@@ -112,9 +131,26 @@ const Register = () => {
                     required
                     autoComplete="current-password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => validatePassword(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-primary sm:text-sm"
                   />
+                  <ul className="mt-2 text-sm space-y-1">
+                    <li className={passwordCriteria.length ? 'text-green-500' : 'text-red-500'}>
+                      {passwordCriteria.length ? '✔️' : '❌'} Au moins 6 caractères
+                    </li>
+                    <li className={passwordCriteria.uppercase ? 'text-green-500' : 'text-red-500'}>
+                      {passwordCriteria.uppercase ? '✔️' : '❌'} Une lettre majuscule
+                    </li>
+                    <li className={passwordCriteria.lowercase ? 'text-green-500' : 'text-red-500'}>
+                      {passwordCriteria.lowercase ? '✔️' : '❌'} Une lettre minuscule
+                    </li>
+                    <li className={passwordCriteria.number ? 'text-green-500' : 'text-red-500'}>
+                      {passwordCriteria.number ? '✔️' : '❌'} Un chiffre
+                    </li>
+                    <li className={passwordCriteria.specialChar ? 'text-green-500' : 'text-red-500'}>
+                      {passwordCriteria.specialChar ? '✔️' : '❌'} Un caractère spécial (@$!%*?&)
+                    </li>
+                  </ul>
                 </div>
 
                 <div>
