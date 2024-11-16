@@ -18,7 +18,6 @@ const Register = () => {
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
 
-    // Vérification des mots de passe
     if (password !== confirmPassword) {
       toast.error('Les mots de passe ne correspondent pas !');
       return;
@@ -26,21 +25,18 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      // Appel à la fonction d'enregistrement
+
       await register({ firstname, lastname, email, password });
 
-      // Afficher un toast pour signaler le succès
       toast.success("Inscription réussie ! Redirection vers la page d'accueil...");
 
-      // Connexion automatique après inscription
       await login({ email, password });
 
-      // Redirection vers la page d'accueil
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (error) {
-      // Gestion des erreurs avec un toast
+
       toast.error("Échec de l'inscription. Veuillez réessayer.");
       console.error("Erreur d'inscription:", error);
     } finally {

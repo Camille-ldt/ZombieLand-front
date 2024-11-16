@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Importer react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import des styles pour react-toastify
+import { toast } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; 
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
 
@@ -15,26 +15,37 @@ const Login = () => {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
+    if (!validateEmail(email)) {
+      toast.error('Veuillez entrer une adresse e-mail valide.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Attempt to log in
+      // Tentative de connexion
       await login({ email, password });
 
-      // Toast success message
-      toast.success("Connexion réussie ! Vous allez être redirigé.");
+      // Toast de succès
+      toast.success('Connexion réussie ! Vous allez être redirigé.');
 
-      // Redirect after successful login
+      // Redirection après connexion réussie
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (error) {
-      // Toast error message
-      toast.error("Échec de la connexion. Vérifiez vos identifiants.");
-      setError("Échec de la connexion. Veuillez vérifier vos identifiants.");
+      // Toast d'erreur
+      toast.error('Échec de la connexion. Vérifiez vos identifiants.');
+      setError('Échec de la connexion. Veuillez vérifier vos identifiants.');
       console.error('Erreur de connexion:', error);
     } finally {
       setIsLoading(false);
@@ -117,7 +128,7 @@ const Login = () => {
                       </div>
   
                       <div className="text-sm/6">
-                        <a href="/" className="font-semibold text-red-primary hover:text-red-secondary">
+                        <a href="/forgot-password" className="font-semibold text-red-primary hover:text-red-secondary">
                           Mot de passe oublié ?
                         </a>
                       </div>

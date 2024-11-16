@@ -15,6 +15,7 @@ import BackOfficeReservations from "../Pages/BackOfficeReservations";
 import ProtectedRoute from "../components/ProtectedRoute";
 import UserReservation from "../Pages/Booking";
 import BackOfficeUser from "../Pages/BackOfficeUser";
+import ForgotPassword from '../Pages/ForgotPassword';
 
 const router = createBrowserRouter([
 	{
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
 			{
 				path: "/register",
 				element: <Register />,
+			},
+			{ 
+				path:"/forgot-password",
+				element: <ForgotPassword />,
 			},
 			{
 				path: "/activity",
