@@ -1,14 +1,9 @@
 import Image404 from "../assets/img/Zombie404.webp";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import { RedLink } from "../components/RedLink";
 
 const Error404 = () => {
 	return (
 		<>
-			<header>
-				<Navbar />
-			</header>
 			<main className="bg-cover bg-no-repeat object-center h-4/5 relative">
 				<img src={Image404} alt="Zombies en perditions" className="w-full" />
 				<RedLink
@@ -19,9 +14,6 @@ const Error404 = () => {
 					Revenir à l'accueil
 				</RedLink>
 			</main>
-			<footer>
-				<Footer />
-			</footer>
 		</>
 	);
 };
