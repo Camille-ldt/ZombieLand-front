@@ -114,7 +114,7 @@ const BackOfficeActivities: React.FC = () => {
 			// Si "all" est sélectionné, toutes les catégories sont incluses
 			// Sinon, vérifie si la catégorie de l'activité correspond à la catégorie sélectionnée
 			(selectedCategory === "all" ||
-				activity.category_id.toString() === selectedCategory) &&
+				activity.category.toString() === selectedCategory) &&
 			// Condition 2 : Filtre par terme de recherche
 			// Vérifie si le titre de l'activité (en minuscules) inclut le terme de recherche (en minuscules)
 			activity.title

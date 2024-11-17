@@ -20,7 +20,6 @@ const Activity = () => {
           buttonText="Retour"
           to="/" // Le bouton "Retour" redirige vers la page d'accueil
           category={activity.category} // Affichage de la catégorie passée dans l'état
-          category_id={activity.category_id} // On inclut également category_id si nécessaire
         />
       </div>
     </div>
