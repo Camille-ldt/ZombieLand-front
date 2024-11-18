@@ -4,7 +4,7 @@ const Glossary = () => {
 			<div className="pb-6">
 				<h2 className="font-bold text-2xl">Glossaire ZombieLand</h2>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Attraction :</h3>
 				<p>
 					Une activité ou installation dans le parc conçue pour offrir une
@@ -12,7 +12,7 @@ const Glossary = () => {
 					hanté ou un manège.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Billetterie :</h3>
 				<p>
 					Espace en ligne ou physique où les visiteurs peuvent acheter leurs
@@ -20,7 +20,7 @@ const Glossary = () => {
 					différentes attractions et événements spéciaux.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Code promo :</h3>
 				<p>
 					Un code de réduction utilisable lors de l'achat de billets en ligne,
@@ -28,7 +28,7 @@ const Glossary = () => {
 					ZombieLand.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Effroi :</h3>
 				<p>
 					Sentiment de peur intense, souvent utilisé pour décrire les sensations
@@ -36,7 +36,7 @@ const Glossary = () => {
 					<strong> ZombieLand</strong>.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Événement Spécial :</h3>
 				<p>
 					Soirée ou activité thématique organisée par
@@ -45,7 +45,7 @@ const Glossary = () => {
 					et terrifiantes.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Expérience Immersive :</h3>
 				<p>
 					Une activité où les visiteurs sont plongés dans un univers interactif
@@ -53,7 +53,7 @@ const Glossary = () => {
 					des décors réalistes.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Frissons :</h3>
 				<p>
 					Réactions physiques de peur ou de froid ressenties par les visiteurs
@@ -61,7 +61,7 @@ const Glossary = () => {
 					<strong> ZombieLand</strong>.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Invasion Zombie :</h3>
 				<p>
 					Thème central de <strong> ZombieLand</strong>, représentant une
@@ -69,7 +69,7 @@ const Glossary = () => {
 					pour offrir des expériences captivantes aux visiteurs.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">La Nuit des Zombies :</h3>
 				<p>
 					Un événement spécial organisé par <strong> ZombieLand</strong> durant
@@ -78,7 +78,7 @@ const Glossary = () => {
 					courageux.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Parcours Hanté :</h3>
 				<p>
 					Un circuit rempli de décors et d’effets spéciaux qui simule une
@@ -86,7 +86,7 @@ const Glossary = () => {
 					effrayantes.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Sécurité :</h3>
 				<p>
 					Ensemble des mesures prises par <strong> ZombieLand</strong> pour
@@ -94,7 +94,7 @@ const Glossary = () => {
 					attractions et événements, même en cas de frayeur extrême.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Zombie :</h3>
 				<p>
 					Une créature fictive, souvent représentée comme un mort-vivant, qui
@@ -103,14 +103,14 @@ const Glossary = () => {
 					attractions, événements et décors du parc.
 				</p>
 			</div>
-			<div className="pb-6">
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Zone de Peur :</h3>
 				<p>
 					Espace spécifique du parc où les visiteurs peuvent s'attendre à des
 					rencontres effrayantes avec des zombies et à des sensations fortes.
 				</p>
 			</div>
-			<div>
+			<div className="pb-6 text-left">
 				<h3 className="font-bold text-xl">Zone de Répit :</h3>
 				<p>
 					Espaces plus calmes et sécurisés dans le parc où les visiteurs peuvent

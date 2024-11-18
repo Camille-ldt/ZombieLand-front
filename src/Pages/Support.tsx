@@ -2,7 +2,9 @@ const Support = () => {
 	return (
 		<div className="lg:mx-52 px-10 py-4 mt-11 text-lg rounded-md text-white bg-grey/70 md:text-left text-center">
 			<div className="pb-6">
-				<h2 className="font-bold text-2xl text-center">Support ZombieLand</h2>
+				<h2 className="font-bold text-2xl text-center pb-2">
+					Support ZombieLand
+				</h2>
 				<p>
 					Bienvenue dans la section Support de <strong> ZombieLand</strong> !
 					Nous sommes là pour vous aider et répondre à toutes vos questions
