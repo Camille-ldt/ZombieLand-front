@@ -96,27 +96,27 @@ const Activities = () => {
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-center text-white mb-8">Toutes les activités</h1>
 
-        <div className="mb-4 flex space-x-4">
-          <input
-            type="text"
-            placeholder="Rechercher une activité..."
-            className="px-4 py-2 border rounded-md flex-grow"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-          <select
-            className="px-4 py-2 border rounded-md w-1/5"
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-          >
-            <option value="all">Toutes les catégories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id.toString()}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <div className="mb-4 flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+        <input
+          type="text"
+          placeholder="Rechercher une activité..."
+          className="px-4 py-2 border rounded-md w-full"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <select
+          className="px-4 py-2 border rounded-md w-full lg:w-1/5"
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          <option value="all">Toutes les catégories</option>
+          {categories.map((category) => (
+          <option key={category.id} value={category.id.toString()}>
+            {category.name}
+          </option>
+        ))}
+        </select>
+      </div>
 
         {/* Affichage d'un message si aucune activité ne correspond aux critères de recherche */}
         {filteredActivities.length === 0 && searchTerm.length > 1 ? (
