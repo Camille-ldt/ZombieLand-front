@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getDatas, createData, deleteData, updateData } from "../services/api";
 import Aside from "../components/Aside";
 import ReservationModal from "../components/ReservationModal";
+import { toast } from 'react-toastify';
+
 
 interface Reservation {
 	id: number;
@@ -24,7 +26,7 @@ interface Period {
 }
 
 interface ReservationFormData {
-	id?: number; // optionnel pour la création
+	id?: number; // optional for creation
 	date_start: string; // format "yyyy-MM-dd"
 	date_end: string; // format "yyyy-MM-dd"
 	number_tickets: number;
@@ -33,96 +35,96 @@ interface ReservationFormData {
 }
 
 const BackOfficeReservations: React.FC = () => {
-	// Stocke la liste des réservations
+	// Stores the list of reservations
 	const [reservations, setReservations] = useState<Reservation[]>([]);
-	// Stocke la liste des utilisateurs
+	// Stores the list of users
 	const [users, setUsers] = useState<User[]>([]);
-	// Stocke la liste des périodes
+	// Stores the list of periods
 	const [periods, setPeriods] = useState<Period[]>([]);
-	// Garde une trace des IDs des réservations sélectionnées
+	// Keeps track of the IDs of selected reservations
 	const [selectedReservations, setSelectedReservations] = useState<number[]>(
 		[],
 	);
-	// Stocke le terme de recherche actuel
+	// Stores the current search term
 	const [searchTerm, setSearchTerm] = useState("");
-	// Stocke la période sélectionnée pour le filtrage
+	// Stores the selected period for filtering
 	const [selectedPeriod, setSelectedPeriod] = useState("all");
-	// Contrôle l'ouverture/fermeture du modal de réservation
+	// Controls the open/close state of the reservation modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	// Stocke la réservation en cours d'édition (null si création d'une nouvelle réservation)
+	// Stores the reservation being edited (null if creating a new reservation)
 	const [reservationToEdit, setReservationToEdit] =
 		useState<Reservation | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
-			// Définition d'une fonction asynchrone pour récupérer les données
+			// Defines an asynchronous function to fetch data
 			try {
-				// Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
+				// Uses Promise.all to make multiple requests in parallel
 				const [reservationsData, usersData, periodsData] = await Promise.all([
-					getDatas("/bookings"), // Récupération des réservations
-					getDatas("/users"), // Récupération des utilisateurs
-					getDatas("/periods"), // Récupération des périodes
+					getDatas("/bookings"), // Fetch reservations
+					getDatas("/users"), // Fetch users
+					getDatas("/periods"), // Fetch periods
 				]);
-				// Mise à jour des états avec les données récupérées
+				// Updates the states with the fetched data
 				setReservations(reservationsData);
 				setUsers(usersData);
 				setPeriods(periodsData);
 
-				// Logs pour le débogage
-				console.log("Utilisateurs récupérés:", usersData);
-				console.log("Réservations récupérées:", reservationsData);
+				// Logs for debugging
+				console.log("Users fetched:", usersData);
+				console.log("Reservations fetched:", reservationsData);
 			} catch (error) {
-				// Gestion des erreurs en cas d'échec de la récupération des données
-				console.error("Erreur lors de la récupération des données", error);
+				// Error handling in case of data fetch failure
+				console.error("Error fetching data", error);
 			}
 		};
-		// Appel de la fonction fetchData
+		// Calls the fetchData function
 		fetchData();
-		// Le tableau vide [] comme second argument signifie que cet effet
-		// ne s'exécutera qu'une seule fois, au montage du composant
+		// The empty array [] as the second argument means this effect
+		// will only run once, when the component is mounted
 	}, []);
 
 	const handleSelectionChange = (id: number) => {
-		// Cette fonction gère la sélection ou la désélection d'une réservation
+		// This function handles the selection or deselection of a reservation
 		setSelectedReservations((prev) =>
-			// Si l'ID est déjà dans la liste des réservations sélectionnées
+			// If the ID is already in the list of selected reservations
 			prev.includes(id)
-				? // Alors on le retire de la liste (désélection)
+				? // Then remove it from the list (deselect)
 					prev.filter((reservationId) => reservationId !== id)
-				: // Sinon, on l'ajoute à la liste (sélection)
+				: // Otherwise, add it to the list (select)
 					[...prev, id],
 		);
 	};
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		// Cette fonction gère le changement du terme de recherche
+		// This function handles changes to the search term
 		setSearchTerm(e.target.value);
 	};
 
 	const filteredReservations = reservations.filter((reservation) => {
-		// Chercher l'utilisateur et la période associés à la réservation
+		// Find the user and period associated with the reservation
 		const user = users.find((user) => user.id === reservation.user_id);
 		const period = periods.find(
 			(period) => period.id === reservation.period_id,
 		);
 
-		// Appliquer les filtres de période
+		// Apply period filters
 		const matchesPeriodFilter =
 			selectedPeriod === "all" ||
 			reservation.period_id.toString() === selectedPeriod;
 
-		// Vérification de la recherche dans le nom de l'utilisateur et le nom de la période
+		// Checks if the search term matches the user's name or the period's name
 		const matchesSearchFilter =
 			searchTerm === "" ||
-			// Recherche dans le prénom et nom de l'utilisateur
+			// Search in user's first and last name
 			(user &&
 				(user.firstname.toLowerCase().includes(searchTerm.toLowerCase()) ||
 					user.lastname.toLowerCase().includes(searchTerm.toLowerCase()))) ||
-			// Recherche dans le nom de la période
+			// Search in the period's name
 			period?.name
 				?.toLowerCase()
 				.includes(searchTerm.toLowerCase()) ||
-			// Recherche dans les dates
+			// Search in dates
 			reservation.date_start.includes(searchTerm) ||
 			reservation.date_end.includes(searchTerm);
 
@@ -132,45 +134,47 @@ const BackOfficeReservations: React.FC = () => {
 	const handleCreateReservation = async (
 		newReservation: ReservationFormData,
 	) => {
-		// Cette fonction gère la création d'une nouvelle réservation
+		// This function handles the creation of a new reservation
 		try {
-			// Affiche les données de la nouvelle réservation dans la console (pour le débogage)
-			console.log("Données envoyées au serveur :", newReservation);
-			// Appel à l'API pour créer la nouvelle réservation
+			// Logs the new reservation data to the console (for debugging)
+			console.log("Data sent to the server:", newReservation);
+			// API call to create the new reservation
 			const createdReservation = await createData("/bookings", newReservation);
-			// Affiche la réservation créée dans la console (pour le débogage)
-			console.log("Réservation créée :", createdReservation);
-			// Met à jour l'état local des réservations en ajoutant la nouvelle réservation
+			// Logs the created reservation to the console (for debugging)
+			console.log("Reservation created:", createdReservation);
+			// Updates the local reservations state by adding the new reservation
 			setReservations((prevReservations) => [
 				...prevReservations,
 				createdReservation,
 			]);
-			// Ferme le modal après la création réussie
+			// Closes the modal after successful creation
 			setIsModalOpen(false);
+			toast.success("Réservation créée avec succès !");
 		} catch (error) {
-			// Gère les erreurs qui peuvent survenir lors de la création
-			console.error("Erreur lors de la création de la réservation:", error);
+			// Handles errors that might occur during creation
+			console.error("Error creating reservation:", error);
+			toast.error("Erreur lors de la création de la réservation. Veuillez réessayer plus tard.");
 		}
 	};
 
 	const handleEditClick = () => {
-		// Cette fonction gère le clic sur le bouton "Modifier"
-		// Vérifie si une seule réservation est sélectionnée
+		// This function handles the click on the "Edit" button
+		// Checks if only one reservation is selected
 		if (selectedReservations.length === 1) {
-			// Recherche la réservation sélectionnée dans la liste des réservations
+			// Finds the selected reservation in the list of reservations
 			const reservationToEdit = reservations.find(
 				(reservation) => reservation.id === selectedReservations[0],
 			);
-			// Affiche la réservation sélectionnée dans la console (pour le débogage)
+			// Logs the selected reservation to the console (for debugging)
 			console.log(
-				"Reservation sélectionnée pour l'édition:",
+				"Reservation selected for editing:",
 				reservationToEdit,
 			);
-			// Si une réservation correspondante est trouvée
+			// If a corresponding reservation is found
 			if (reservationToEdit) {
-				// Met à jour l'état avec la réservation à éditer
+				// Updates the state with the reservation to edit
 				setReservationToEdit(reservationToEdit);
-				// Ouvre le modal d'édition
+				// Opens the edit modal
 				setIsModalOpen(true);
 			}
 		}
@@ -179,76 +183,96 @@ const BackOfficeReservations: React.FC = () => {
 	const handleUpdateReservation = async (
 		updatedReservation: ReservationFormData,
 	) => {
-		// Cette fonction gère la mise à jour d'une réservation existante
+		// This function handles the update of an existing reservation
 		try {
-			// Vérifie si la réservation à mettre à jour a un ID
+			// Checks if the reservation to update has an ID
 			if (updatedReservation.id) {
-				// Appel à l'API pour mettre à jour la réservation
+				// API call to update the reservation
 				const updatedReservationFromServer = await updateData(
 					"/bookings",
 					updatedReservation.id,
 					updatedReservation,
 				);
-				// Met à jour l'état local des réservations
+				// Updates the local reservations state
 				setReservations((prevReservations) =>
 					prevReservations.map((reservation) =>
-						// Si l'ID correspond, remplace l'ancienne réservation par la nouvelle
+						// If the ID matches, replace the old reservation with the new one
 						reservation.id === updatedReservationFromServer.id
 							? updatedReservationFromServer
 							: reservation,
 					),
 				);
-				// Ferme le modal après la mise à jour réussie
+				// Closes the modal after successful update
 				setIsModalOpen(false);
-				// Réinitialise la réservation en cours d'édition
+				toast.success("Réservation modifiée avec succès !");
+				// Resets the reservation being edited
 				setReservationToEdit(null);
-				// Efface la sélection de réservations
+				// Clears the list of selected reservations
 				setSelectedReservations([]);
 			}
 		} catch (error) {
-			// Gère les erreurs qui peuvent survenir lors de la mise à jour
-			console.error("Erreur lors de la mise à jour de la réservation:", error);
+			// Handles errors that might occur during the update
+			console.error("Error updating reservation:", error);
+			toast.error("Erreur lors de la modification de la réservation. Veuillez réessayer plus tard.");
 		}
 	};
 
 	const handleDeleteSelectedReservations = async () => {
-		// Vérifie si des réservations sont sélectionnées pour la suppression
+		// Checks if any reservations are selected for deletion
 		if (selectedReservations.length === 0) {
-			alert("Veuillez sélectionner au moins une réservation à supprimer");
+			alert("Please select at least one reservation to delete");
 			return;
 		}
-		// Demande une confirmation à l'utilisateur avant de procéder à la suppression
+		// Asks for user confirmation before proceeding with the deletion
 		if (
 			window.confirm(
-				`Êtes-vous sûr de vouloir supprimer ${selectedReservations.length} réservation(s)?`,
+				`Are you sure you want to delete ${selectedReservations.length} reservation(s)?`,
 			)
 		) {
 			try {
-				// Supprime chaque réservation sélectionnée
+				// Deletes each selected reservation
 				for (const reservationId of selectedReservations) {
 					await deleteData("/bookings", reservationId);
 				}
-				// Met à jour l'état local en filtrant les réservations supprimées
+				// Updates the local state by filtering out deleted reservations
 				setReservations((prevReservations) =>
 					prevReservations.filter(
 						(reservation) => !selectedReservations.includes(reservation.id),
 					),
 				);
-				// Réinitialise la liste des réservations sélectionnées
+				// Resets the list of selected reservations
 				setSelectedReservations([]);
-				console.log("Réservations supprimées avec succès");
+				toast.success("Réservation supprimée avec succès !");
 			} catch (error) {
-				// Gère les erreurs qui peuvent survenir pendant la suppression
-				console.error("Erreur lors de la suppression des réservations:", error);
+				// Handles errors that might occur during deletion
+				console.error("Error deleting reservations:", error);
+				toast.error("Erreur lors de la suppression de la réservation. Veuillez réessayer plus tard.");
 			}
 		}
 	};
-	console.log(reservationToEdit);
+
+	const SmallScreenMessage = () => (
+		<div className="flex items-center justify-center h-screen bg-gray-100 p-4">
+		  <p className="text-center text-xl font-semibold">
+			Cette page n'est disponible que sur ordinateur. Veuillez utiliser un écran plus large pour accéder au contenu.
+		  </p>
+		</div>
+	  );
 
 
 	return (
+		<>
+			{/* Affiche le message sur les petits écrans */}
+			<div className="lg:hidden">
+        <SmallScreenMessage />
+      </div>
+
+      {/* Affiche le contenu normal sur les écrans moyens et grands */}
+      <div className="hidden lg:flex h-screen bg-gray-100">
+        <Aside />
+        <div className="flex-1 overflow-auto">
 		<div className="flex h-screen bg-gray-100">
-			<Aside />
+			
 			<div className="flex-1 overflow-auto">
 				<div className="container mx-auto p-4">
 					<h1 className="text-2xl font-bold mb-4">
@@ -389,6 +413,10 @@ const BackOfficeReservations: React.FC = () => {
 				</div>
 			</div>
 		</div>
+        </div>
+      </div>
+		</>
+		
 	);
   
 

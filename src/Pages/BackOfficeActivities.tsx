@@ -1,9 +1,10 @@
-//Importation des éléments necessaires
+// Import the necessary elements
 import { useCallback, useEffect, useState } from "react";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import ActivitiesModal from "../components/ActivitiesModal";
+import { toast } from 'react-toastify';
 
 interface ActiProps {
 	id: number;
@@ -12,12 +13,12 @@ interface ActiProps {
 	description: string;
 	category_id: number;
 }
-//Interface pour les catégories
+// Interface for categories
 interface Category {
 	id: number;
 	name: string;
 }
-//Interface poyr les informations émises par le formulaire de création/modification des activités
+// Interface for the data submitted via the activity creation/edit form
 interface ActivityFormData {
 	id?: number;
 	title: string;
@@ -34,30 +35,30 @@ interface Activity {
 }
 
 const BackOfficeActivities: React.FC = () => {
-	//Definition des variables d'etat necessaires pour le backoffice des activités
-	//Définit la liste des activités disponibles et retourne un tableau d'objet de type Activity qui est au départ vide puis se remplit avec les données de l'API
+	// Definition of the state variables needed for the back-office of activities
+	// Defines the list of available activities and returns an array of objects of type Activity, initially empty and filled later with API data
 	const [activities, setActivities] = useState<Activity[]>([]);
-	//Idem que activities
+	// Same as activities, but for categories
 	const [categories, setCategories] = useState<Category[]>([]);
-	// Contient l'id des activités sélectionnées et retourne un tableau de nombres (commence avec un tableau vide)
+	// Contains the IDs of the selected activities and returns an array of numbers (starts with an empty array)
 	const [selectedActivities, setSelectedActivities] = useState<number[]>([]);
-	//Stocke le terme recherché par l'utilisateur, est de type chaine de caractère et est vide par défaut
+	// Stores the term searched by the user, it's a string and is empty by default
 	const [searchTerm, setSearchTerm] = useState("");
-	//Contient la catégorie sélectionnée pour filtrer les catégories, c'est une chaine de caractère et sa valeur initiale est "all" pour afficher toutes les caté par défaut
+	// Contains the selected category for filtering, it's a string and its initial value is "all" to display all categories by default
 	const [selectedCategory, setSelectedCategory] = useState("all");
-	//Permet de gérer l'état d'ouverture de la Modal
+	// Manages the open state of the Modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	//Permet de modifier éléments pendant des temps de chargement (ex : texte d'un bouton)
+	// Manages the loading state (e.g., button text during processing)
 	const [isLoading, setIsLoading] = useState(false);
-	//Stocke l'activité selectionnée pour modification, il renvoit soit l'activité soit null
+	// Stores the selected activity for editing; it returns either the activity or null
 	const [activityToEdit, setActivityToEdit] = useState<Activity | null>(null);
-	//Permet de gérer l'état d'ouverture de la modal de modification
+	// Manages the open state of the edit modal
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-	// Définition d'une fonction asynchrone pour récupérer les données
+	// Definition of an asynchronous function to fetch data
 	const fetchData = useCallback(async () => {
 		try {
-			// Utilisation de Promise.all pour effectuer plusieurs requêtes en parallèle
+			// Uses Promise.all to perform multiple requests in parallel
 			const [activitiesData, categoriesData] = await Promise.all([
 				getDatas("/activities"),
 				getDatas("/categories"),
@@ -78,23 +79,23 @@ const BackOfficeActivities: React.FC = () => {
 			setActivities(activitiesDatas);
 			setCategories(categoriesData);
 		} catch (error) {
-			// Gestion des erreurs en cas d'échec de la récupération des données
-			console.error("Erreur lors de la récupération des données", error);
+			// Error handling in case data retrieval fails
+			console.error("Error while fetching data", error);
 		}
 	}, []);
 
 	useEffect(() => {
-		// Appel de la fonction fetchData
+		// Calls the fetchData function
 		fetchData();
-		// Le tableau vide [] comme second argument signifie que cet effet
-		// ne s'exécutera qu'une seule fois, au montage du composant
+		// An empty array [] as the second argument ensures that this effect
+		// is executed only once, when the component mounts
 	}, [fetchData]);
 
 	console.table(activities);
 	const handleSelectionChange = (id: number) => {
-		// Met à jour l'état des activités sélectionnées
+		// Updates the state of selected activities
 		setSelectedActivities((prev) =>
-			// Si l'ID est déjà dans la liste des activités sélectionnées alors on le retire de la liste (désélection) sinon, on l'ajoute à la liste (sélection)
+			// If the ID is already in the list of selected activities, it is removed (deselection); otherwise, it's added to the list (selection)
 			prev.includes(id)
 				? prev.filter((activityId) => activityId !== id)
 				: [...prev, id],
@@ -102,107 +103,109 @@ const BackOfficeActivities: React.FC = () => {
 	};
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		// Met à jour le terme de recherche lorsque l'utilisateur tape dans le champ de recherche
+		// Updates the search term when the user types in the search field
 		setSearchTerm(e.target.value);
 	};
 
 	const filteredActivities = activities.filter(
 		(activity) =>
-			// Vérifie deux conditions pour chaque activité
+			// Checks two conditions for each activity
 
-			// Condition 1 : Filtre par catégorie
-			// Si "all" est sélectionné, toutes les catégories sont incluses
-			// Sinon, vérifie si la catégorie de l'activité correspond à la catégorie sélectionnée
+			// Condition 1: Filter by category
+			// If "all" is selected, all categories are included
+			// Otherwise, checks if the activity's category matches the selected category
 			(selectedCategory === "all" ||
 				activity.category.toString() === selectedCategory) &&
-			// Condition 2 : Filtre par terme de recherche
-			// Vérifie si le titre de l'activité (en minuscules) inclut le terme de recherche (en minuscules)
+			// Condition 2: Filter by search term
+			// Checks if the activity's title (lowercased) includes the search term (lowercased)
 			activity.title
 				.toLowerCase()
 				.includes(searchTerm.toLowerCase()),
 	);
 
 	if (activities.length === 0) {
-		// Si le tableau d'objet des activités est vide alors on affiche le texte "Aucune activité disponible pour le moment"
+		// If the activities array is empty, displays the text "No activities available at the moment"
 		return (
 			<p className="text-center text-white">
-				Aucune activité disponible pour le moment.
+				No activities available at the moment.
 			</p>
 		);
 	}
 
 	const handleCreateActivity = async (newActivity: ActivityFormData) => {
-		// Gère la création d'une nouvelle activité
+		// Handles the creation of a new activity
 		try {
-			// Log pour indiquer que la fonction a été déclenchée
-			console.log("handleCreateActivity déclenché");
-			// Affiche les données de la nouvelle activité avant l'envoi au serveur
-			console.log("Données envoyées au serveur:", newActivity);
-			// Appel à l'API pour créer la nouvelle activité
+			// Log to indicate the function was triggered
+			console.log("handleCreateActivity triggered");
+			// Displays the new activity data before sending to the server
+			console.log("Data sent to server:", newActivity);
+			// API call to create the new activity
 			const createdActivity = await createData("/activities", newActivity);
-			console.log("Activité créée:", createdActivity); // Pour le débogage
-			// Met à jour l'état local en ajoutant la nouvelle activité à la liste existante
+			console.log("Created activity:", createdActivity); // Debugging
+			// Updates the local state by adding the new activity to the existing list
 			setActivities((prevActivities) => [...prevActivities, createdActivity]);
-			// Ferme le modal après la création réussie
+			// Closes the modal after successful creation
 			setIsModalOpen(false);
+			toast.success("Activité créée avec succès !");
 		} catch (error) {
-			// En cas d'erreur lors de la création, affiche l'erreur dans la console
-			console.error("Erreur lors de la création de l'activité:", error);
+			// In case of an error during creation, logs the error to the console
+			console.error("Error while creating activity:", error);
+			toast.error("Erreur lors de la création de l'activité. Veuillez réessayer plus tard.");
 		}
 	};
 
 	const handleEditClick = () => {
-		// Gère le clic sur le bouton "Modifier"
-		// Vérifie si une seule activité est sélectionnée
+		// Handles the "Edit" button click
+		// Checks if only one activity is selected
 		if (selectedActivities.length === 1) {
-			// Recherche l'activité sélectionnée dans la liste des activités
+			// Searches for the selected activity in the activities list
 			const activityToEdit = activities.find(
 				(activity) => activity.id === selectedActivities[0],
 			);
-			// Si l'activité est trouvée
+			// If the activity is found
 			if (activityToEdit) {
 				console.log(
-					"Activité à éditer avant la mise à jour de l'état :",
+					"Activity to edit before state update:",
 					activityToEdit,
 				);
-				// Met à jour l'état avec l'activité à éditer
+				// Updates the state with the activity to edit
 				setActivityToEdit(activityToEdit);
-				// Ouvre le modal d'édition
+				// Opens the edit modal
 				setIsEditModalOpen(true);
 			}
 		}
 	};
 
 	const handleUpdateActivity = async (updatedActivity: ActivityFormData) => {
-		// Gère la mise à jour d'une activité existante
+		// Handles updating an existing activity
 		try {
-			// Vérifie si l'activité à mettre à jour a un ID valide
+			// Checks if the activity to update has a valid ID
 			if ("id" in updatedActivity && typeof updatedActivity.id === "number") {
-				// Vérifiez si `category_id` est défini
+				// Checks if `category_id` is defined
 				if (
 					updatedActivity.category_id === undefined ||
 					updatedActivity.category_id === null
 				) {
 					console.error(
-						"category_id est manquant dans les données de mise à jour.",
+						"category_id is missing in update data.",
 					);
-					return; // Arrête la fonction si `category_id` est `undefined` ou `null`
+					return; // Stops the function if `category_id` is `undefined` or `null`
 				}
 
-				console.log("Données mises à jour envoyées:", updatedActivity);
+				console.log("Updated data sent:", updatedActivity);
 
-				// Appel à l'API pour mettre à jour l'activité
+				// API call to update the activity
 				const updatedActivityFromServer = await updateData(
 					"/activities",
 					updatedActivity.id,
 					updatedActivity,
 				);
 				console.log(
-					"Activité mise à jour reçue du serveur:",
+					"Updated activity received from server:",
 					updatedActivityFromServer,
 				);
 
-				// Met à jour l'état local des activités avec l'activité mise à jour
+				// Updates the local state of activities with the updated activity
 				setActivities((prevActivities) =>
 					prevActivities.map((activity) =>
 						activity.id === updatedActivityFromServer.id
@@ -210,22 +213,25 @@ const BackOfficeActivities: React.FC = () => {
 							: activity,
 					),
 				);
-				// Récupère à nouveau toutes les activités du serveur pour s'assurer d'avoir les données les plus récentes
+				// Fetches all activities again from the server to ensure the latest data
 				const refreshedActivities = await getDatas("/activities");
 				setActivities(refreshedActivities);
-				// Ferme le modal d'édition
+				
+				// Closes the edit modal
 				setIsEditModalOpen(false);
-				// Réinitialise l'activité en cours d'édition
+				toast.success("Activité modifiée avec succès !");
+				// Resets the activity being edited
 				setActivityToEdit(null);
-				// Efface la sélection d'activités
+				// Clears the selection of activities
 				setSelectedActivities([]);
 			} else {
-				// Affiche une erreur si l'ID de l'activité n'est pas valide
-				console.error("L'activité à mettre à jour n'a pas d'ID valide");
+				// Logs an error if the activity ID is invalid
+				console.error("The activity to update has an invalid ID");
 			}
 		} catch (error) {
-			// Gère les erreurs qui peuvent survenir lors de la mise à jour
-			console.error("Erreur lors de la mise à jour de l'activité:", error);
+			// Handles errors that may occur during the update
+			console.error("Error while updating activity:", error);
+			toast.error("Erreur lors de la modification de l'activité. Veuillez réessayer plus tard.");
 		}
 	};
 
@@ -255,16 +261,37 @@ const BackOfficeActivities: React.FC = () => {
 			);
 			// Réinitialise la liste des activités sélectionnées
 			setSelectedActivities([]);
-			console.log("Activités supprimées avec succès");
+			toast.success("Activité supprimée avec succès !");
 		} catch (error) {
 			// Gère les erreurs qui peuvent survenir pendant la suppression
 			console.error("Erreur lors de la suppression des activités:", error);
+			toast.error("Erreur lors de la suppression de l'activité. Veuillez réessayer plus tard.");
 		}
 	};
 
+
+	const SmallScreenMessage = () => (
+		<div className="flex items-center justify-center h-screen bg-gray-100 p-4">
+		  <p className="text-center text-xl font-semibold">
+			Cette page n'est disponible que sur ordinateur. Veuillez utiliser un écran plus large pour accéder au contenu.
+		  </p>
+		</div>
+	  );
+
 	return (
-		<div className="flex h-screen bg-gray-100">
-			<Aside />
+		<>
+		{/* Affiche le message sur les petits écrans */}
+			<div className="lg:hidden">
+        		<SmallScreenMessage />
+      		</div>
+		
+		{/* Affiche le contenu normal sur les écrans moyens et grands */}
+			<div className="hidden lg:flex h-screen bg-gray-100">
+        		<Aside />
+        	<div className="flex-1 overflow-auto">
+          {/* ... (le reste du contenu existant) */}
+		  <div className="flex h-screen bg-gray-100">
+			
 			<div className="flex-1 overflow-auto">
 				<div className="container mx-auto p-4">
 					<h1 className="text-2xl font-bold mb-4">
@@ -390,7 +417,7 @@ const BackOfficeActivities: React.FC = () => {
 											{categories.find((cat) => cat.id === activity.category)
 												?.name || "Non catégorisé"}
 										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
+										<td className="px-6 py-4 whitespace-nowrap text-center">
 											<input
 												type="checkbox"
 												checked={selectedActivities.includes(activity.id)}
@@ -406,6 +433,10 @@ const BackOfficeActivities: React.FC = () => {
 				</div>
 			</div>
 		</div>
+        	</div>
+     	 </div>
+		</>
+		
 	);
 };
 

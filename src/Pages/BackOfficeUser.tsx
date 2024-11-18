@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import UserModal from "../components/UserModal";
+import { toast } from 'react-toastify';
 
 interface User {
 	id: number;
@@ -27,14 +28,14 @@ interface UserFormData {
 }
 
 const BackOfficeUser: React.FC = () => {
-	// Tableau des utilisateurs récupérés depuis l'API
+	// List of users fetched from the API
 	const [users, setUsers] = useState<User[]>([]);
-	// Tableau des utilisateurs sélectionnés avec les checkboxes
+	// List of users selected via checkboxes
 	const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
 
-	// Filtre des utilisateurs par nom ou prénom
+	// Search filter for users by first name or last name
 	const [searchTerm, setSearchTerm] = useState("");
-	// Filtre des utilisateurs par rôle
+	// Search filter for users by role
 	const [searchRole, setSearchRole] = useState("all");
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,11 +44,10 @@ const BackOfficeUser: React.FC = () => {
 	const [roles, setRoles] = useState<Role[]>([]);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-	// Tableau des utilisateurs à afficher, il est construit à partir
-	// des utilisateurs récupérés depuis l'API et des filtres de recherche
+	// List of users to display, filtered by search terms and role filters
 	const usersToDisplay = users.filter((user) => {
-		// 1. on vérifie si l'utilisateur correspond au filtre de recherche par nom/prénom
-		// (vrai si on n'a pas de filtre actuellement)
+		// 1. Check if the user matches the search term filter
+		// (true if no search filter is currently applied)
 		let matchesSearchTerm = true;
 		if (searchTerm !== "") {
 			matchesSearchTerm =
@@ -55,41 +55,44 @@ const BackOfficeUser: React.FC = () => {
 				user.lastname.toLowerCase().includes(searchTerm);
 		}
 
-		// 2. on vérifie si l'utilisateur correspond au filtre de recherche par rôle
-		// (vrai si le filtre actuel est sur "tous les rôles")
+		// 2. Check if the user matches the role filter
+		// (true if the current filter is set to "all roles")
 		let matchesSearchRole = true;
 		if (searchRole !== "all") {
 			matchesSearchRole = user.role_id === Number.parseInt(searchRole);
 		}
 
-		// 3. on retourne true si l'utilisateur correspond à tous les filtres
+		// 3. Return true if the user matches all applied filters
 		return matchesSearchTerm && matchesSearchRole;
 	});
 
 	useEffect(() => {
+		// Fetches the list of users from the API
 		const fetchData = async () => {
 			try {
 				const users = await getDatas("/users");
 				setUsers(users);
 			} catch (error) {
-				console.error("Erreur lors de la récupération des données", error);
+				console.error("Error while fetching user data", error);
 			}
 		};
 		fetchData();
 	}, []);
 
 	useEffect(() => {
+		// Fetches the list of roles from the API
 		const fetchRoles = async () => {
 			try {
 				const rolesData = await getDatas("/roles");
 				setRoles(rolesData);
 			} catch (error) {
-				console.error("Erreur lors de la récupération des rôles", error);
+				console.error("Error while fetching role data", error);
 			}
 		};
 		fetchRoles();
 	}, []);
 
+	// Handles the selection and deselection of users via checkboxes
 	const handleSelectionChange = (id: number) => {
 		setSelectedUsers((prev) =>
 			prev.includes(id)
@@ -99,49 +102,56 @@ const BackOfficeUser: React.FC = () => {
 	};
 
 	/**
-	 * Met à jour filtre de recherche par nom/prénom
-	 * @param {Event} event L'événement survenu sur le champ de recherche
+	 * Updates the search filter by first name or last name
+	 * @param {Event} event The event triggered by the search input
 	 */
 	const handleSearch = (event: React.UIEvent<HTMLInputElement>) => {
-		// 1. on lit la valeur qui est actuellement dans notre <input>
+		// 1. Read the current value in the input field
 		const value = event.target.value.toLowerCase();
 
-		// 2. on met à jour le state avec le nouveau filtre de recherche par nom/prénom
+		// 2. Update the state with the new search term
 		setSearchTerm(value);
 	};
 
 	/**
-	 * Met à jour filtre de recherche par rôle
-	 * @param {Event} event L'événement survenu sur le champ de recherche
+	 * Updates the search filter by role
+	 * @param {Event} event The event triggered by the select dropdown
 	 */
 	const handleRoleSearch = (event: React.UIEvent<HTMLSelectElement>) => {
-		// 1. on lit la valeur qui est actuellement sélectionnée dans notre <select>
+		// 1. Read the current selected value from the dropdown
 		const roleId = event.target.value;
 
-		// 2. on met à jour le state avec le nouveau filtre de recherche par rôle
+		// 2. Update the state with the new role filter
 		setSearchRole(roleId);
 	};
 
+	// Show a message if no users are available
 	if (users.length === 0) {
 		return (
 			<p className="text-center text-white">
-				Aucun utilisateur disponible pour le moment.
+				No users available at the moment.
 			</p>
 		);
 	}
 
+	// Handles creating a new user
 	const handleCreateUser = async (newUser: UserFormData) => {
 		try {
-			console.log("Données envoyées au serveur:", newUser);
+			console.log("Data sent to the server:", newUser);
 			const createdUser = await createData("/users", newUser);
-			console.log("Utilisateur créé:", createdUser);
+			console.log("User created:", createdUser);
+			// Add the newly created user to the current list of users
 			setUsers([...users, createdUser]);
 			setIsModalOpen(false);
+			toast.success("Utilisateur créé avec succès !");
 		} catch (error) {
-			console.error("Erreur lors de la création de l'utilisateur:", error);
+			console.error("Error while creating user:", error);
+			toast.error("Erreur lors de la création de l'utilisateur. Veuillez réessayer plus tard.");
+
 		}
 	};
 
+	// Opens the edit modal for a selected user
 	const handleEditClick = () => {
 		if (selectedUsers.length === 1) {
 			const userToEdit = users.find((user) => user.id === selectedUsers[0]);
@@ -152,6 +162,7 @@ const BackOfficeUser: React.FC = () => {
 		}
 	};
 
+	// Handles updating an existing user
 	const handleUpdateUser = async (updatedUser: UserFormData) => {
 		try {
 			if ("id" in updatedUser && typeof updatedUser.id === "number") {
@@ -160,14 +171,13 @@ const BackOfficeUser: React.FC = () => {
 					updatedUser.id,
 					updatedUser,
 				);
-				console.log(
-					"Utilisateur mise à jour reçue du serveur",
-					updatedUserFromServer,
-				);
+				console.log("Updated user received from the server:", updatedUserFromServer);
 
+				// Find the index of the user to update
 				const userIndex = users.findIndex(
 					(user) => user.id === updatedUserFromServer.id,
 				);
+				// Update the user in the list
 				const updatedUsers = users.toSpliced(
 					userIndex,
 					1,
@@ -178,23 +188,26 @@ const BackOfficeUser: React.FC = () => {
 				const refreshedUsers = await getDatas("/users");
 				setUsers(refreshedUsers);
 				setIsEditModalOpen(false);
+				toast.success("Utilisateur modifié avec succès !");
 				setUserToEdit(null);
 				setSelectedUsers([]);
 			} else {
-				console.error("L'utilisateur à mettre à jour n'a pas d'ID valide.");
+				console.error("The user to update has no valid ID.");
 			}
 		} catch (error) {
-			console.error("Erreur lors de la mise à jour de l'utilisateur", error);
+			console.error("Error while updating user", error);
+			toast.error("Erreur lors de la modification de l'utilisateur. Veuillez réessayer plus tard.");
 		}
 	};
 
+	// Handles deleting selected users
 	const handleDeleteSelectedUser = async () => {
 		if (selectedUsers.length === 0) {
-			alert("Veuillez sélectionner au moins un utilisateur à supprimer");
+			alert("Please select at least one user to delete");
 			return;
 		}
 		const confirmDelete = window.confirm(
-			`Êtes-vous sur de vouloir supprimer ${selectedUsers.length} utilisateur(s) ?`,
+			`Are you sure you want to delete ${selectedUsers.length} user(s)?`,
 		);
 		if (!confirmDelete) return;
 
@@ -203,20 +216,41 @@ const BackOfficeUser: React.FC = () => {
 			for (const userId of selectedUsers) {
 				await deleteData("/users", userId);
 			}
+			// Remove deleted users from the state
 			setUsers((prevUsers) =>
 				prevUsers.filter((user) => !selectedUsers.includes(user.id)),
 			);
 			setSelectedUsers([]);
-			console.log("Utilisateurs suprimées avec succès");
+			toast.success("Utilisateur supprimé avec succès !");
 			setIsLoading(false);
 		} catch (error) {
-			console.error("Erreur lors de la suppression des utilisateurs:", error);
+			console.error("Error while deleting users:", error);
+			toast.error("Erreur lors de la suppression de l'utilisateur. Veuillez réessayer plus tard.")
 		}
 	};
 
+	// Component to display a message for small screens
+	const SmallScreenMessage = () => (
+		<div className="flex items-center justify-center h-screen bg-gray-100 p-4">
+			<p className="text-center text-xl font-semibold">
+				This page is only available on larger screens. Please use a bigger display to access this content.
+			</p>
+		</div>
+	);
+
 	return (
+		<>
+			{/* Affiche le message sur les petits écrans */}
+			<div className="lg:hidden">
+        <SmallScreenMessage />
+      </div>
+
+      {/* Affiche le contenu normal sur les écrans moyens et grands */}
+      <div className="hidden lg:flex h-screen bg-gray-100">
+        <Aside />
+        <div className="flex-1 overflow-auto">
 		<div className="flex h-screen bg-gray-100">
-			<Aside />
+			
 			<div className="flex-1 overflow-auto">
 				<div className="container p-4 mx-auto">
 					<h1 className="mb-4 text-2xl font-bold">
@@ -339,6 +373,10 @@ const BackOfficeUser: React.FC = () => {
 				</div>
 			</div>
 		</div>
+        </div>
+      </div>
+		</>
+		
 	);
 };
 
