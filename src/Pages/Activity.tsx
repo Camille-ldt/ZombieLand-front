@@ -1,9 +1,14 @@
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { CardProps, Card } from "../components/ActivityCard";
 
-const Activity = () => {
+const Activity: React.FC = () => {
   const location = useLocation();
   const activity = location.state?.activity as CardProps;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!activity) {
     return <p className="text-center text-white">Aucune activité sélectionnée.</p>;
@@ -18,8 +23,9 @@ const Activity = () => {
           title={activity.title}
           description={activity.description}
           buttonText="Retour"
-          to="/" // Le bouton "Retour" redirige vers la page d'accueil
-          category={activity.category} // Affichage de la catégorie passée dans l'état
+          to="/"
+          category={activity.category}
+          imageHeight="60rem" // Set a custom height here
         />
       </div>
     </div>
