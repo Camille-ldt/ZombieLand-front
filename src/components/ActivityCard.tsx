@@ -1,30 +1,34 @@
 import { Link } from "react-router-dom";
 
 export interface CardProps {
-  multimedias: { url: string }[];
-  category_id: number;
-  id: number;
-  backgroundImage: string;
-  title: string;
-  description: string;
-  buttonText: string;
-  to: string;
-  category: { id: number; name: string } | null; // La catégorie peut être null
-}
+	multimedias: { url: string }[];
+	category_id: number;
+	id: number;
+	backgroundImage: string;
+	title: string;
+	description: string;
+	buttonText: string;
+	to: string;
+	category: { id: number; name: string } | null;
+	imageHeight?: string; // New prop for custom height
+  }
+  
 
-export const Card = ({
+  export const Card = ({
 	id,
 	backgroundImage,
 	title,
 	description,
 	buttonText,
 	to,
-	category, // Category peut être null ou un objet
-}: CardProps): JSX.Element => {
+	category,
+	imageHeight = "40rem", // Default height if not specified
+  }: CardProps): JSX.Element => {
 	return (
 		<div
 			className="bg-center bg-no-repeat bg-cover h-[40rem] w-full flex flex-col justify-around"
-			style={{ backgroundImage: `url(${backgroundImage})` }}
+			style={{ backgroundImage: `url(${backgroundImage})`,
+			height: imageHeight  }}
 		>
 			<div className="h-5 p-4 flex-grow-0">
 				<h2 className="inline-block bg-black bg-opacity-70 text-white px-3 py-1 text-sm font-bold rounded mb-2.5">

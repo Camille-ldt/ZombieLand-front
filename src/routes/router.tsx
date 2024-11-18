@@ -63,9 +63,12 @@ const router = createBrowserRouter([
 			{
 				path: "/user/:userId",
 				element: (
-					<ProtectedRoute requiredRole={2 || 3}>
+					<>
+					{console.log("Route protégée /user/:userId tentée")}
+					<ProtectedRoute requiredRole={2}>
 						<Profil />
 					</ProtectedRoute>
+					</>
 				),
 			},
 			{
