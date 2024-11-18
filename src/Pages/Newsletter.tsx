@@ -3,11 +3,11 @@ const Newsletter = () => {
 		<div className="relative text-white px-10 py-4 mt-11 text-center lg:mx-52">
 			<div className="absolute inset-0 bg-[url('./assets/img/mains-zombie.webp')] bg-cover bg-bottom rounded-md" />
 			<div className="relative p-7 rounded-md bg-grey/70">
-				<div className="pb-6">
-					<h2 className="text-2xl font-bold text-center">
+				<div className="pb-6 text-left">
+					<h2 className="text-2xl font-bold text-center pb-6">
 						Vivez l'effroi comme jamais avec ZombieLand !
 					</h2>
-					<p className="font-semibold text-xl">
+					<p className="font-semibold text-xl text-center pb-2">
 						Chers fans de sensations fortes,
 					</p>
 					<p>
@@ -17,8 +17,8 @@ const Newsletter = () => {
 						immersive.
 					</p>
 				</div>
-				<div className="pb-6">
-					<h3 className="text-xl font-bold">
+				<div className="pb-6 text-left">
+					<h3 className="text-xl font-bold text-center pb-2">
 						🎃 Événement spécial : La Nuit des Zombies
 					</h3>
 					<p>
@@ -32,8 +32,8 @@ const Newsletter = () => {
 					<p>📍 Lieu : ZombieLand</p>
 					<p>🎟️ Réservation obligatoire – Places limitées !</p>
 				</div>
-				<div className="pb-6">
-					<h3 className="text-xl font-bold">
+				<div className="pb-6 text-left">
+					<h3 className="text-xl font-bold text-center pb-2">
 						🧟‍♂️ Nouvelle attraction : Le Cimetière Maudit
 					</h3>
 					<p>
@@ -47,8 +47,8 @@ const Newsletter = () => {
 						aventure inédite.
 					</p>
 				</div>
-				<div className="pb-6">
-					<h3 className="text-xl font-bold">
+				<div className="pb-6 text-left">
+					<h3 className="text-xl font-bold text-center pb-2">
 						🎟️ Offres spéciales pour nos abonnés
 					</h3>
 					<p>
@@ -58,8 +58,8 @@ const Newsletter = () => {
 					</p>
 					<p>📅 Valable jusqu’au 31/12/2024</p>
 				</div>
-				<div>
-					<h3 className="text-xl font-bold">
+				<div className="pb-6 text-left">
+					<h3 className="text-xl font-bold text-center pb-2">
 						🖤 Rejoignez la communauté ZombieLand
 					</h3>
 					<p>

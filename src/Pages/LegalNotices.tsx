@@ -11,7 +11,7 @@ const LegalNotices = () => {
 					<p>Siret : 6516615611641616</p>
 					<p>Directeur de la publication : John Doe</p>
 				</div>
-				<div className="bg-grey/70 text-lg text-center rounded-md  mt-11 px-10 py-4 md:text-left text-center">
+				<div className="bg-grey/70 text-lg rounded-md  mt-11 px-10 py-4 text-left">
 					<div className="pb-6">
 						<h3 className="font-bold text-xl">Hébergeur du site</h3>
 						<p>Le site Zombieland est hébergé par :</p>

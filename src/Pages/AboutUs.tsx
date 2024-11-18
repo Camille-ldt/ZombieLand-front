@@ -1,10 +1,10 @@
 const AboutUs = () => {
 	return (
-		<div className="relative text-center rounded-md lg:mx-52 p-7 mt-7 ">
+		<div className="relative text-left rounded-md lg:mx-52 p-7 mt-7 ">
 			<div className="absolute inset-0 bg-[url('./assets/img/zombie-girl.webp')] bg-cover bg-center rounded-md" />
 
 			<div className="relative p-7 rounded-md bg-grey/70">
-				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold">
+				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold text-center">
 					Bienvenue à ZombieLand, l'expérience d'aventure ultime !
 				</p>
 				<p className="text-white pb-12 sm:text-base md:text-lg lg:text-xl">
@@ -14,7 +14,7 @@ const AboutUs = () => {
 					dans un décor apocalyptique, chaque visiteur devient le héros de sa
 					propre aventure dans une terre infestée de zombies !
 				</p>
-				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold">
+				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold text-center">
 					Notre concept : survivre à l'invasion !
 				</p>
 				<p className="text-white pb-12 sm:text-base md:text-lg lg:text-xl">
@@ -27,7 +27,7 @@ const AboutUs = () => {
 					d'activités adaptées à tous les niveaux, garantissant une expérience
 					unique et mémorable.
 				</p>
-				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold">
+				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold text-center">
 					Une expérience immersive et sécurisée
 				</p>
 				<p className="text-white pb-12 sm:text-base md:text-lg lg:text-xl">
@@ -37,7 +37,7 @@ const AboutUs = () => {
 					l'aventure en toute tranquillité, même dans les situations les plus
 					terrifiantes !
 				</p>
-				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold">
+				<p className="text-white pb-3.5 sm:text-lg md:text-xl lg:text-3xl font-semibold text-center">
 					Prêt à survivre ?
 				</p>
 				<p className="text-white sm:text-base md:text-lg lg:text-xl">
