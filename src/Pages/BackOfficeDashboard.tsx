@@ -46,9 +46,9 @@ const BackOfficeDashboard: React.FC = () => {
             <thead>
               <tr>
                 <th className="px-6 py-4 bg-white-700 text-white rounded-md text-left">Taux / Catégorie</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux à la journée N-1</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux au mois N-1</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux à l'année N-1</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Journée précédente</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Mois précédent</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Année actuelle</th>
               </tr>
             </thead>
             <tbody>
