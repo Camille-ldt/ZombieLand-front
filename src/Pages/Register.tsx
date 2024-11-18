@@ -5,6 +5,8 @@ import { useAuth } from '../Auth/authContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import MyImage from '../assets/img/zombie-accueil.webp';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Register = () => {
   // State for form inputs (État pour les champs du formulaire)
@@ -168,7 +170,7 @@ const Register = () => {
                       onClick={() => setPasswordVisible(!passwordVisible)}
                       className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700"
                     >
-                      {passwordVisible ? '✳️' : '👁️'}
+                      <FontAwesomeIcon icon={confirmPasswordVisible ? faEyeSlash : faEye} />
                     </button>
                   </div>
                   <ul className="mt-2 text-sm space-y-1">
@@ -209,7 +211,7 @@ const Register = () => {
                       onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
                       className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700"
                     >
-                      {confirmPasswordVisible ? '✳️' : '👁️'}
+                      <FontAwesomeIcon icon={confirmPasswordVisible ? faEyeSlash : faEye} />
                     </button>
                   </div>
                 </div>

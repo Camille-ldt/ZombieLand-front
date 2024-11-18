@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import MyImage from '../assets/img/zombie-accueil.webp';
 import { useAuth } from '../Auth/authContext';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Login = () => {
   // State for email and password inputs (État pour les champs de l'email et du mot de passe)
@@ -125,7 +127,7 @@ const Login = () => {
                         onClick={() => setPasswordVisible(!passwordVisible)} // Toggle password visibility (Basculer la visibilité du mot de passe)
                         className="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700"
                       >
-                        {passwordVisible ? '✳️' : '👁️'} {/* Icon for visibility toggle (Icône pour basculer la visibilité) */}
+                        <FontAwesomeIcon icon={passwordVisible ? faEyeSlash : faEye} />
                       </button>
                     </div>
                   </div>

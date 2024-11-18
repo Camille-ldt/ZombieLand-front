@@ -59,18 +59,22 @@ const HomePage = () => {
             {/* Hero section */}
             <div className="relative">
                 <img
-                    src={MyImage} // Ton image ici
+                    src={MyImage} 
                     alt="Visuel principal de la page"
                     className="w-full h-[50vh] object-cover sm:h-[70vh] md:h-screen"
                 />
-                <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-center px-4 sm:px-2 md:px-0">
-                    <p className="text-white max-w-xs sm:max-w-sm md:max-w-md text-lg sm:text-lg md:text-xl font-semibold bg-gray-800/50 rounded-xl p-4 mb-4">
+               <div class="absolute top-1/2 left-1/2 w-full md:w-auto md:left-1/4 transform -translate-x-1/2 -translate-y-1/2 text-center px-4 sm:px-2 md:px-0">
+               <p class="text-white w-full max-w-full sm:max-w-sm md:max-w-md text-lg sm:text-lg md:text-xl font-semibold bg-gray-800/50 rounded-xl p-4 mb-4">
                         Préparez-vous à survivre à l'impensable : entrez dans le monde des zombies, où chaque seconde compte !
                     </p>
-                    <RedLink to="/bookings" textSize="text-lg sm:text-xl" position="">
-                        Réservation
-                    </RedLink>
+                    <div className="mt-4">
+                        <RedLink to="/bookings" textSize="text-lg sm:text-xl" position="">
+                            Réservation
+                        </RedLink>
+                    </div>
                 </div>
+
+
             </div>
             <div className="text-center mt-7 px-4 sm:px-10 md:px-60">
                 <Title>Qui sommes-nous ?</Title>
