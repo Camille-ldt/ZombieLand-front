@@ -1,7 +1,7 @@
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react';
 import { getDataById, createData, updateData, deleteData } from '../services/api';
-import { useNavigate, useParams} from 'react-router-dom';
+import { useParams} from 'react-router-dom';
 import { Title } from '../components/Title';
 import PasswordModal from '../components/PasswordModal';
 import { useAuth } from '../Auth/authContext';
@@ -29,9 +29,7 @@ interface ReservationProps {
 }
 
 const Profil = () => {
-
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout } = useAuth(); // Context for authentication
   const [isModalOpen, setIsModalOpen]= useState(false);
   const [user, setUser] = useState<UserProps>({
     id: 0,
@@ -50,25 +48,21 @@ const Profil = () => {
   const [reservations, setReservations] = useState<ReservationProps[]>([]);
 
   
-  const {userId} = useParams();
-
-  console.log(userId);
+  const {userId} = useParams(); // Retrieve user ID from the URL
 
   useEffect(() => {
       
       const fetchOneUser = async () => {
           try {
-            console.log("userId:", userId);
               if (userId) {
+                  // Fetch user data
                   const dataUser = await getDataById("/users", userId);
-                  console.log("Données utilisateur:", dataUser);
                   setUser({
                     ...dataUser,
                     birthday: dataUser.birthday ? new Date(dataUser.birthday) : null
                   });
-
+                  // Fetch user reservations
                   const dataReservations = await getDataById("/bookings/user", userId);
-                  console.log("Données réservations:", dataReservations);
                   setReservations(dataReservations);
               }
           } catch (error) {
@@ -78,12 +72,12 @@ const Profil = () => {
       fetchOneUser();
   }, [userId]);
 
-  console.log(user)
+  // Handle image upload and conversion to base64
   const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    // On récupère le fichier que l'utilisateur vient de renseigner dans l'input
+    // Retrieve the file provided by the user in the input field
     const file = evt.target.files[0]; // File
 
-    // On convertit le fichier en data-url
+    // Convert the file to a data URL
     const reader = new FileReader();
     reader.addEventListener('load', () => {
       setUser({
@@ -94,30 +88,30 @@ const Profil = () => {
     reader.readAsDataURL(file);
   };
 
+  // Handle profile form submission
   const handleSubmit = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    // Prevent default form submission
     evt.preventDefault();
 
     if (user.id) {
-      updateData(`/users`, user.id, user);
+      updateData(`/users`, user.id, user); // Update user data
       toast.success("Votre profil a été mis à jour avec succès.")
     }
     else {
-      createData(`/users`, user);
+      createData(`/users`, user); // Create new user
     }
   };
 
-  //Fonction pour gérer la suppression du profil
+  // Handle profile deletion
   const handleDeleteProfile = async () => {
-    console.log("handleDeleteProfile called");
     const confirmation = window.confirm("Voulez-vous vraiment supprimer votre profil ? Cette action est irréversible.");
     if (confirmation) {
       try {
         if (userId) {
-          await deleteData("/users", userId);
-          console.log("Data deleted, navigating to home...");
+          await deleteData("/users", userId); // Delete user data
           toast.success("Votre profil a été supprimé avec succès.");
 
-          // Déconnexion de l'utilisateur via le contexte et redirection vers la page Login inclus dans le useContext
+          // Log the user out using the context and redirect to the Login page included in the useContext
           logout();
         }
       } catch (error) {
@@ -127,7 +121,7 @@ const Profil = () => {
     }
   };
 
-  // Fonction générique pour gérer les changements d'input
+  // Handle input changes
   const handleInputChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = evt.target;
     setUser((prevUser) => ({

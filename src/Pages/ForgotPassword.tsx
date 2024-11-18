@@ -13,28 +13,40 @@ const ForgotPassword = () => {
     return emailRegex.test(email);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (email.trim() === '') {
-      toast.error('Veuillez entrer une adresse e-mail.');
-      return;
+        toast.error('Veuillez entrer une adresse e-mail.');
+        return;
     }
 
     if (!validateEmail(email)) {
-      toast.error('Veuillez entrer une adresse e-mail valide.');
-      return;
+        toast.error('Veuillez entrer une adresse e-mail respectant les critères.');
+        return;
     }
 
     try {
-      console.log('Email envoyé pour réinitialisation :', email);
-      toast.success('Un lien de réinitialisation a été envoyé à votre adresse e-mail.');
-      setTimeout(() => navigate('/login'), 3000);
+        const response = await fetch('http://localhost:3000/auth/request-password-reset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+
+        if (response.ok) {
+            toast.success('Un lien de réinitialisation a été envoyé à votre adresse e-mail.');
+            setTimeout(() => navigate('/login'), 3000);
+        } else {
+            const errorData = await response.json();
+            toast.error(errorData.message || 'Une erreur est survenue. Veuillez réessayer.');
+        }
     } catch (error) {
-      console.error("Erreur lors de l'envoi de l'e-mail :", error);
-      toast.error('Une erreur est survenue. Veuillez réessayer.');
+        console.error("Erreur lors de l'envoi de l'e-mail :", error);
+        toast.error('Une erreur est survenue. Veuillez réessayer.');
     }
-  };
+};
 
   return (
     <div className="flex min-h-full">
