@@ -84,7 +84,7 @@ const Navbar = () => {
           </div>
 
           {/* Section de droite contenant les boutons Réservation et Connexion/Déconnexion */}
-          <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             {/* Bouton Réservation */}
             <RedLink to="/bookings" textSize="text-sm" position="min-w-[120px] w-full flex justify-center">
               Réservation
@@ -129,6 +129,7 @@ const Navbar = () => {
           ))}
 
           {/* Bouton Réservation */}
+          
           <NavLink to="/bookings">
             <DisclosureButton
               as="div"

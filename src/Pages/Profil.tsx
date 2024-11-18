@@ -4,6 +4,8 @@ import { getDataById, createData, updateData, deleteData } from '../services/api
 import { useNavigate, useParams} from 'react-router-dom';
 import { Title } from '../components/Title';
 import PasswordModal from '../components/PasswordModal';
+import { useAuth } from '../Auth/authContext';
+import { toast } from 'react-toastify';
 
 interface UserProps {
     id: number;
@@ -29,6 +31,7 @@ interface ReservationProps {
 const Profil = () => {
 
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isModalOpen, setIsModalOpen]= useState(false);
   const [user, setUser] = useState<UserProps>({
     id: 0,
@@ -96,6 +99,7 @@ const Profil = () => {
 
     if (user.id) {
       updateData(`/users`, user.id, user);
+      toast.success("Votre profil a été mis à jour avec succès.")
     }
     else {
       createData(`/users`, user);
@@ -111,8 +115,10 @@ const Profil = () => {
         if (userId) {
           await deleteData("/users", userId);
           console.log("Data deleted, navigating to home...");
-          alert("Votre profil a été supprimé avec succès.");
-          navigate('/');
+          toast.success("Votre profil a été supprimé avec succès.");
+
+          // Déconnexion de l'utilisateur via le contexte et redirection vers la page Login inclus dans le useContext
+          logout();
         }
       } catch (error) {
         console.error('Erreur lors de la suppression du profil :', error);
@@ -197,7 +203,7 @@ const Profil = () => {
                     />
                   )}
                   <label htmlFor="file-upload" className="rounded-md bg-green-high px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                    Change
+                    Modifier
                   <input id="file-upload" name="file-upload" type="file" className="sr-only" onInput={updateImage} />
                   </label>
                 </div>
@@ -275,7 +281,7 @@ const Profil = () => {
 
               <div className="sm:col-span-2 sm:col-start-1">
                 <label htmlFor="city" className="block font-medium text-white text-sm/6">
-                  City
+                  Ville
                 </label>
                 <div className="mt-2">
                   <input
@@ -293,7 +299,7 @@ const Profil = () => {
 
               <div className="sm:col-span-2">
                 <label htmlFor="postal_code" className="block font-medium text-white text-sm/6">
-                  ZIP / Postal code
+                  Code Postal
                 </label>
                 <div className="mt-2">
                   <input
