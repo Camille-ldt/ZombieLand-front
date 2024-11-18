@@ -7,9 +7,12 @@ import { Title } from "../components/Title";
 const BackOfficeDashboard: React.FC = () => {
   const { user, isLoading } = useAuth();
   const [stats, setStats] = useState<{
-    dailyRate: number;
-    monthlyRate: number;
-    yearlyRate: number;
+    dailyReservations: number;
+    monthlyReservations: number;
+    yearlyReservations: number;
+    dailyTickets: number;
+    monthlyTickets: number;
+    yearlyTickets: number;
     dailyRevenue: number;
     monthlyRevenue: number;
     yearlyRevenue: number;
@@ -19,7 +22,7 @@ const BackOfficeDashboard: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const statsData = await getDatas("/reservations/stats"); // Correction de l'URL
+        const statsData = await getDatas("/reservations/stats");
         setStats(statsData);
       } catch (error) {
         setError("Erreur lors du chargement des statistiques.");
@@ -46,22 +49,34 @@ const BackOfficeDashboard: React.FC = () => {
             <thead>
               <tr>
                 <th className="px-6 py-4 bg-white-700 text-white rounded-md text-left">Taux / Catégorie</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux à la journée N-1</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux au mois N-1</th>
-                <th className="px-8 py-6 bg-black text-white rounded-md">Taux à l'année N-1</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Journée précédente</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Mois précédent</th>
+                <th className="px-8 py-6 bg-black text-white rounded-md">Année actuelle</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td className="px-6 py-4 bg-black text-white rounded-md text-left">Nombre de réservations</td>
                 <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
-                  {stats ? stats.dailyRate : "N/A"}
+                  {stats ? stats.dailyReservations : "N/A"}
                 </td>
                 <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
-                  {stats ? stats.monthlyRate : "N/A"}
+                  {stats ? stats.monthlyReservations : "N/A"}
                 </td>
                 <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
-                  {stats ? stats.yearlyRate : "N/A"}
+                  {stats ? stats.yearlyReservations : "N/A"}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-6 py-4 bg-black text-white rounded-md text-left">Nombre de tickets</td>
+                <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                  {stats ? stats.dailyTickets : "N/A"}
+                </td>
+                <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                  {stats ? stats.monthlyTickets : "N/A"}
+                </td>
+                <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                  {stats ? stats.yearlyTickets : "N/A"}
                 </td>
               </tr>
               <tr>
