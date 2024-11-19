@@ -1,50 +1,11 @@
-# React + TypeScript + Vite
+# zombieland-front
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Liste des dépendances installées dans le front :
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- Axios : Pour effectuer des requêtes HTTP (GET, POST, etc).
+- Clsx : Permet de conditionner dynamiquement des classes CSS dans les composants React. 
+- Date-fns : Fournit des utilitaires pour manipuler et formater les dates de manière performante et intuitive.
+- React : Permet de créer des interfaces utilisateur réactives et basées sur des composants. 
+- React-dom : Pour gérer le rendu des composants React dans le DOM du navigateur.
+- React-router-dom : Gestionnaire de routage pour créer des applications React avec navigation entre plusieurs pages. 
+- React-toastify : Permet d'afficher des notifications toast non bloquantes dans les applications React.
