@@ -1,64 +1,63 @@
-// Importation de composants spécifiques depuis @headlessui/react pour construire un menu déroulant personnalisable
+// Import specific components from @headlessui/react to build a customizable dropdown menu
 import {
 	Listbox,
 	ListboxButton,
 	ListboxOption,
 	ListboxOptions,
 } from "@headlessui/react";
-// Importation d'icônes depuis @heroicons/react pour améliorer l'interface utilisateur du menu déroulant
+// Import icons from @heroicons/react to enhance the dropdown menu UI
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-// Importation de hooks React pour la gestion des états et des effets
+// Import React hooks for managing state and effects
 import { useEffect, useState } from "react";
-// Importation du type SelectOptionItem, utilisé pour typer les options du menu déroulant
+// Import the SelectOptionItem type, used to type the dropdown menu options
 import { SelectOptionItem } from "./Select.type";
 
-// Définition du type des props pour le composant Select, avec un type générique T pour une meilleure flexibilité
+// Define the prop types for the Select component, using a generic type T for greater flexibility
 type SelectProps<T> = {
-	items: SelectOptionItem<T>[]; // Liste des options disponibles dans la liste déroulante, typée pour être générique
-	selectedItem: T; // Option actuellement sélectionnée, du même type que les items
-	onSelectedItem: (item: T) => void; // Fonction de rappel appelée quand une nouvelle option est sélectionnée
+	items: SelectOptionItem<T>[]; // List of available options in the dropdown, typed generically
+	selectedItem: T; // Currently selected option, of the same type as the items
+	onSelectedItem: (item: T) => void; // Callback function triggered when a new option is selected
 };
 
-// Déclaration du composant Select utilisant un type générique <T> pour qu'il puisse gérer divers types d'options
+// Declare the Select component using a generic type <T> to handle various types of options
 export const Select = <T,>({
-	items, // Liste des options disponibles
-	selectedItem, // Élément sélectionné actuel
-	onSelectedItem, // Callback pour signaler la sélection d'un nouvel élément
+	items, // List of available options
+	selectedItem, // Current selected item
+	onSelectedItem, // Callback to notify the selection of a new item
 }: SelectProps<T>) => {
-	// Déclaration d'un état pour gérer l'élément actuellement sélectionné dans l'interface utilisateur
+	// Declare state to manage the currently selected item in the UI
 	const [currentSelectedItem, setCurrentSelectedItem] = useState<
 		SelectOptionItem<T> | undefined
-	>(undefined); // Initialisé à undefined pour l'absence de sélection initiale
+	>(undefined); // Initialized to undefined for no initial selection
 
-	// Utilisation d'un effet pour synchroniser currentSelectedItem avec la valeur de selectedItem
+	// Use an effect to synchronize currentSelectedItem with the value of selectedItem
 	useEffect(() => {
-		// Recherche de l'élément dans items correspondant à selectedItem et mise à jour de currentSelectedItem
+		// Find the item in items matching selectedItem and update currentSelectedItem
 		setCurrentSelectedItem(items.find((item) => item.value === selectedItem));
-	}, [selectedItem]); // L'effet est déclenché chaque fois que selectedItem change
+	}, [selectedItem]); // Effect triggers whenever selectedItem changes
 
 	return (
 		<div className="block">
-			{/* Listbox est le conteneur principal pour le menu déroulant, configuré avec la valeur et l'événement onChange */}
+			{/* Listbox is the main container for the dropdown menu, configured with value and onChange event */}
 			<Listbox
-				value={currentSelectedItem} // Définit l'élément sélectionné affiché dans la liste
+				value={currentSelectedItem} // Sets the displayed selected item in the list
 				onChange={(item) => {
-					onSelectedItem(item.value); // Appelle la fonction onSelectedItem avec la valeur de l'élément choisi
+					onSelectedItem(item.value); // Calls the onSelectedItem function with the chosen item's value
 				}}
 			>
-				{/* Label du composant Select pour indiquer l'objet de la liste déroulante */}
-
+				{/* Label for the Select component to indicate the purpose of the dropdown */}
 				<div className="relative mt-2">
-					{/* ListboxButton affiche le texte du choix sélectionné et réagit aux clics pour ouvrir la liste */}
+					{/* ListboxButton displays the selected choice's text and reacts to clicks to open the list */}
 					<ListboxButton className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-black shadow-sm ring-1 ring-inset ring-green-low focus:outline-none focus:ring-2 focus:ring-red-primary sm:text-sm/6">
 						<span className="flex items-center">
-							{/* Affiche le nom de l'option sélectionnée ou un texte par défaut si aucune sélection */}
+							{/* Displays the name of the selected option or a default text if no selection */}
 							<span className="block ml-3 truncate">
 								{currentSelectedItem
-									? currentSelectedItem?.name // Affiche le nom de l'élément sélectionné si disponible
-									: "Sélectionnez une option"}
+									? currentSelectedItem?.name // Displays the name of the selected item if available
+									: "Select an option"}
 							</span>
 						</span>
-						{/* Icône ChevronUpDown indiquant que la liste est déroulante */}
+						{/* ChevronUpDown icon indicating the dropdown functionality */}
 						<span className="absolute inset-y-0 right-0 flex items-center pr-2 ml-3 pointer-events-none">
 							<ChevronUpDownIcon
 								aria-hidden="true"
@@ -67,26 +66,26 @@ export const Select = <T,>({
 						</span>
 					</ListboxButton>
 
-					{/* ListboxOptions affiche les options disponibles sous forme de menu déroulant */}
+					{/* ListboxOptions displays the available options as a dropdown menu */}
 					<ListboxOptions
-						transition // Applique une transition pour l'ouverture et la fermeture de la liste
+						transition // Applies a transition for opening and closing the list
 						className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
 					>
-						{/* items.map pour générer chaque option de la liste à partir des données items */}
+						{/* items.map generates each dropdown option from the items data */}
 						{items.map((item: SelectOptionItem<T>) => (
 							<ListboxOption
-								key={item.name} // Clé unique pour chaque option basée sur le nom
-								value={item} // Valeur de l'option
+								key={item.name} // Unique key for each option based on the name
+								value={item} // Option value
 								className="group relative cursor-default select-none py-2 pl-3 pr-9 text-black data-[focus]:bg-red-primary data-[focus]:text-white"
 							>
 								<div className="flex items-center">
-									{/* Affiche le nom de l'option */}
+									{/* Displays the name of the option */}
 									<span className="ml-3 block truncate font-normal group-data-[selected]:font-semibold">
 										{item.name}
 									</span>
 								</div>
 
-								{/* Icône Check affichée si l'option est sélectionnée */}
+								{/* Check icon displayed if the option is selected */}
 								<span className="absolute inset-y-0 right-0 flex items-center pr-4 text-red-primary group-data-[focus]:text-white [.group:not([data-selected])_&]:hidden">
 									<CheckIcon aria-hidden="true" className="w-5 h-5" />
 								</span>
