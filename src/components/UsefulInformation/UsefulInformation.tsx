@@ -13,78 +13,85 @@ import Glossary from "../../Pages/Glossary";
 import Support from "../../Pages/Support";
 
 export const UsefulInformation = () => {
+	// State to track the currently selected item. Default value is "aboutus".
 	const [selectedItem, setSelectedItem] =
 		useState<UsefulInformationContentItem>("aboutus");
+	
+	// Hook to access the current location, including path and hash in the URL.
 	const location = useLocation();
 
-	// Détection de l'ancre dans l'URL pour choisir la section correspondante
+	// Effect to detect changes in the URL hash and update the selected item.
 	useEffect(() => {
+		// If there is a hash in the URL, extract and match it with available options.
 		if (location.hash) {
-			const hashValue = location.hash.substring(1);
+			const hashValue = location.hash.substring(1); // Remove the "#" character.
+			// Check if the hash matches a value in optionItems and update selectedItem if valid.
 			if (optionItems.some((item) => item.value === hashValue)) {
 				setSelectedItem(hashValue as UsefulInformationContentItem);
 			}
 		}
-	}, [location]);
+	}, [location]); // Re-run the effect whenever the location changes.
 
-	// Fonction pour remonter en haut de la page lors de la navigation
+	// Function to scroll to the top of the page with a smooth animation.
 	const scrollToTop = () => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
 
-	// Déclaration des options disponibles pour le Select, sous forme d'un tableau d'objets
+	// Define available options for the dropdown and navigation links.
 	const optionItems: SelectOptionItem<UsefulInformationContentItem>[] = [
-		{ name: "À propos", value: "aboutus" },
-		{ name: "Plan du site", value: "sitemap" },
-		{ name: "Mentions légales", value: "legal-notices" },
-		{ name: "CGV", value: "cgv" },
-		{ name: "Newsletter", value: "newsletter" },
-		{ name: "Glossaire", value: "glossary" },
-		{ name: "Support", value: "support" },
+		{ name: "À propos", value: "aboutus" }, // About Us page
+		{ name: "Plan du site", value: "sitemap" }, // Sitemap page
+		{ name: "Mentions légales", value: "legal-notices" }, // Legal Notices page
+		{ name: "CGV", value: "cgv" }, // Terms and Conditions (CGV) page
+		{ name: "Newsletter", value: "newsletter" }, // Newsletter page
+		{ name: "Glossaire", value: "glossary" }, // Glossary page
+		{ name: "Support", value: "support" }, // Support page
 	];
 
 	return (
 		<div className="block min-h-screen bg-black p-11">
+			{/* Navigation links for larger screens (desktop view) */}
 			<div className="flex-wrap items-center justify-center hidden gap-4 py-8 lg:flex sm:text-sm lg:text-lg xl:text-xl">
-				{/* Utilisation de map pour afficher tous les GreenLinks */}
+				{/* Map over optionItems to display each item as a clickable GreenLink */}
 				{optionItems.map((item) => (
 					<GreenLink
-						key={item.value}
+						key={item.value} // Unique key based on item value
 						onClick={() => {
-							setSelectedItem(item.value);
-							scrollToTop();
+							setSelectedItem(item.value); // Update selectedItem when a link is clicked
+							scrollToTop(); // Scroll to the top of the page
 						}}
 						textSize="text-sm"
 						position="relative"
 					>
-						{item.name}
+						{item.name} {/* Display the name of the option */}
 					</GreenLink>
 				))}
 			</div>
 
+			{/* Dropdown menu for smaller screens (mobile view) */}
 			<div>
 				<div className="block lg:hidden">
+					{/* Pass options and current selection to the Select component */}
 					<Select
-						label="Sélectionne ton choix"
-						items={optionItems}
-						selectedItem={selectedItem}
+						items={optionItems} // Array of options for the dropdown
+						selectedItem={selectedItem} // Currently selected item
 						onSelectedItem={(
 							nextSelectedItem: UsefulInformationContentItem,
 						) => {
-							setSelectedItem(nextSelectedItem);
-							scrollToTop();
+							setSelectedItem(nextSelectedItem); // Update selectedItem when a new option is selected
+							scrollToTop(); // Scroll to the top of the page
 						}}
 					/>
 				</div>
 
-				{/* Affichage d'une page lors du click sur un Item */}
-				{selectedItem === "aboutus" && <AboutUs />}
-				{selectedItem === "sitemap" && <SiteMap />}
-				{selectedItem === "legal-notices" && <LegalNotices />}
-				{selectedItem === "cgv" && <CGV />}
-				{selectedItem === "newsletter" && <Newletter />}
-				{selectedItem === "glossary" && <Glossary />}
-				{selectedItem === "support" && <Support />}
+				{/* Display the corresponding page component based on the selected item */}
+				{selectedItem === "aboutus" && <AboutUs />} {/* About Us page */}
+				{selectedItem === "sitemap" && <SiteMap />} {/* Sitemap page */}
+				{selectedItem === "legal-notices" && <LegalNotices />} {/* Legal Notices page */}
+				{selectedItem === "cgv" && <CGV />} {/* Terms and Conditions (CGV) page */}
+				{selectedItem === "newsletter" && <Newletter />} {/* Newsletter page */}
+				{selectedItem === "glossary" && <Glossary />} {/* Glossary page */}
+				{selectedItem === "support" && <Support />} {/* Support page */}
 			</div>
 		</div>
 	);
