@@ -74,7 +74,9 @@ const Profil = () => {
   // Handle image upload and conversion to base64
   const updateImage = (evt: React.ChangeEvent<HTMLInputElement>) => {
     // Retrieve the file provided by the user in the input field
-    const file = evt.target.files[0]; // File
+    const files = evt.target.files;
+    if (!files) return;
+    const file = files[0]; // File
 
     // Convert the file to a data URL
     const reader = new FileReader();
@@ -88,16 +90,16 @@ const Profil = () => {
   };
 
   // Handle profile form submission
-  const handleSubmit = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubmit = (evt: React.ChangeEvent<HTMLFormElement>) => {
     // Prevent default form submission
     evt.preventDefault();
 
     if (user.id) {
-      updateData(`/users`, user.id, user); // Update user data
+      updateData('/users', user.id, user); // Update user data
       toast.success("Votre profil a été mis à jour avec succès.")
     }
     else {
-      createData(`/users`, user); // Create new user
+      createData('/users', user); // Create new user
     }
   };
 

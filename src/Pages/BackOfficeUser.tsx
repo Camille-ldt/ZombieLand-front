@@ -107,7 +107,7 @@ const BackOfficeUser: React.FC = () => {
 	 */
 	const handleSearch = (event: React.UIEvent<HTMLInputElement>) => {
 		// 1. Read the current value in the input field
-		const value = event.target.value.toLowerCase();
+		const value = (event.target as HTMLInputElement).value.toLowerCase();
 
 		// 2. Update the state with the new search term
 		setSearchTerm(value);
@@ -119,7 +119,7 @@ const BackOfficeUser: React.FC = () => {
 	 */
 	const handleRoleSearch = (event: React.UIEvent<HTMLSelectElement>) => {
 		// 1. Read the current selected value from the dropdown
-		const roleId = event.target.value;
+		const roleId = (event.target as HTMLInputElement).value;
 
 		// 2. Update the state with the new role filter
 		setSearchRole(roleId);
@@ -178,11 +178,11 @@ const BackOfficeUser: React.FC = () => {
 					(user) => user.id === updatedUserFromServer.id,
 				);
 				// Update the user in the list
-				const updatedUsers = users.toSpliced(
-					userIndex,
-					1,
+				const updatedUsers = [
+					...users.slice(0, userIndex),
 					updatedUserFromServer,
-				);
+					...users.slice(userIndex + 1),
+				];
 
 				setUsers(updatedUsers);
 				const refreshedUsers = await getDatas("/users");
