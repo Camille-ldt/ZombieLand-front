@@ -51,7 +51,6 @@ const Profil = () => {
   const {userId} = useParams(); // Retrieve user ID from the URL
 
   useEffect(() => {
-      
       const fetchOneUser = async () => {
           try {
               if (userId) {
