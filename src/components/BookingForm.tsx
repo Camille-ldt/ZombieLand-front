@@ -119,7 +119,7 @@ const BookingForm: React.FC<BookingFormProps> = ({
         <div className="mt-5 w-full">
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="w-full bg-red-primary hover:bg-red-secondary text-white font-bold py-2 px-4 rounded"
             disabled={!startDate || numberOfTickets < 1}
           >
             Réserver

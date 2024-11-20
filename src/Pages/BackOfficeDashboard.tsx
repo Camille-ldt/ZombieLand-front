@@ -75,37 +75,37 @@ const BackOfficeDashboard: React.FC = () => {
 
               {stats ? (
                 <div className="overflow-x-auto w-full py-4 mt-8">
-                  <table className="table-auto w-full border-collapse border-separate border-spacing-2 border-slate-500 text-lg">
+                  <table className="table-auto w-full border-separate border-spacing-2 border-slate-500 text-lg">
                     <thead>
                       <tr>
                         <th className="px-6 py-4 bg-white-700 text-white rounded-md text-left">Taux / Catégorie</th>
-                        <th className="px-8 py-6 bg-black text-white rounded-md">Journée précédente</th>
-                        <th className="px-8 py-6 bg-black text-white rounded-md">Mois précédent</th>
-                        <th className="px-8 py-6 bg-black text-white rounded-md">Année actuelle</th>
+                        <th className="px-8 py-6 bg-black text-white rounded-md uppercase tracking-wider text-sm">Journée précédente</th>
+                        <th className="px-8 py-6 bg-black text-white rounded-md uppercase tracking-wider text-sm">Mois précédent</th>
+                        <th className="px-8 py-6 bg-black text-white rounded-md uppercase tracking-wider text-sm">Année actuelle</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td className="px-6 py-4 bg-black text-white rounded-md text-left">Nombre de réservations</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.dailyReservations}</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.monthlyReservations}</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.yearlyReservations}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.dailyReservations}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.monthlyReservations}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.yearlyReservations}</td>
                       </tr>
                       <tr>
                         <td className="px-6 py-4 bg-black text-white rounded-md text-left">Nombre de tickets</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.dailyTickets}</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.monthlyTickets}</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">{stats.yearlyTickets}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.dailyTickets}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.monthlyTickets}</td>
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">{stats.yearlyTickets}</td>
                       </tr>
                       <tr>
                         <td className="px-6 py-4 bg-black text-white rounded-md text-left">Chiffre d'affaires (€)</td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">
                           {stats.dailyRevenue.toFixed(2)}
                         </td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">
                           {stats.monthlyRevenue.toFixed(2)}
                         </td>
-                        <td className="px-8 py-6 bg-gray-500 text-white text-center rounded-md">
+                        <td className="px-8 py-6 bg-red-primary text-white text-center rounded-md">
                           {stats.yearlyRevenue.toFixed(2)}
                         </td>
                       </tr>

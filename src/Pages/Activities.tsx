@@ -92,7 +92,7 @@ const Activities = () => {
   });
 
   return (
-    <div className="bg-black min-h-screen min-w-screen">
+    <div className="bg-black min-h-screen min-w-screen pb-20">
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-center text-white mb-8">Toutes les activités</h1>
 
@@ -100,12 +100,12 @@ const Activities = () => {
         <input
           type="text"
           placeholder="Rechercher une activité..."
-          className="px-4 py-2 border rounded-md w-full"
+          className="px-4 py-2 border rounded-md w-full focus:border-red-primary focus:ring focus:ring-red-primary focus:ring-opacity-20"
           value={searchTerm}
           onChange={handleSearchChange}
         />
         <select
-          className="px-4 py-2 border rounded-md w-full lg:w-1/5"
+          className="px-4 py-2 border rounded-md w-full lg:w-1/5 focus:border-red-primary focus:ring focus:ring-red-primary focus:ring-opacity-20"
           value={selectedCategory}
           onChange={handleCategoryChange}
         >

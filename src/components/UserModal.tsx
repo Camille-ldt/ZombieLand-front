@@ -271,7 +271,7 @@ const UserModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, user, role
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+              className="px-4 py-2 bg-red-primary text-white rounded hover:bg-red-secondary"
             >
               {user ? "Modifier" : "Créer"}
             </button>
