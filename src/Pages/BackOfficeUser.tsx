@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getDatas, createData, updateData, deleteData } from "../services/api";
 import Aside from "../components/Aside";
 import UserModal from "../components/UserModal";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 interface User {
 	id: number;
@@ -146,8 +146,9 @@ const BackOfficeUser: React.FC = () => {
 			toast.success("Utilisateur créé avec succès !");
 		} catch (error) {
 			console.error("Error while creating user:", error);
-			toast.error("Erreur lors de la création de l'utilisateur. Veuillez réessayer plus tard.");
-
+			toast.error(
+				"Erreur lors de la création de l'utilisateur. Veuillez réessayer plus tard.",
+			);
 		}
 	};
 
@@ -171,7 +172,10 @@ const BackOfficeUser: React.FC = () => {
 					updatedUser.id,
 					updatedUser,
 				);
-				console.log("Updated user received from the server:", updatedUserFromServer);
+				console.log(
+					"Updated user received from the server:",
+					updatedUserFromServer,
+				);
 
 				// Find the index of the user to update
 				const userIndex = users.findIndex(
@@ -196,7 +200,9 @@ const BackOfficeUser: React.FC = () => {
 			}
 		} catch (error) {
 			console.error("Error while updating user", error);
-			toast.error("Erreur lors de la modification de l'utilisateur. Veuillez réessayer plus tard.");
+			toast.error(
+				"Erreur lors de la modification de l'utilisateur. Veuillez réessayer plus tard.",
+			);
 		}
 	};
 
@@ -225,7 +231,9 @@ const BackOfficeUser: React.FC = () => {
 			setIsLoading(false);
 		} catch (error) {
 			console.error("Error while deleting users:", error);
-			toast.error("Erreur lors de la suppression de l'utilisateur. Veuillez réessayer plus tard.")
+			toast.error(
+				"Erreur lors de la suppression de l'utilisateur. Veuillez réessayer plus tard.",
+			);
 		}
 	};
 
@@ -233,7 +241,7 @@ const BackOfficeUser: React.FC = () => {
 	const SmallScreenMessage = () => (
 		<div className="flex items-center justify-center h-screen bg-gray-100 p-4">
 			<p className="text-center text-xl font-semibold">
-				This page is only available on larger screens. Please use a bigger display to access this content.
+			Cette page est uniquement disponible sur ordinateur. Veuillez utiliser un écran plus grand pour accéder au contenu.
 			</p>
 		</div>
 	);
@@ -242,141 +250,144 @@ const BackOfficeUser: React.FC = () => {
 		<>
 			{/* Affiche le message sur les petits écrans */}
 			<div className="lg:hidden">
-        <SmallScreenMessage />
-      </div>
+				<SmallScreenMessage />
+			</div>
 
-      {/* Affiche le contenu normal sur les écrans moyens et grands */}
-      <div className="hidden lg:flex h-screen bg-gray-100">
-        <Aside />
-        <div className="flex-1 overflow-auto">
-		<div className="flex h-screen bg-gray-100">
-			
-			<div className="flex-1 overflow-auto">
-				<div className="container p-4 mx-auto">
-					<h1 className="mb-4 text-2xl font-bold">
-						Administration des Utilisateurs
-					</h1>
+			{/* Affiche le contenu normal sur les écrans moyens et grands */}
+			<div className="hidden lg:flex h-screen bg-gray-100">
+				<Aside />
+				<div className="flex-1 overflow-auto">
+					<div className="flex h-screen bg-gray-100">
+						<div className="flex-1 overflow-auto">
+							<div className="container p-4 mx-auto">
+								<h1 className="mb-4 text-2xl font-bold">
+									Administration des Utilisateurs
+								</h1>
 
-					<div className="flex mb-4 space-x-4">
-						<input
-							type="search"
-							placeholder="Rechercher un utilisateur..."
-							className="flex-grow px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
-							onInput={handleSearch}
-						/>
-						<select
-							className="w-1/5 px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
-							onInput={handleRoleSearch}
-						>
-							<option value="all">Tous les rôles</option>
-							{roles.map((role) => (
-								<option key={role.id} value={role.id}>
-									{role.name}
-								</option>
-							))}
-						</select>
-					</div>
-					<div className="flex justify-end mb-4 space-x-4 ">
-						<button
-							type="button"
-							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
-							onClick={() => setIsModalOpen(true)}
-						>
-							Créer
-						</button>
-						<button
-							type="button"
-							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
-							onClick={handleEditClick}
-							disabled={selectedUsers.length !== 1}
-						>
-							Modifier
-						</button>
-						<button
-							type="button"
-							className="p-2 text-white rounded bg-grey hover:bg-gray-700"
-							onClick={handleDeleteSelectedUser}
-							disabled={selectedUsers.length === 0 || isLoading}
-						>
-							{isLoading ? "Suppression..." : "Supprimer"}
-						</button>
-					</div>
-					<UserModal
-						isOpen={isModalOpen || isEditModalOpen}
-						onClose={() => {
-							setIsModalOpen(false);
-							setIsEditModalOpen(false);
-							setUserToEdit(null);
-						}}
-						onSubmit={userToEdit ? handleUpdateUser : handleCreateUser}
-						user={userToEdit}
-						role={roles}
-					/>
-					<div className="overflow-hidden bg-white rounded-lg shadow-md">
-						<table className="min-w-full divide-y divide-gray-200">
-							<thead className="bg-grey">
-								<tr>
-									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										ID
-									</th>
-									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										Nom
-									</th>
-									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										Prénom
-									</th>
-									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										Email
-									</th>
+								<div className="flex mb-4 space-x-4">
+									<input
+										type="search"
+										placeholder="Rechercher un utilisateur..."
+										className="flex-grow px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
+										onInput={handleSearch}
+									/>
+									<select
+										className="w-1/5 px-4 py-2 border rounded-md focus:border-grey focus:ring focus:ring-grey focus:ring-opacity-20"
+										onInput={handleRoleSearch}
+									>
+										<option value="all">Tous les rôles</option>
+										{roles.map((role) => (
+											<option key={role.id} value={role.id}>
+												{role.name}
+											</option>
+										))}
+									</select>
+								</div>
+								<div className="flex justify-end mb-4 space-x-4 ">
+									<button
+										type="button"
+										className="p-2 text-white rounded bg-grey hover:bg-gray-700"
+										onClick={() => setIsModalOpen(true)}
+									>
+										Créer
+									</button>
+									<button
+										type="button"
+										className="p-2 text-white rounded bg-grey hover:bg-gray-700"
+										onClick={handleEditClick}
+										disabled={selectedUsers.length !== 1}
+									>
+										Modifier
+									</button>
+									<button
+										type="button"
+										className="p-2 text-white rounded bg-grey hover:bg-gray-700"
+										onClick={handleDeleteSelectedUser}
+										disabled={selectedUsers.length === 0 || isLoading}
+									>
+										{isLoading ? "Suppression..." : "Supprimer"}
+									</button>
+								</div>
+								<UserModal
+									isOpen={isModalOpen || isEditModalOpen}
+									onClose={() => {
+										setIsModalOpen(false);
+										setIsEditModalOpen(false);
+										setUserToEdit(null);
+									}}
+									onSubmit={userToEdit ? handleUpdateUser : handleCreateUser}
+									user={userToEdit}
+									role={roles}
+								/>
+								<div className="overflow-hidden bg-white rounded-lg shadow-md">
+									<table className="min-w-full divide-y divide-gray-200">
+										<thead className="bg-grey">
+											<tr>
+												<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
+													ID
+												</th>
+												<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
+													Nom
+												</th>
+												<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
+													Prénom
+												</th>
+												<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
+													Email
+												</th>
 
-									<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
-										Rôle
-									</th>
-									<th className="px-6 py-3" />
-								</tr>
-							</thead>
-							<tbody className="bg-white divide-y divide-gray-200 ">
-								{usersToDisplay.map((user) => (
-									<tr key={user.id}>
-										{/* ID de l'utilisateur */}
-										<td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
+												<th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-white uppercase">
+													Rôle
+												</th>
+												<th className="px-6 py-3" />
+											</tr>
+										</thead>
+										<tbody className="bg-white divide-y divide-gray-200 ">
+											{usersToDisplay.map((user) => (
+												<tr key={user.id}>
+													{/* ID de l'utilisateur */}
+													<td className="px-6 py-4 whitespace-nowrap">
+														{user.id}
+													</td>
 
-										{/* Nom de l'utilisateur */}
-										<td className="px-6 py-4 whitespace-nowrap">
-											{user.lastname}
-										</td>
+													{/* Nom de l'utilisateur */}
+													<td className="px-6 py-4 whitespace-nowrap">
+														{user.lastname}
+													</td>
 
-										{/* Prénom de l'utilisateur */}
-										<td className="px-6 py-4">{user.firstname}</td>
+													{/* Prénom de l'utilisateur */}
+													<td className="px-6 py-4">{user.firstname}</td>
 
-										{/* Email de l'utilisateur */}
-										<td className="px-6 py-4">{user.email}</td>
+													{/* Email de l'utilisateur */}
+													<td className="px-6 py-4">{user.email}</td>
 
-										{/* Rôle de l'utilisateur */}
-										<td className="px-6 py-4 whitespace-nowrap ">
-											{roles.find((role) => role.id === user.role_id)?.name}
-										</td>
-										<td className="px-6 py-4 whitespace-nowrap">
-											{/* Checkbox pour modifier ou supprimer un utilisateur */}
-											<input
-												type="checkbox"
-												checked={selectedUsers.includes(user.id)}
-												onChange={() => handleSelectionChange(user.id)}
-												className="w-4 h-4 border-gray-300 rounded text-red-primary focus:ring-red-primary"
-											/>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+													{/* Rôle de l'utilisateur */}
+													<td className="px-6 py-4 whitespace-nowrap ">
+														{
+															roles.find((role) => role.id === user.role_id)
+																?.name
+														}
+													</td>
+													<td className="px-6 py-4 whitespace-nowrap">
+														{/* Checkbox pour modifier ou supprimer un utilisateur */}
+														<input
+															type="checkbox"
+															checked={selectedUsers.includes(user.id)}
+															onChange={() => handleSelectionChange(user.id)}
+															className="w-4 h-4 border-gray-300 rounded text-red-primary focus:ring-red-primary"
+														/>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-        </div>
-      </div>
 		</>
-		
 	);
 };
 

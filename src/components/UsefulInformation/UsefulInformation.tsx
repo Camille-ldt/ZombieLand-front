@@ -63,7 +63,7 @@ export const UsefulInformation = () => {
 						textSize="text-sm"
 						position="relative"
 					>
-						{item.name} {/* Display the name of the option */}
+						{item.name} 
 					</GreenLink>
 				))}
 			</div>
